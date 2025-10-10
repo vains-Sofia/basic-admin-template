@@ -42,7 +42,10 @@ jobs:
 
       # 6️⃣ 构建项目
       - name: Build project
-        run: pnpm build-only
+        run: |
+          pnpm build-only
+          # 复制 index.html 为 404.html（兼容 GitHub Pages 刷新）
+          cp dist/index.html dist/404.html
 
       # 7️⃣ 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
