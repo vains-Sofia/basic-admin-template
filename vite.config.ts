@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
 		].filter(Boolean),
 
 		// 设置基础路径
-		base: './',
+		base: env.VITE_BASE_PATH || '/',
 
 		server: {
 			host: '0.0.0.0',
