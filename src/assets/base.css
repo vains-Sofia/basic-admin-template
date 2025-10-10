@@ -37,6 +37,7 @@ body {
 .dark::view-transition-old(root) {
 	z-index: 100;
 }
+
 ::view-transition-new(root),
 ::view-transition-old(root) {
 	/* 关闭默认动画，否则影响自定义动画的执行 */
