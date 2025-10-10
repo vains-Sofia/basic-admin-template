@@ -53,8 +53,7 @@ router.beforeEach((to, from, next) => {
 	}
 
 	if (!userStore.routers) {
-		to.path = '/login'
-		next({ ...to, replace: true })
+		next({ path: '/login', replace: true })
 		return
 	}
 
