@@ -1,0 +1,6 @@
+export { default as Layout } from './index.vue'
+export { default as Logo } from './Logo/Index.vue'
+export { default as Navbar } from './Navbar/Index.vue'
+export { default as Sidebar } from './Sidebar/Index.vue'
+export { default as Breadcrumb } from './Breadcrumb/Index.vue'
+export { default as MainContent } from './MainContent/Index.vue'

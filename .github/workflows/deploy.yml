@@ -1,0 +1,56 @@
+name: 🚀 Deploy Project to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 当推送到 main 分支时触发（可改为你的分支）
+
+permissions:
+  contents: write  # 允许推送到 gh-pages 分支
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 检出仓库代码
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      # 2️⃣ 安装 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3️⃣ 安装 pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # 4️⃣ 缓存 pnpm 依赖
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # 5️⃣ 安装依赖
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 6️⃣ 构建项目
+      - name: Build project
+        run: pnpm build-only
+
+      # 7️⃣ 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Vite 默认输出目录
+          publish_dir: ./dist
+          force_orphan: true

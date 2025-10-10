@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+#app {
+	height: 100%;
+}
+
+:root {
+	/* 布局 */
+	--layout-navbar-height: 60px;
+
+	/* 动画 */
+	--animate-duration: 300ms;
+	--animate-delay: 0;
+
+	/* 表格	*/
+	--el-text-color-secondary: black;
+
+	/* 抽屉body padding值 */
+	--drawer-body-padding: 0px;
+}
+
+.dark {
+	--el-menu-bg-color: #0a0a0a;
+	--el-menu-text-color: #e5eaf3;
+	--el-menu-hover-bg-color: hsl(216 5% 19%);
+	--el-menu-hover-text-color: hsl(0, 0%, 98%);
+}
+
+/* 黑暗模式切换动画css */
+.dark::view-transition-old(root) {
+	z-index: 100;
+}
+::view-transition-new(root),
+::view-transition-old(root) {
+	/* 关闭默认动画，否则影响自定义动画的执行 */
+	animation: none;
+}
+
+/* 抽屉 body 样式 */
+.drawer-body-padding {
+	padding: var(--drawer-body-padding);
+}
