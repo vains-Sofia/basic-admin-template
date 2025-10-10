@@ -40,7 +40,7 @@ jobs:
 
       # 5️⃣ 安装依赖
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       # 6️⃣ 构建项目
       - name: Build project
