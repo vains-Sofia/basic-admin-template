@@ -25,7 +25,7 @@ jobs:
 
       # 3️⃣ 安装 pnpm
       - name: Setup pnpm
-        uses: npm install -g pnpm
+        run: npm install -g pnpm
 
       # 4️⃣ 缓存 pnpm 依赖
       - name: Cache pnpm store
