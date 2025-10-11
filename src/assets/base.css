@@ -48,3 +48,8 @@ body {
 .drawer-body-padding {
 	padding: var(--drawer-body-padding);
 }
+
+/* 进度条 */
+#nprogress .bar {
+	background: var(--el-color-primary) !important;
+}

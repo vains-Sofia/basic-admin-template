@@ -2,6 +2,24 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createPersistedStatePlugin } from 'pinia-plugin-persistedstate-2'
 
+// 进度条
+import "nprogress/nprogress.css"
+import NProgress from 'nprogress'
+
+// 进度条配置
+NProgress.configure({
+	// 动画方式
+	easing: "ease",
+	// 递增进度条的速度
+	speed: 500,
+	// 是否显示加载ico
+	showSpinner: false,
+	// 自动递增间隔
+	trickleSpeed: 200,
+	// 初始化时的最小百分比
+	minimum: 0.3
+});
+
 // element-plus
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'

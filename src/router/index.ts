@@ -1,3 +1,4 @@
+import NProgress from 'nprogress'
 import { useUserStore } from '@/stores/User.ts'
 import { staticRoutes } from '@/router/modules/default'
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
@@ -37,6 +38,7 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+	NProgress.start()
 	const userStore = useUserStore()
 
 	// 如果未登录，跳转到登录页
@@ -59,5 +61,7 @@ router.beforeEach((to, from, next) => {
 
 	next()
 })
+
+router.afterEach(() => NProgress.done())
 
 export default router
