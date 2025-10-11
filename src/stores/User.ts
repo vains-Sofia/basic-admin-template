@@ -4,11 +4,14 @@ import { defineStore } from 'pinia'
 import { staticRoutes } from '@/router/modules/default.ts'
 import { transformMenuToRoutes } from '@/router/transform.ts'
 
+const logo = new URL(`../assets/logo.png`, import.meta.url).href
+
+
 export const useUserStore = defineStore(
 	'User',
 	() => {
 		// 头像
-		const picture = ref('/src/assets/logo.png')
+		const picture = ref(logo)
 
 		// 账号
 		const username = ref('')
@@ -24,6 +27,7 @@ export const useUserStore = defineStore(
 
 		// 设置用户基础信息
 		function setupUser(userinfo: any) {
+			console.log(userinfo)
 			if (userinfo.picture) {
 				picture.value = userinfo.picture
 			}
@@ -65,7 +69,9 @@ export const useUserStore = defineStore(
 		// 登出
 		function logout() {
 			router.push({ path: '/login' }).then(() => {
-				picture.value = '/src/assets/logo.png'
+
+				console.log(logo)
+				picture.value = logo
 				username.value = ''
 				nickname.value = ''
 				routers.value = []

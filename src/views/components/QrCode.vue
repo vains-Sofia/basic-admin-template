@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import QrCode from '@/components/QrCode'
 import { ref } from 'vue'
+import logo from '@/assets/logo.png'
+import QrCode from '@/components/QrCode'
 
 const data = 'https://qr-code-styling.com'
 
@@ -26,7 +27,7 @@ const url = ref(props.url || data)
 				/>
 			</el-form-item>
 			<div class="flex justify-center">
-				<QrCode v-if="url" :data="url" image="/src/assets/logo.png" />
+				<QrCode v-if="url" :data="url" :image="logo" />
 			</div>
 		</div>
 	</div>
