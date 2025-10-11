@@ -123,7 +123,6 @@ export default defineComponent({
 		'size-change',
 		'current-change',
 		// 透传 Table 的原始事件
-		'selection-change',
 		'sort-change',
 		'refresh',
 	],
@@ -237,7 +236,6 @@ export default defineComponent({
 
 		// ===== 列展示控制 =====
 		const visibleColumns = ref(props.columns.map((col) => col.dataKey))
-		console.log(visibleColumns.value)
 
 		/**
 		 * 渲染 columns 配置的列
@@ -356,7 +354,6 @@ export default defineComponent({
 					data={props.data}
 					v-loading={props.loading}
 					height={props.adaptive ? tableHeight.value : undefined}
-					onSelection-Change={(rows: any[]) => emit('selection-change', rows)}
 					onSort-Change={(sort: any) => emit('sort-change', sort)}
 					v-slots={{
 						empty: slots.empty

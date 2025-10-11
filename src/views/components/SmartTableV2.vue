@@ -13,6 +13,9 @@
 			@sort-change="handleSortChange"
 			@size-change="loadData"
 			@current-change="loadData"
+			@select="handleSelect"
+			@select-all="handleSelectAll"
+			@selection-change="handleSelectionChange"
 		>
 			<!-- 自定义单元格插槽 -->
 			<template #name="{ rowData }">
@@ -66,17 +69,32 @@ const sortState = ref<SortBy>({
 	order: TableV2SortOrder.ASC,
 })
 
+const handleSelectionChange = (rows: any[]) => {
+	console.log('选中行：', rows)
+}
+
+const handleSelectAll = (rows: any[]) => {
+	console.log(rows)
+}
+
+const handleSelect = (rows: any[], row: any) => {
+	console.log(rows, row)
+}
+
 // 表格列
 const columns: TableColumnV2[] = [
 	{
 		key: 'index',
 		dataKey: 'index',
+		selection: true,
+		width: 50
 	},
 	{
 		key: 'name',
 		dataKey: 'name',
 		title: '姓名',
 		slot: 'name',
+		align: 'center',
 	},
 	{
 		key: 'age',
@@ -130,6 +148,7 @@ const columns: TableColumnV2[] = [
 		align: 'center',
 	},
 	{
+		dataKey: 'edit-col',
 		title: '操作',
 		slot: 'edit-slot',
 		width: 150,

@@ -7,6 +7,8 @@
 			v-model:pagination="pagination"
 			style="width: 100%"
 			@refresh="loadData"
+			@select="handleSelect"
+			@select-all="handleSelectAll"
 			@selection-change="handleSelectionChange"
 			@sort-change="handleSortChange"
 			@size-change="loadData"
@@ -108,6 +110,14 @@ const columns: TableColumn[] = [
 
 const handleSelectionChange = (rows: any[]) => {
 	console.log('选中行：', rows)
+}
+
+const handleSelectAll = (rows: any[]) => {
+	console.log(rows)
+}
+
+const handleSelect = (rows: any, row: any) => {
+	console.log(rows, row)
 }
 
 const handleSortChange = (sort: any) => {

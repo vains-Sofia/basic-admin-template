@@ -1,29 +1,31 @@
 import {
+	computed,
 	defineComponent,
+	Fragment,
+	type FunctionalComponent,
+	h,
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
 	type PropType,
 	ref,
-	computed,
-	nextTick,
-	onMounted,
-	onBeforeUnmount,
-	watch,
-	h,
-	Fragment,
+	unref,
 	type VNode,
+	watch,
 } from 'vue'
+import type { Column as ElTableColumn, CheckboxValueType } from 'element-plus'
 import {
-	ElTableV2,
-	ElPagination,
-	ElTooltip,
-	ElButton,
-	ElPopover,
-	ElCheckboxGroup,
-	ElCheckbox,
 	ElAutoResizer,
+	ElButton,
+	ElCheckbox,
+	ElCheckboxGroup,
 	ElEmpty,
+	ElPagination,
+	ElPopover,
+	ElTableV2,
+	ElTooltip,
 } from 'element-plus'
 import { Icon } from '@iconify/vue'
-import type { Column as ElTableColumn } from 'element-plus'
 
 export interface TablePaginationV2 {
 	currentPage: number
@@ -33,7 +35,16 @@ export interface TablePaginationV2 {
 }
 
 export interface TableColumnV2<T = any> extends Omit<ElTableColumn<T>, 'width'> {
+	// 默认均分宽度
 	width?: number
+	// 是否为选择列
+	selection?: boolean
+}
+
+interface SelectionCellProps {
+	value: boolean
+	intermediate?: boolean
+	onChange: (value: CheckboxValueType) => void
 }
 
 export default defineComponent({
@@ -85,7 +96,16 @@ export default defineComponent({
 		},
 	},
 
-	emits: ['update:pagination', 'size-change', 'current-change', 'sort-change', 'refresh'],
+	emits: [
+		'update:pagination',
+		'size-change',
+		'current-change',
+		'sort-change',
+		'refresh',
+		'select',
+		'select-all',
+		'selection-change',
+	],
 
 	setup(props, { emit, slots, attrs }) {
 		// 分页器绑定
@@ -139,7 +159,8 @@ export default defineComponent({
 			if (tableHeight.value < 200) tableHeight.value = 200
 
 			// 表格宽度
-			tableWidth.value = (containerRect instanceof DOMRect ? containerRect.width : rect.width) - 20
+			tableWidth.value =
+				(containerRect instanceof DOMRect ? containerRect.width : rect.width) - 20
 		}
 
 		let resizeObserver: ResizeObserver | null = null
@@ -168,16 +189,55 @@ export default defineComponent({
 			resizeObserver?.disconnect()
 		})
 
+		const SelectionCell: FunctionalComponent<SelectionCellProps> = ({
+			value,
+			intermediate = false,
+			onChange,
+		}) => {
+			return (
+				<ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
+			)
+		}
+
 		// 列控制
 		const visibleColumns = ref(props.columns.map((c) => c.dataKey))
+
+		/**
+		 * 自动计算未设置宽度单元格的宽度，计算时会排除不展示和固定宽带的列
+		 * 计算方式：(表格宽度 - 设置宽度单元格宽度和) / (展示列的数量 - 展示列固定长度列数量)
+		 */
+		const getWidth = () => {
+			// 固定宽度的列
+			const fixedWidthCols = props.columns.filter(
+				(c) => !c.autoWidth && visibleColumns.value.includes(c.dataKey),
+			)
+			// 固定宽度列的dataKey
+			const fixedWidthColKeys = fixedWidthCols.map((c) => c.dataKey)
+			// 固定列的宽度和
+			const fixedWidth = fixedWidthCols.reduce((acc, c) => acc + (c.width ?? 0), 0)
+
+			// 自动计算宽度列时去除固定宽度列，仅计算剩余列的宽度
+			return (
+				(tableWidth.value - fixedWidth) /
+				visibleColumns.value.filter((c) => !fixedWidthColKeys.includes(c)).length
+			)
+		}
 
 		// 构造 ElTableV2 的列
 		const tableColumns = computed(() => {
 			return props.columns
 				.filter((c) => visibleColumns.value.includes(c.dataKey))
 				.map((col) => {
-					// 列宽默认200
-					col.width = col.width || (tableWidth.value / props.columns.length)
+					if (col.autoWidth) {
+						// 自动计算宽度列时去除固定宽度列，仅计算剩余列的宽度
+						col.width = getWidth()
+					} else {
+						// 标志列的宽度是否为自动计算
+						col.autoWidth = !col.width
+						// 列宽默认200
+						col.width = col.width || getWidth()
+					}
+
 					const slotName = col.slot || col.dataKey
 					const headerSlotName = col.headerSlot || `${col.prop}-header`
 
@@ -208,6 +268,23 @@ export default defineComponent({
 							// 默认返回值
 							return h('span', {}, value)
 						}
+					} else if (col.selection) {
+						// 设置单元格展示复选框
+						col.cellRenderer = ({ rowData }: any) => {
+							const onChange = (value: CheckboxValueType) => {
+								rowData.checked = value
+								emit(
+									'select',
+									props.data.filter((d) => d.checked),
+									rowData,
+								)
+								emit(
+									'selection-change',
+									props.data.filter((d) => d.checked),
+								)
+							}
+							return <SelectionCell value={rowData.checked} onChange={onChange} />
+						}
 					}
 
 					if (col.headerSlot) {
@@ -218,63 +295,104 @@ export default defineComponent({
 								? h(Fragment, null, slotResult)
 								: slotResult
 						}
+					} else if (col.selection) {
+						// 设置表头为复选框，全选、半选由具体数据列决定
+						col.headerCellRenderer = () => {
+							const _data = unref(props.data)
+							const onChange = (value: CheckboxValueType) => {
+								props.data.forEach((row) => {
+									row.checked = value
+								})
+								emit(
+									'selection-change',
+									props.data.filter((d) => d.checked),
+								)
+								emit(
+									'select-all',
+									props.data.filter((d) => d.checked),
+								)
+							}
+							const allSelected =
+								_data.length !== 0 && _data.every((row) => row.checked)
+							const containsChecked = _data.some((row) => row.checked)
+
+							return (
+								<SelectionCell
+									value={allSelected}
+									intermediate={containsChecked && !allSelected}
+									onChange={onChange}
+								/>
+							)
+						}
 					}
 
 					return col
 				})
 		})
 
-		const renderDefaultToolbar = () => (
-			<div
-				style="
+		const renderDefaultToolbar = () => {
+			const onColumnChange = () => {
+				calcTableHeight()
+			}
+			return (
+				<div
+					style="
           display:flex;justify-content:space-between;align-items:center;
           padding:0 11px 11px;border-bottom:1px solid var(--el-border-color-lighter);
         "
-			>
-				<div style="font-size:16px;font-weight:600;color:var(--el-text-color-primary);">
-					{slots.title ? slots.title() : props.title}
+				>
+					<div style="font-size:16px;font-weight:600;color:var(--el-text-color-primary);">
+						{slots.title ? slots.title() : props.title}
+					</div>
+					<div style="display:flex;gap:0px;align-items:center;">
+						{props.showRefresh && (
+							<ElTooltip content="刷新" placement="top">
+								<ElButton
+									text
+									onClick={() => emit('refresh')}
+									disabled={props.loading}
+								>
+									<Icon icon="ep:refresh" />
+								</ElButton>
+							</ElTooltip>
+						)}
+						{props.showColumnController && (
+							<ElTooltip content="列设置" placement="top" as-child>
+								<div>
+									<ElPopover trigger="click" placement="bottom-end">
+										{{
+											reference: () => (
+												<ElButton text>
+													<Icon icon="ep:menu" />
+												</ElButton>
+											),
+											default: () => (
+												<ElCheckboxGroup
+													v-model={visibleColumns.value}
+													style="padding-left:20px"
+													onChange={onColumnChange}
+												>
+													{props.columns.map((col) => (
+														<ElCheckbox
+															onChange={onColumnChange}
+															key={col.dataKey}
+															value={col.dataKey}
+															label={
+																col.selection ? '复选框' : col.title
+															}
+														/>
+													))}
+												</ElCheckboxGroup>
+											),
+										}}
+									</ElPopover>
+								</div>
+							</ElTooltip>
+						)}
+					</div>
 				</div>
-				<div style="display:flex;gap:0px;align-items:center;">
-					{props.showRefresh && (
-						<ElTooltip content="刷新" placement="top">
-							<ElButton text onClick={() => emit('refresh')} disabled={props.loading}>
-								<Icon icon="ep:refresh" />
-							</ElButton>
-						</ElTooltip>
-					)}
-					{props.showColumnController && (
-						<ElTooltip content="列设置" placement="top" as-child>
-							<div>
-								<ElPopover trigger="click" placement="bottom-end">
-									{{
-										reference: () => (
-											<ElButton text>
-												<Icon icon="ep:menu" />
-											</ElButton>
-										),
-										default: () => (
-											<ElCheckboxGroup
-												v-model={visibleColumns.value}
-												style="padding-left:20px"
-											>
-												{props.columns.map((col) => (
-													<ElCheckbox
-														key={col.dataKey}
-														label={col.dataKey}
-													>
-														{col.title}
-													</ElCheckbox>
-												))}
-											</ElCheckboxGroup>
-										),
-									}}
-								</ElPopover>
-							</div>
-						</ElTooltip>
-					)}
-				</div>
-			</div>
-		)
+			)
+		}
 
 		return () => (
 			<div
