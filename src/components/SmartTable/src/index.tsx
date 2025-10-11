@@ -237,6 +237,7 @@ export default defineComponent({
 
 		// ===== 列展示控制 =====
 		const visibleColumns = ref(props.columns.map((col) => col.dataKey))
+		console.log(visibleColumns.value)
 
 		/**
 		 * 渲染 columns 配置的列
@@ -326,12 +327,9 @@ export default defineComponent({
 													{props.columns.map((col) => (
 														<ElCheckbox
 															key={col.dataKey}
-															label={col.dataKey}
-														>
-															{col.type === 'selection'
-																? '复选列'
-																: col.dataKey}
-														</ElCheckbox>
+															value={col.dataKey}
+															label={col.type === 'selection' ? '复选列' : col.title}
+														/>
 													))}
 												</ElCheckboxGroup>
 											),
