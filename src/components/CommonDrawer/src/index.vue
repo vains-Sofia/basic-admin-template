@@ -51,7 +51,6 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="!p-[0] hidden"></div>
 	<el-drawer
 		v-for="item in drawerStore.drawers"
 		:key="item.id"
