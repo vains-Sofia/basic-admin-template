@@ -4,10 +4,55 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <title>Basic Cloud</title>
+    <style>
+        /* 页面加载动画样式 */
+        .loading-mask {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-mask.fade-out {
+            opacity: 0;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-mask p {
+            margin-top: 12px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- 🚀 页面加载时显示的 loading -->
+      <div id="app-loading" class="loading-mask">
+        <div class="loading-spinner"></div>
+        <p>正在加载，请稍候...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

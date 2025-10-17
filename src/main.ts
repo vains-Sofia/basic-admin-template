@@ -53,3 +53,11 @@ app.use(ElementPlus, {
 app.component('Icon', Icon)
 
 app.mount('#app')
+
+// 🚀 Vue 挂载完成后，淡出并移除 Loading
+const loader = document.getElementById('app-loading')
+if (loader) {
+	loader.classList.add('fade-out')
+	// 等淡出动画结束再移除
+	loader.addEventListener('transitionend', () => loader.remove(), { once: true })
+}
