@@ -20,11 +20,8 @@ NProgress.configure({
 	minimum: 0.3
 });
 
-// element-plus
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+// Element-Plus黑暗模式css
 import 'element-plus/theme-chalk/dark/css-vars.css'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 // 引入动画库 animate.css
 import 'animate.css'
@@ -35,6 +32,7 @@ import { Icon } from '@iconify/vue'
 
 import App from './App.vue'
 import router from './router'
+import { autoImport } from '@/AutoImport.ts'
 
 const app = createApp(App)
 
@@ -45,9 +43,13 @@ pinia.use(installPersistedStatePlugin)
 
 app.use(pinia)
 app.use(router)
-app.use(ElementPlus, {
-	locale: zhCn,
-})
+// app.use(ElementPlus, {
+// 	locale: zhCn,
+// })
+
+// element-plus
+// install(app)
+autoImport(app)
 
 // 注册图标
 app.component('Icon', Icon)

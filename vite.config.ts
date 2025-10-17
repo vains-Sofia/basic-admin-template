@@ -5,6 +5,9 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, loadEnv } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -19,6 +22,14 @@ export default defineConfig(({ mode }) => {
 			tailwindcss(),
 			// 根据环境变量决定是否启用 Vue 开发工具
 			devToolsEnabled ? vueDevTools() : null,
+			AutoImport({
+				resolvers: [ElementPlusResolver()],
+			}),
+			Components({
+				resolvers: [ElementPlusResolver()],
+				// 允许多层目录结构推断
+				directoryAsNamespace: true,
+			}),
 		].filter(Boolean),
 
 		// 设置基础路径
