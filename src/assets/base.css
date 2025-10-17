@@ -46,7 +46,7 @@ body {
 
 /* 抽屉 body 样式 */
 .drawer-body-padding {
-	padding: var(--drawer-body-padding);
+	padding: var(--drawer-body-padding) !important;
 }
 
 /* 进度条 */
