@@ -1,0 +1,1 @@
+import{On as e,cn as t,r as n}from"./index-DsyIgf0Q.js";var r={};function i(n,r){return e(),t(`div`,null,`首页`)}var a=n(r,[[`render`,i]]);export{a as default};
