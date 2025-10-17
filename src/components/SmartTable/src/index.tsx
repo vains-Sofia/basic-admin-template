@@ -23,6 +23,7 @@ import {
 import type { TableColumnCtx } from 'element-plus'
 import type { DefaultRow } from 'element-plus/es/components/table/src/table/defaults'
 import { Icon } from '@iconify/vue'
+import { AdaptiveTable } from '@/utils/Common.ts'
 
 export interface TableColumn<T extends DefaultRow = any> {
 	/** 列类型 */
@@ -165,70 +166,48 @@ export default defineComponent({
 		// =========== 表格自适应高度开始 ===========
 		const tableRef = ref<HTMLElement | null>(null)
 		const paginationRef = ref<HTMLElement | null>(null)
-		const tableHeight = ref<number | undefined>(undefined)
+		const tableHeight = ref<number>(0)
 
-		function getScrollContainer(el: HTMLElement | null): HTMLElement | Window {
-			while (el) {
-				const overflowY = window.getComputedStyle(el).overflowY
-				if (overflowY === 'auto' || overflowY === 'scroll') return el
-				el = el.parentElement
-			}
-			return window
-		}
-
-		const calcTableHeight = () => {
-			if (!props.adaptive || !tableRef.value) return
-
-			const container = getScrollContainer(tableRef.value)
-			const containerHeight =
-				container instanceof Window ? window.innerHeight : container.clientHeight
-
-			const rect = tableRef.value.getBoundingClientRect()
-			const containerRect =
-				container instanceof Window ? { top: 0 } : container.getBoundingClientRect()
-			const tableTop = rect.top - containerRect.top
-
-			const paginationHeight = paginationRef.value?.offsetHeight || 0
-
-			// 表格高度
-			tableHeight.value = containerHeight - tableTop - paginationHeight - props.extraGap - 65
-			if (tableHeight.value < 200) tableHeight.value = 200
-		}
+		const adaptiveTable = new AdaptiveTable(
+			props,
+			tableRef,
+			paginationRef,
+			tableHeight,
+			undefined,
+		)
 
 		let resizeObserver: ResizeObserver | null = null
 
-		onMounted(() => {
-			nextTick(() => {
-				calcTableHeight()
+		onMounted(async () => {
+			await nextTick()
 
-				// 监听窗口大小
-				window.addEventListener('resize', calcTableHeight)
+			adaptiveTable.calcTableHeight()
 
-				// 监听分页器高度变化
-				resizeObserver = new ResizeObserver(() => {
-					calcTableHeight()
-				})
+			// 监听窗口大小
+			window.addEventListener('resize', () => adaptiveTable.calcTableHeight())
 
-				// 只有在分页器存在时才监听
-				watch(
-					() => paginationRef.value,
-					(el) => {
-						// 解绑旧的
-						resizeObserver?.disconnect()
-						// 绑定新的
-						if (props.pagination && el instanceof HTMLElement) {
-							resizeObserver?.observe(el)
-						}
-						// 重新计算高度
-						calcTableHeight()
-					},
-					{ immediate: true },
-				)
-			})
+			// 监听分页器高度变化
+			resizeObserver = new ResizeObserver(() => adaptiveTable.calcTableHeight())
+
+			// 只有在分页器存在时才监听
+			watch(
+				() => paginationRef.value,
+				(el) => {
+					// 解绑旧的
+					resizeObserver?.disconnect()
+					// 绑定新的
+					if (props.pagination && el instanceof HTMLElement) {
+						resizeObserver?.observe(el)
+					}
+					// 重新计算高度
+					adaptiveTable.calcTableHeight()
+				},
+				{ immediate: true },
+			)
 		})
 
 		onBeforeUnmount(() => {
-			window.removeEventListener('resize', calcTableHeight)
+			window.removeEventListener('resize', () => adaptiveTable.calcTableHeight())
 			resizeObserver?.disconnect()
 		})
 

@@ -13,7 +13,7 @@ import {
 	type VNode,
 	watch,
 } from 'vue'
-import type { Column as ElTableColumn, CheckboxValueType } from 'element-plus'
+import type { CheckboxValueType, Column as ElTableColumn } from 'element-plus'
 import {
 	ElAutoResizer,
 	ElButton,
@@ -26,6 +26,7 @@ import {
 	ElTooltip,
 } from 'element-plus'
 import { Icon } from '@iconify/vue'
+import { AdaptiveTable } from '@/utils/Common.ts'
 
 export interface TablePaginationV2 {
 	currentPage: number
@@ -111,6 +112,9 @@ export default defineComponent({
 		// 分页器绑定
 		const paginationConfig = computed(() => props.pagination ?? null)
 
+		/**
+		 * 分页器 -> 修改 pageSize
+		 */
 		const handleSizeChange = (size: number) => {
 			if (!paginationConfig.value) return
 			const newPagination = { ...paginationConfig.value, pageSize: size, currentPage: 1 }
@@ -118,6 +122,9 @@ export default defineComponent({
 			emit('size-change', size)
 		}
 
+		/**
+		 * 分页器 -> 修改当前页
+		 */
 		const handleCurrentChange = (page: number) => {
 			if (!paginationConfig.value) return
 			const newPagination = { ...paginationConfig.value, currentPage: page }
@@ -127,65 +134,42 @@ export default defineComponent({
 
 		// 自适应高度
 		const tableHeight = ref<number>(0)
-		const tableRef = ref<HTMLElement | null>(null)
+		const tableContainerRef = ref<HTMLElement | null>(null)
+		const tableInstanceRef = ref()
 		const paginationRef = ref<HTMLElement | null>(null)
 		const tableWidth = ref<number>(0)
 
-		function getScrollContainer(el: HTMLElement | null): HTMLElement | Window {
-			while (el) {
-				const overflowY = window.getComputedStyle(el).overflowY
-				if (overflowY === 'auto' || overflowY === 'scroll') return el
-				el = el.parentElement
-			}
-			return window
-		}
-
-		const calcTableHeight = () => {
-			if (!props.adaptive || !tableRef.value) return
-
-			const container = getScrollContainer(tableRef.value)
-			const containerHeight =
-				container instanceof Window ? window.innerHeight : container.clientHeight
-
-			const rect = tableRef.value.getBoundingClientRect()
-			const containerRect =
-				container instanceof Window ? { top: 0 } : container.getBoundingClientRect()
-			const tableTop = rect.top - containerRect.top
-
-			const paginationHeight = paginationRef.value?.offsetHeight || 0
-
-			// 表格高度
-			tableHeight.value = containerHeight - tableTop - paginationHeight - props.extraGap - 65
-			if (tableHeight.value < 200) tableHeight.value = 200
-
-			// 表格宽度
-			tableWidth.value =
-				(containerRect instanceof DOMRect ? containerRect.width : rect.width) - 20
-		}
-
 		let resizeObserver: ResizeObserver | null = null
 
-		onMounted(() => {
-			nextTick(() => {
-				calcTableHeight()
-				window.addEventListener('resize', calcTableHeight)
-				resizeObserver = new ResizeObserver(() => calcTableHeight())
-				watch(
-					() => paginationRef.value,
-					(el) => {
-						resizeObserver?.disconnect()
-						if (props.pagination && el instanceof HTMLElement) {
-							resizeObserver?.observe(el)
-						}
-						calcTableHeight()
-					},
-					{ immediate: true },
-				)
-			})
+		const adaptiveTable = new AdaptiveTable(
+			props,
+			tableContainerRef,
+			paginationRef,
+			tableHeight,
+			tableWidth,
+		)
+
+		onMounted(async () => {
+			await nextTick()
+
+			adaptiveTable.calcTableHeight()
+			resizeObserver = new ResizeObserver(() => adaptiveTable.calcTableHeight())
+			window.addEventListener('resize', () => adaptiveTable.calcTableHeight())
+			watch(
+				() => paginationRef.value,
+				(el) => {
+					resizeObserver?.disconnect()
+					if (props.pagination && el instanceof HTMLElement) {
+						resizeObserver?.observe(el)
+					}
+					adaptiveTable.calcTableHeight()
+				},
+				{ immediate: true },
+			)
 		})
 
 		onBeforeUnmount(() => {
-			window.removeEventListener('resize', calcTableHeight)
+			window.removeEventListener('resize', () => adaptiveTable.calcTableHeight())
 			resizeObserver?.disconnect()
 		})
 
@@ -332,7 +316,7 @@ export default defineComponent({
 
 		const renderDefaultToolbar = () => {
 			const onColumnChange = () => {
-				calcTableHeight()
+				adaptiveTable.calcTableHeight()
 			}
 			return (
 				<div
@@ -397,7 +381,7 @@ export default defineComponent({
 		return () => (
 			<div
 				style="background-color:var(--el-bg-color);padding:12px;box-sizing:border-box;"
-				ref={tableRef}
+				ref={tableContainerRef}
 			>
 				{/* 工具栏 */}
 				{slots.toolbar ? slots.toolbar() : renderDefaultToolbar()}
@@ -406,6 +390,7 @@ export default defineComponent({
 					{({ height, width }: { height: number; width: number }) => (
 						<ElTableV2
 							{...attrs}
+							ref={tableInstanceRef}
 							data={props.data}
 							width={width}
 							columns={tableColumns.value as any}

@@ -49,9 +49,9 @@ import { type SortBy, TableV2SortOrder } from 'element-plus'
 const tableData = ref<any[]>([])
 const pagination = ref<TablePaginationV2>({
 	currentPage: 1,
-	pageSize: 50,
+	pageSize: 3000,
 	total: 0,
-	pageSizes: [10, 20, 100],
+	pageSizes: [10, 20, 50, 100, 3000],
 })
 
 const loading = ref(false)
@@ -172,7 +172,7 @@ const loadData = () => {
 	loading.value = true
 	// 模拟请求
 	setTimeout(() => {
-		pagination.value.total = 100
+		pagination.value.total = 10000
 		tableData.value = Array.from({ length: pagination.value.pageSize }).map((_, i) => ({
 			id: (pagination.value.currentPage - 1) * pagination.value.pageSize + i + 1,
 			name: `用户 ${(pagination.value.currentPage - 1) * pagination.value.pageSize + i + 1}`,
