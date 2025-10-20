@@ -3,9 +3,9 @@ import router from '@/router'
 import { defineStore } from 'pinia'
 import { staticRoutes } from '@/router/modules/default.ts'
 import { transformMenuToRoutes } from '@/router/transform.ts'
+import { lastRouters } from '@/router/modules/lastRouters.ts'
 
 const logo = new URL(`../assets/logo.png`, import.meta.url).href
-
 
 export const useUserStore = defineStore(
 	'User',
@@ -63,13 +63,15 @@ export const useUserStore = defineStore(
 				router.addRoute('Home', route)
 			})
 
+			// 添加最后的路由(404)
+			lastRouters.forEach(route => router.addRoute(route))
+
 			isRouterInitialized.value = true
 		}
 
 		// 登出
 		function logout() {
 			router.push({ path: '/login' }).then(() => {
-
 				console.log(logo)
 				picture.value = logo
 				username.value = ''

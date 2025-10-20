@@ -20,4 +20,18 @@ export const staticRoutes = [
 			},
 		],
 	},
+	{
+		path: '/',
+		name: 'Error',
+		meta: { title: '错误页', icon: 'ep:folder-delete' },
+		component: () => import('@/components/Layout/index.vue'),
+		children: [
+			{
+				path: '404',
+				name: '404',
+				component: () => import('@/views/error/404.vue'),
+				meta: { title: '404', icon: 'ep:circle-close' },
+			},
+		],
+	},
 ]
