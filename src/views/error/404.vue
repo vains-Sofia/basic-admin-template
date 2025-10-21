@@ -1,11 +1,11 @@
 <template>
 	<div class="error-page">
 		<div class="error-content">
-			<Vue3Lottie
+			<DotLottieVue
+				loop
+				autoplay
 				class="error-lottie"
-				:animationData="animationData"
-				:loop="true"
-				:autoplay="true"
+				:src="lottieUrl"
 			/>
 			<h1 class="error-title">404 页面未找到</h1>
 			<p class="error-desc">抱歉，您访问的页面不存在或已被移除。</p>
@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { Vue3Lottie } from 'vue3-lottie'
-import animationData from '@/assets/lottie/404-animation.json'
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
+const lottieUrl = new URL(`@/assets/lottie/animation-404.lottie`, import.meta.url).href
 
 const router = useRouter()
 const goHome = () => {
@@ -44,7 +44,7 @@ const goHome = () => {
 }
 
 .error-lottie {
-	width: 320px;
+	width: 800px;
 	max-width: 80vw;
 	margin: 0 auto 24px;
 }

@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BounceTextSrc: typeof import('./src/components/BounceText/src/Index.vue')['default']
     CommonDialogSrc: typeof import('./src/components/CommonDialog/src/index.vue')['default']
     CommonDrawerSrc: typeof import('./src/components/CommonDrawer/src/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
