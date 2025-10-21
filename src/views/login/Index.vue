@@ -15,15 +15,12 @@
 			</div>
 			<div class="login-wrapper">
 				<div class="login-container">
-					<div
+					<BounceText
 						v-if="showLogoText"
-						class="mb-4 pb-5 bounce-text"
-						style="color: var(--el-text-color); font-family: 'Playfair Display', serif"
-					>
-						<span v-for="(char, i) in logoTextArray" :key="i" :style="{ '--i': i }">
-							{{ char }}
-						</span>
-					</div>
+						:text="logoText"
+						class="mb-4 pb-5"
+						style="font-family: 'Playfair Display', serif"
+					/>
 
 					<!-- 邮件登录 -->
 					<EmailLogin v-if="loginType === 'email'" />
@@ -112,6 +109,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import { Logo } from '@/components/Layout'
+import BounceText from '@/components/BounceText'
 import { useLayoutStore } from '@/stores/Layout'
 import EmailLogin from './components/EmailLogin.vue'
 import AccountLogin from './components/AccountLogin.vue'
@@ -121,10 +119,13 @@ import UserRegister from '@/views/login/components/UserRegister.vue'
 const lottieUrl = new URL(`@/assets/lottie/animation-admin.lottie`, import.meta.url).href
 
 const layoutStore = useLayoutStore()
+if (layoutStore.menuCollapse) {
+	// 如果折叠了，则展开
+	layoutStore.toggleMenuCollapse()
+}
 
 // logo 内容
 const logoText = ref('Basic Cloud')
-const logoTextArray = logoText.value.split('')
 
 const showLogoText = ref(true)
 // 登录方式
@@ -154,7 +155,7 @@ const thirdPartyLogins = computed(() => [
 
 watch(loginType, () => {
 	showLogoText.value = false
-	nextTick(() => showLogoText.value = true)
+	nextTick(() => (showLogoText.value = true))
 })
 </script>
 
@@ -266,35 +267,5 @@ watch(loginType, () => {
 		#d7e9fc 0%,
 		/* 中心浅蓝 */ #f5f8fb 100% /* 外圈更浅 */
 	);
-}
-
-:root {
-	--i: 0;
-}
-
-.bounce-text {
-	display: flex;
-	gap: 4px;
-	font-size: 48px;
-	font-weight: bold;
-}
-
-.bounce-text span {
-	animation: bounce 0.8s ease-in-out forwards;
-	animation-delay: calc(var(--i) * 0.1s);
-}
-
-/* 核心动画 */
-@keyframes bounce {
-	0%,
-	100% {
-		transform: translateY(0);
-	}
-	30% {
-		transform: translateY(-15px) scale(1.1);
-	}
-	60% {
-		transform: translateY(0);
-	}
 }
 </style>

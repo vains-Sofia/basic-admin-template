@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BounceText from '@/components/BounceText'
 import { useLayoutStore } from '@/stores/Layout'
 
 const layoutStore = useLayoutStore()
@@ -7,7 +8,13 @@ const layoutStore = useLayoutStore()
 <template>
 	<div class="logo-container" :class="layoutStore.darkMenu ? 'dark' : 'light'">
 		<img src="@/assets/logo.png" class="logo-image" alt="Vue logo" />
-		<div v-if="!layoutStore.menuCollapse" class="logo-text">Basic Cloud</div>
+<!--		<div v-if="!layoutStore.menuCollapse" class="logo-text">Basic Cloud</div>-->
+		<BounceText
+			v-if="!layoutStore.menuCollapse"
+			size="16px"
+			text="Basic Cloud"
+			style="color: var(--el-text-color); font-family: 'Playfair Display', serif"
+		/>
 	</div>
 </template>
 
