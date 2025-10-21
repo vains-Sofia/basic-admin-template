@@ -3,10 +3,26 @@
 		<div class="login-bar">
 			<Logo />
 			<div>
-				<el-icon :size="18" class="cursor-pointer" @click="layoutStore.toggleDark">
-					<Icon v-if="layoutStore.isDark" icon="ep:sunny" color="#FCD34D" />
-					<Icon v-else icon="ep:moon" color="#374151" />
-				</el-icon>
+				<el-switch
+					v-model="layoutStore.isDark"
+					@click="layoutStore.toggleDark"
+					:before-change="() => false"
+					style="
+						--el-switch-on-color: var(--el-bg-color-page);
+						--el-switch-border-color: var(--el-border-color);
+					"
+				>
+					<template #active-action>
+						<Icon icon="ep:moon" color="#FFFFFF" />
+					</template>
+					<template #inactive-action>
+						<Icon icon="ep:sunny" color="FCD34D" />
+					</template>
+				</el-switch>
+				<!--				<el-icon :size="18" class="cursor-pointer" @click="layoutStore.toggleDark">-->
+				<!--					<Icon v-if="layoutStore.isDark" icon="ep:sunny" color="#FCD34D" />-->
+				<!--					<Icon v-else icon="ep:moon" color="#374151" />-->
+				<!--				</el-icon>-->
 			</div>
 		</div>
 		<div class="login-page">
@@ -267,5 +283,10 @@ watch(loginType, () => {
 		#d7e9fc 0%,
 		/* 中心浅蓝 */ #f5f8fb 100% /* 外圈更浅 */
 	);
+}
+
+:deep(.el-switch__core .el-switch__action ) {
+	background: var(--el-bg-color-page);
+	border: 1px solid var(--el-border-color);
 }
 </style>
