@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import QrCode from '@/components/QrCode/src'
 
-const qrcodeWidth = 200
+const qrcodeWidth = 230
 
 interface Emits {
 	back: []

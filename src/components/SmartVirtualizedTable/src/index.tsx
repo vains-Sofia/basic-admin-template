@@ -87,6 +87,11 @@ export default defineComponent({
 			type: Boolean,
 			default: true,
 		},
+		/** 显示工具栏 */
+		showToolbar: {
+			type: Boolean,
+			default: true,
+		},
 		showColumnController: {
 			type: Boolean,
 			default: true,
@@ -384,7 +389,11 @@ export default defineComponent({
 				ref={tableContainerRef}
 			>
 				{/* 工具栏 */}
-				{slots.toolbar ? slots.toolbar() : renderDefaultToolbar()}
+				{props.showToolbar
+					? slots.toolbar
+						? slots.toolbar()
+						: renderDefaultToolbar()
+					: null}
 
 				<ElAutoResizer>
 					{({ height, width }: { height: number; width: number }) => (

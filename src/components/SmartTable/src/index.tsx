@@ -112,6 +112,11 @@ export default defineComponent({
 			type: Boolean,
 			default: true,
 		},
+		/** 显示工具栏 */
+		showToolbar: {
+			type: Boolean,
+			default: true,
+		},
 		/** 是否正在加载 */
 		loading: {
 			type: Boolean,
@@ -305,7 +310,11 @@ export default defineComponent({
 														<ElCheckbox
 															key={col.dataKey}
 															value={col.dataKey}
-															label={col.type === 'selection' ? '复选列' : col.title}
+															label={
+																col.type === 'selection'
+																	? '复选列'
+																	: col.title
+															}
 														/>
 													))}
 												</ElCheckboxGroup>
@@ -326,7 +335,11 @@ export default defineComponent({
 				ref={tableRef}
 			>
 				{/* 工具栏 */}
-				{slots.toolbar ? slots.toolbar() : renderDefaultToolbar()}
+				{props.showToolbar
+					? slots.toolbar
+						? slots.toolbar()
+						: renderDefaultToolbar()
+					: null}
 
 				<ElTable
 					{...attrs}

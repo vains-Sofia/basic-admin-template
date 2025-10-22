@@ -47,7 +47,7 @@ export const menuData: any[] = [
 				name: 'dialog',
 				component: '/components/Dialog',
 				meta: {
-					icon: 'material-symbols:table-view-outline-sharp',
+					icon: 'material-symbols:chat-outline',
 					title: 'Dialog对话框',
 				},
 			},
@@ -56,7 +56,7 @@ export const menuData: any[] = [
 				name: 'drawer',
 				component: '/components/Drawer',
 				meta: {
-					icon: 'material-symbols:table-view-outline-sharp',
+					icon: 'material-symbols:bottom-drawer-outline',
 					title: 'Drawer抽屉',
 				},
 			},

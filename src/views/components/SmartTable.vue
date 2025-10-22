@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<SmartTable
+			title="表格"
 			:data="tableData"
 			:columns="columns"
 			:loading="loading"

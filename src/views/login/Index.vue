@@ -36,6 +36,7 @@
 						:text="logoText"
 						class="mb-4 pb-5"
 						style="font-family: 'Playfair Display', serif"
+						:style="loginType === 'qrcode' ? 'justify-content: center;' : ''"
 					/>
 
 					<!-- 邮件登录 -->

@@ -39,14 +39,14 @@ export function sortByKey<T extends Record<string, unknown>>(
 }
 
 export class AdaptiveTable {
-	props: { adaptive: boolean; extraGap: number; pagination: any }
+	props: { adaptive: boolean; extraGap: number; pagination: any, showToolbar: boolean }
 	tableContainerRef: Ref<HTMLElement | null>
 	paginationRef: Ref<HTMLElement | null>
 	tableHeight: Ref<number>
 	tableWidth?: Ref<number>
 
 	constructor(
-		props: { adaptive: boolean; extraGap: number; pagination: any },
+		props: { adaptive: boolean; extraGap: number; pagination: any, showToolbar: boolean },
 		tableContainerRef: Ref<HTMLElement | null>,
 		paginationRef: Ref<HTMLElement | null>,
 		tableHeight: Ref<number>,
@@ -75,7 +75,7 @@ export class AdaptiveTable {
 
 		// 表格高度
 		this.tableHeight.value =
-			containerHeight - tableTop - paginationHeight - this.props.extraGap - 65
+			containerHeight - tableTop - paginationHeight - this.props.extraGap - (this.props.showToolbar === undefined || this.props.showToolbar ? 65 : 18)
 		if (this.tableHeight.value < 200) this.tableHeight.value = 200
 
 		// 表格宽度
