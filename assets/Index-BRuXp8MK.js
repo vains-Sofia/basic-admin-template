@@ -1,0 +1,1 @@
+import{kn as e,ln as t,r as n}from"./index-O7hvt5-X.js";var r={};function i(n,r){return e(),t(`div`,null,`首页`)}var a=n(r,[[`render`,i]]);export{a as default};
