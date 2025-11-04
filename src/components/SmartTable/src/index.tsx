@@ -9,17 +9,6 @@ import {
 	onBeforeUnmount,
 	watch,
 } from 'vue'
-import {
-	ElTable,
-	ElEmpty,
-	ElTableColumn,
-	ElPagination,
-	ElTooltip,
-	ElButton,
-	ElPopover,
-	ElCheckboxGroup,
-	ElCheckbox,
-} from 'element-plus'
 import type { TableColumnCtx } from 'element-plus'
 import type { DefaultRow } from 'element-plus/es/components/table/src/table/defaults'
 import { Icon } from '@iconify/vue'

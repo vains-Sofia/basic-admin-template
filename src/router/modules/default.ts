@@ -6,6 +6,23 @@ export const staticRoutes = [
 		component: () => import('@/views/login/Index.vue'),
 	},
 	{
+		path: '/tools',
+		name: 'tools',
+		meta: { title: '工具集', icon: 'ep:house', hidden: true },
+		children: [
+			{
+				path: 'video',
+				name: 'video',
+				meta: {
+					title: '视频提取',
+					icon: 'ep:house',
+					hidden: true
+				},
+				component: () => import('@/views/tools/ExtractVideo.vue'),
+			}
+		]
+	},
+	{
 		path: '/',
 		name: 'Home',
 		redirect: '/dashboard',

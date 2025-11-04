@@ -14,17 +14,6 @@ import {
 	watch,
 } from 'vue'
 import type { CheckboxValueType, Column as ElTableColumn } from 'element-plus'
-import {
-	ElAutoResizer,
-	ElButton,
-	ElCheckbox,
-	ElCheckboxGroup,
-	ElEmpty,
-	ElPagination,
-	ElPopover,
-	ElTableV2,
-	ElTooltip,
-} from 'element-plus'
 import { Icon } from '@iconify/vue'
 import { AdaptiveTable } from '@/utils/Common.ts'
 
