@@ -23,14 +23,14 @@ export default defineConfig(({ mode }) => {
 			// 根据环境变量决定是否启用 Vue 开发工具
 			devToolsEnabled ? vueDevTools() : null,
 			AutoImport({
-				dts: 'auto-imports.d.ts',
+				dts: 'src/auto-imports.d.ts',
 				resolvers: [ElementPlusResolver()]
 			}),
 			Components({
 				// 添加 tsx 扩展名
 				extensions: ['vue', 'tsx'],
 				include: [/\.vue$/, /\.vue\?vue/, /\.tsx$/, /\.ts$/],
-				dts: 'components.d.ts',
+				dts: 'src/components.d.ts',
 				resolvers: [ElementPlusResolver()],
 				// 允许多层目录结构推断
 				directoryAsNamespace: true,
