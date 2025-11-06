@@ -64,7 +64,7 @@ const onPreview = (ratio: string) => {
 		if (ratio !== '') {
 			result.value.videoUrl = updateUrlParams(result.value.videoUrl, { ratio })
 		}
-		window.open(result.value.videoUrl, '_blank')
+		window.open(result.value.videoUrl, '_blank', 'noreferrer')
 	} else {
 		ElMessage('提取视频链接失败.')
 	}
