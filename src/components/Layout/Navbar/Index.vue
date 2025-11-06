@@ -10,6 +10,11 @@ const userStore = useUserStore()
 const layoutStore = useLayoutStore()
 
 const searchVisible = ref(false)
+
+const adminLogout = () => {
+	userStore.logout()
+	layoutStore.routeTabs = []
+}
 </script>
 
 <template>
@@ -55,7 +60,7 @@ const searchVisible = ref(false)
 									</el-icon>
 									个人信息
 								</el-dropdown-item>
-								<el-dropdown-item @click="userStore.logout">
+								<el-dropdown-item @click="adminLogout">
 									<el-icon>
 										<Icon icon="ep:opportunity" />
 									</el-icon>

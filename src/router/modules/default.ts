@@ -33,7 +33,7 @@ export const staticRoutes = [
 				path: '/dashboard',
 				name: 'Dashboard',
 				component: () => import('@/views/dashboard/Index.vue'),
-				meta: { title: '首页', icon: 'ep:house' },
+				meta: { title: '首页', icon: 'ep:house', affix: true },
 			},
 		],
 	},

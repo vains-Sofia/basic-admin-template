@@ -1,23 +1,22 @@
 <template>
 	<div class="route-tabs-container">
-		<el-scrollbar>
+		<el-scrollbar height="40px" ref="tabsRef">
 			<div class="tabs-wrapper">
 				<div
-					v-for="tab in visitedTabs"
+					v-for="tab in layoutStore.routeTabs"
 					:key="tab.path"
 					:class="['tab-item', { active: isActive(tab.path) }]"
 					@click="handleTabClick(tab)"
 					@contextmenu.prevent="openContextMenu($event, tab)"
 				>
 					<span class="tab-title">{{ tab.title }}</span>
-					<el-icon
-						v-if="!tab.affix"
-						class="close-icon"
-						@click.stop="closeTab(tab)"
-					>
-						<Close />
+					<el-icon v-if="!tab.affix" class="close-icon" @click.stop="closeTab(tab)">
+						<el-icon>
+							<Icon icon="ep:close" />
+						</el-icon>
 					</el-icon>
 				</div>
+				<div class="w-[10px]">&nbsp;</div>
 			</div>
 		</el-scrollbar>
 
@@ -28,27 +27,39 @@
 			class="context-menu"
 		>
 			<li @click="refreshTab">
-				<el-icon><Refresh /></el-icon>
+				<el-icon>
+					<Icon icon="ep:refresh" />
+				</el-icon>
 				刷新
 			</li>
 			<li v-if="!selectedTab.affix" @click="closeTab(selectedTab)">
-				<el-icon><Close /></el-icon>
+				<el-icon>
+					<Icon icon="ep:close" />
+				</el-icon>
 				关闭
 			</li>
 			<li @click="closeOtherTabs">
-				<el-icon><CircleClose /></el-icon>
+				<el-icon>
+					<Icon icon="ep:circle-close" />
+				</el-icon>
 				关闭其他
 			</li>
 			<li @click="closeLeftTabs">
-				<el-icon><Back /></el-icon>
+				<el-icon>
+					<Icon icon="ep:back" />
+				</el-icon>
 				关闭左侧
 			</li>
 			<li @click="closeRightTabs">
-				<el-icon><Right /></el-icon>
+				<el-icon>
+					<Icon icon="ep:right" />
+				</el-icon>
 				关闭右侧
 			</li>
 			<li @click="closeAllTabs">
-				<el-icon><FolderDelete /></el-icon>
+				<el-icon>
+					<Icon icon="ep:folder-delete" />
+				</el-icon>
 				关闭所有
 			</li>
 		</ul>
@@ -56,24 +67,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from 'vue'
-import { useRouter, useRoute, type LocationQuery, type RouteParams } from 'vue-router'
+import type { TabItem } from '@/stores/Layout'
+import { useLayoutStore } from '@/stores/Layout'
+import { useRoute, useRouter } from 'vue-router'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import type { ScrollbarInstance } from 'element-plus'
 
-// 定义标签页类型
-interface TabItem {
-	path: string
-	title: string
-	name?: string | symbol
-	affix?: boolean
-	query?: LocationQuery
-	params?: RouteParams
-}
+const layoutStore = useLayoutStore()
 
 const router = useRouter()
 const route = useRoute()
 
 // 已访问的标签页列表
-const visitedTabs = ref<TabItem[]>([])
 
 // 右键菜单相关
 const contextMenuVisible = ref<boolean>(false)
@@ -97,7 +102,7 @@ const addTab = (): void => {
 	const title = meta.title || (typeof name === 'string' ? name : '') || '未命名页面'
 
 	// 检查是否已存在
-	const existTab = visitedTabs.value.find(tab => tab.path === path)
+	const existTab = layoutStore.routeTabs.find((tab) => tab.path === path)
 	if (existTab) {
 		// 更新标题（可能动态改变）
 		existTab.title = title
@@ -105,14 +110,16 @@ const addTab = (): void => {
 	}
 
 	// 添加新标签
-	visitedTabs.value.push({
+	layoutStore.routeTabs.push({
 		path,
 		title,
 		name,
 		affix: meta.affix || false, // 固定标签（首页等）
 		query: route.query,
-		params: route.params
+		params: route.params,
 	})
+
+	scrollToLast()
 }
 
 // 点击标签页
@@ -120,31 +127,35 @@ const handleTabClick = (tab: TabItem): void => {
 	router.push({
 		path: tab.path,
 		query: tab.query,
-		params: tab.params
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
+		params: tab.params,
 	})
 }
 
 // 关闭标签页
 const closeTab = (tab: TabItem): void => {
-	const index = visitedTabs.value.findIndex(t => t.path === tab.path)
+	const index = layoutStore.routeTabs.findIndex((t) => t.path === tab.path)
 
 	if (index === -1) return
 
 	// 如果关闭的是当前标签，需要跳转到其他标签
 	if (isActive(tab.path)) {
 		// 优先跳转到右侧标签，如果没有则跳转到左侧
-		const nextTab = visitedTabs.value[index + 1] || visitedTabs.value[index - 1]
+		const nextTab = layoutStore.routeTabs[index + 1] || layoutStore.routeTabs[index - 1]
 		if (nextTab) {
 			router.push({
 				path: nextTab.path,
 				query: nextTab.query,
-				params: nextTab.params
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-expect-error
+				params: nextTab.params,
 			})
 		}
 	}
 
 	// 移除标签
-	visitedTabs.value.splice(index, 1)
+	layoutStore.routeTabs.splice(index, 1)
 }
 
 // 打开右键菜单
@@ -164,21 +175,21 @@ const closeContextMenu = (): void => {
 const refreshTab = (): void => {
 	router.replace({
 		path: '/redirect' + selectedTab.value.path,
-		query: selectedTab.value.query
+		query: selectedTab.value.query,
 	})
 	closeContextMenu()
 }
 
 // 关闭其他标签
 const closeOtherTabs = (): void => {
-	visitedTabs.value = visitedTabs.value.filter(
-		tab => tab.affix || tab.path === selectedTab.value.path
+	layoutStore.routeTabs = layoutStore.routeTabs.filter(
+		(tab) => tab.affix || tab.path === selectedTab.value.path,
 	)
 
 	if (!isActive(selectedTab.value.path)) {
 		router.push({
 			path: selectedTab.value.path,
-			query: selectedTab.value.query
+			query: selectedTab.value.query,
 		})
 	}
 
@@ -187,15 +198,13 @@ const closeOtherTabs = (): void => {
 
 // 关闭左侧标签
 const closeLeftTabs = (): void => {
-	const index = visitedTabs.value.findIndex(tab => tab.path === selectedTab.value.path)
-	visitedTabs.value = visitedTabs.value.filter(
-		(tab, i) => tab.affix || i >= index
-	)
+	const index = layoutStore.routeTabs.findIndex((tab) => tab.path === selectedTab.value.path)
+	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab, i) => tab.affix || i >= index)
 
 	if (!isActive(selectedTab.value.path)) {
 		router.push({
 			path: selectedTab.value.path,
-			query: selectedTab.value.query
+			query: selectedTab.value.query,
 		})
 	}
 
@@ -204,15 +213,13 @@ const closeLeftTabs = (): void => {
 
 // 关闭右侧标签
 const closeRightTabs = (): void => {
-	const index = visitedTabs.value.findIndex(tab => tab.path === selectedTab.value.path)
-	visitedTabs.value = visitedTabs.value.filter(
-		(tab, i) => tab.affix || i <= index
-	)
+	const index = layoutStore.routeTabs.findIndex((tab) => tab.path === selectedTab.value.path)
+	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab, i) => tab.affix || i <= index)
 
 	if (!isActive(selectedTab.value.path)) {
 		router.push({
 			path: selectedTab.value.path,
-			query: selectedTab.value.query
+			query: selectedTab.value.query,
 		})
 	}
 
@@ -221,14 +228,14 @@ const closeRightTabs = (): void => {
 
 // 关闭所有标签
 const closeAllTabs = (): void => {
-	visitedTabs.value = visitedTabs.value.filter(tab => tab.affix)
+	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab) => tab.affix)
 
 	// 跳转到第一个固定标签或首页
-	const firstTab = visitedTabs.value[0]
+	const firstTab = layoutStore.routeTabs[0]
 	if (firstTab) {
 		router.push({
 			path: firstTab.path,
-			query: firstTab.query
+			query: firstTab.query,
 		})
 	} else {
 		router.push('/')
@@ -241,6 +248,20 @@ const closeAllTabs = (): void => {
 watch(route, () => {
 	addTab()
 })
+
+const tabsRef = ref<ScrollbarInstance | null>(null)
+
+// 滚动到最后一个 tab
+const scrollToLast = () => {
+	if (tabsRef.value) {
+		nextTick(() => {
+			tabsRef.value!.scrollTo({
+				left: tabsRef.value!.wrapRef!.clientWidth,
+				behavior: 'smooth',
+			})
+		})
+	}
+}
 
 // 监听点击事件，关闭右键菜单
 onMounted(() => {
@@ -257,9 +278,9 @@ onMounted(() => {
 .route-tabs-container {
 	position: relative;
 	height: 40px;
-	background: #fff;
-	border-bottom: 1px solid #e4e7ed;
-	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	background: transparent;
+	border-bottom: 1px solid var(--el-menu-border-color);
+	/*box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);*/
 }
 
 .tabs-wrapper {
@@ -276,9 +297,8 @@ onMounted(() => {
 	margin: 5px 3px;
 	padding: 0 12px;
 	font-size: 13px;
-	color: #666;
-	background: #f5f5f5;
-	border: 1px solid #e4e7ed;
+	color: var(--el-text-color-regular);
+	border: 1px solid var(--el-menu-border-color);
 	border-radius: 3px;
 	cursor: pointer;
 	transition: all 0.3s;
@@ -286,15 +306,14 @@ onMounted(() => {
 }
 
 .tab-item:hover {
-	color: #409eff;
-	background: #ecf5ff;
-	border-color: #c6e2ff;
+	color: var(--el-color-primary);
+	border-color: var(--el-color-primary);
 }
 
 .tab-item.active {
-	color: #fff;
-	background: #409eff;
-	border-color: #409eff;
+	color: white;
+	border-color: var(--el-color-primary);
+	background-color: var(--el-color-primary);
 }
 
 .tab-title {
@@ -313,12 +332,12 @@ onMounted(() => {
 }
 
 .close-icon:hover {
-	color: #fff;
-	background: rgba(0, 0, 0, 0.2);
+	color: var(--el-color-primary);
+	background: var(--el-bg-color-page);
 }
 
 .tab-item.active .close-icon:hover {
-	background: rgba(255, 255, 255, 0.3);
+	background: var(--el-bg-color-page);
 }
 
 /* 右键菜单样式 */
@@ -329,9 +348,9 @@ onMounted(() => {
 	padding: 5px 0;
 	margin: 0;
 	font-size: 13px;
-	color: #333;
+	color: var(--el-text-color-regular);
 	list-style: none;
-	background: #fff;
+	background: var(--el-bg-color);
 	border-radius: 4px;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
@@ -346,22 +365,12 @@ onMounted(() => {
 }
 
 .context-menu li:hover {
-	color: #409eff;
-	background: #ecf5ff;
+	color: var(--el-color-primary);
+	background: var(--el-bg-color-page);
 }
 
 .context-menu li .el-icon {
 	margin-right: 8px;
 	font-size: 14px;
-}
-
-/* 滚动条样式优化 */
-:deep(.el-scrollbar__wrap) {
-	overflow-x: auto;
-	overflow-y: hidden;
-}
-
-:deep(.el-scrollbar__bar.is-horizontal) {
-	height: 6px;
 }
 </style>

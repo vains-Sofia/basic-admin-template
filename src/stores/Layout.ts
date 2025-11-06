@@ -1,6 +1,17 @@
-import { computed, ref } from 'vue'
+import { computed, type Ref, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useDark } from '@vueuse/core'
+import type { LocationQuery, RouteParamsRawGeneric } from 'vue-router'
+
+// 定义标签页类型
+export interface TabItem {
+	path: string
+	title: string
+	name?: string | symbol
+	affix?: boolean
+	query?: LocationQuery
+	params?: RouteParamsRawGeneric
+}
 
 export const useLayoutStore = defineStore('Layout', () => {
 	// 是否为黑暗模式
@@ -8,6 +19,9 @@ export const useLayoutStore = defineStore('Layout', () => {
 
 	// 深色菜单
 	const darkMenu = ref(true)
+
+	// tab标签列表
+	const routeTabs: Ref<Array<TabItem>> = ref([]);
 
 	// 菜单是否折叠
 	const menuCollapse = ref(false)
@@ -75,6 +89,7 @@ export const useLayoutStore = defineStore('Layout', () => {
 		isDark,
 		darkMenu,
 		menuWidth,
+		routeTabs,
 		toggleDark,
 		menuCollapse,
 		toggleDarkMenu,

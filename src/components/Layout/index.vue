@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import RouteTabs from './RouteTabs/Index.vue'
 import Plugins from './Plugins/Index.vue'
 import { useLayoutStore } from '@/stores/Layout'
 import { Sidebar, Navbar, MainContent, Logo } from '@/components/Layout'
@@ -19,6 +20,7 @@ const LayoutStore = useLayoutStore()
 			<el-header style="padding: 0">
 				<Navbar />
 			</el-header>
+			<RouteTabs />
 			<MainContent />
 		</el-container>
 		<Plugins />
