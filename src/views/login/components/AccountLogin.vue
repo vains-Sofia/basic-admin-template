@@ -117,7 +117,7 @@ const login = () => {
 				userStore.initRouter()
 				userStore.setupUser({
 					username: 'admin',
-					nickname: '云逸1111111111111111',
+					nickname: '云逸',
 				})
 				loading.value = false
 				router.replace({ name: 'Dashboard' })

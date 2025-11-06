@@ -15,6 +15,9 @@ declare module 'vue-router' {
 		noShowingChildren?: boolean
 		// 强制显示父级菜单，即使只有一个子菜单也显示为子菜单结构。
 		alwaysShow?: boolean
+
+		affix?: boolean
+		hiddenTag?: boolean
 	}
 }
 
