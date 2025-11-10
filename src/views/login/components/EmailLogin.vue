@@ -2,7 +2,7 @@
 	<el-form
 		ref="loginFormRef"
 		:model="loginForm"
-		:rules="rules"
+		:rules="emailRules"
 		label-width="auto"
 		class="login-form"
 	>
@@ -48,7 +48,7 @@
 				size="large"
 				type="primary"
 				class="login-button"
-				@click="login"
+				@click="onLogin"
 				:loading="loading"
 				>登录</el-button
 			>
@@ -57,12 +57,11 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '@/stores/User'
+import { reactive, ref } from 'vue'
+import { useLogin } from '@/views/login/utils/hooks'
 import VerifyCodeInput from '@/components/VerifyCodeInput'
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
-import { menuData } from '@/components/Layout/Sidebar/menuData'
-import router from '@/router'
+import type { FormInstance } from 'element-plus'
+import { emailRules } from '@/views/login/utils/Rules'
 
 // 登录表单
 const loginForm = reactive({
@@ -70,13 +69,10 @@ const loginForm = reactive({
 	captcha: '',
 })
 
-// 是否加载中
-const loading = ref(false)
-
 // 表单实例
 const loginFormRef = ref<FormInstance>()
 
-const userStore = useUserStore()
+const { onLogin, loading } = useLogin(loginFormRef, loginForm, 'email')
 
 // 请求验证码
 const requestCaptcha = async () => {
@@ -90,60 +86,6 @@ const requestCaptcha = async () => {
 		})
 	})
 }
-
-// 登录
-const login = () => {
-	if (!loginFormRef.value) return
-	loginFormRef.value.validate((valid) => {
-		if (valid) {
-			console.log('loginForm', loginForm)
-			loading.value = true
-			setTimeout(() => {
-				userStore.setupRouters(menuData)
-				userStore.initRouter()
-				userStore.setupUser({
-					username: 'admin',
-					nickname: '云逸-e',
-				})
-				loading.value = false
-				router.replace({ name: 'Dashboard' })
-			}, 500)
-		}
-	})
-}
-
-onMounted(() => {
-	window.addEventListener('keydown', (e) => {
-		if (e.key === 'Enter') {
-			login()
-		}
-	})
-})
-
-onUnmounted(() => {
-	window.removeEventListener('keydown', (e) => {
-		if (e.key === 'Enter') {
-			login()
-		}
-	})
-})
-
-const rules = reactive<FormRules<typeof loginForm>>({
-	email: [
-		{
-			required: true,
-			message: '请输入电子邮箱',
-			trigger: 'blur',
-		},
-	],
-	captcha: [
-		{
-			required: true,
-			message: '请输入验证',
-			trigger: 'blur',
-		},
-	],
-})
 </script>
 
 <style scoped>

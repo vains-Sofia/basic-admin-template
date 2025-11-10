@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 import router from '@/router'
 import { defineStore } from 'pinia'
-import { staticRoutes } from '@/router/modules/default.ts'
-import { transformMenuToRoutes } from '@/router/transform.ts'
-import { lastRouters } from '@/router/modules/lastRouters.ts'
+import { useRoute } from 'vue-router'
+import { staticRoutes } from '@/router/modules/default'
+import { transformMenuToRoutes } from '@/router/transform'
+import { lastRouters } from '@/router/modules/lastRouters'
 
 const logo = new URL(`../assets/logo.png`, import.meta.url).href
 
@@ -22,12 +23,13 @@ export const useUserStore = defineStore(
 		// 拥有的菜单
 		const routers = ref()
 
+		const route = useRoute()
+
 		// 路由是否被初始化
 		const isRouterInitialized = ref(false)
 
 		// 设置用户基础信息
 		function setupUser(userinfo: any) {
-			console.log(userinfo)
 			if (userinfo.picture) {
 				picture.value = userinfo.picture
 			}
@@ -64,9 +66,29 @@ export const useUserStore = defineStore(
 			})
 
 			// 添加最后的路由(404)
-			lastRouters.forEach(route => router.addRoute(route))
+			lastRouters.forEach((route) => router.addRoute(route))
 
 			isRouterInitialized.value = true
+		}
+
+		// 登录
+		function login(type: string, data: any) {
+			console.log(route.query)
+			return new Promise((resolve, reject) => {
+				setTimeout(() => {
+					switch (type) {
+						case 'account':
+						case 'email':
+						case 'qrcode':
+							console.log(type, data)
+							resolve(true)
+							break
+						default:
+							reject(new Error(`无对应类型: ${type}`))
+							break
+					}
+				}, 500)
+			})
 		}
 
 		// 登出
@@ -82,6 +104,7 @@ export const useUserStore = defineStore(
 		}
 
 		return {
+			login,
 			logout,
 			routers,
 			picture,
