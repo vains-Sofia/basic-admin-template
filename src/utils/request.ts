@@ -86,27 +86,52 @@ service.interceptors.response.use(
 	(response: AxiosResponse) => response,
 	(error) => {
 		if (error.response) {
+			console.error(error.response)
 			const { status } = error.response
 			switch (status) {
 				case 401:
-					console.warn('未授权，请重新登录')
+					ElMessage({
+						showClose: true,
+						message: '登录失效，请重新登录',
+						type: 'error',
+					})
 					setToken(null)
 					window.location.href = '/login'
 					break
 				case 403:
-					console.error('拒绝访问')
+					ElMessage({
+						showClose: true,
+						message: '权限不足，拒绝访问',
+						type: 'error',
+					})
 					break
 				case 404:
-					console.error('接口未找到')
+					ElMessage({
+						showClose: true,
+						message: '接口不存在',
+						type: 'error',
+					})
 					break
 				case 500:
-					console.error('服务器错误')
+					ElMessage({
+						showClose: true,
+						message: '服务器错误',
+						type: 'error',
+					})
 					break
 				default:
-					console.error('未知错误')
+					ElMessage({
+						showClose: true,
+						message: '未知错误',
+						type: 'error',
+					})
 			}
 		} else {
-			console.error('网络错误或服务器未响应')
+			ElMessage({
+				showClose: true,
+				message: '网络错误或服务器未响应',
+				type: 'error',
+			})
 		}
 		return Promise.reject(error)
 	},
