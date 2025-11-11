@@ -4,6 +4,7 @@ export const menuData: any[] = [
 		meta: {
 			title: '组件',
 			icon: 'ep:menu',
+			showLink: true
 		},
 		children: [
 			{
@@ -13,6 +14,7 @@ export const menuData: any[] = [
 				meta: {
 					title: '二维码',
 					icon: 'material-symbols:qr-code',
+					showLink: true
 				},
 			},
 			{
@@ -22,6 +24,7 @@ export const menuData: any[] = [
 				meta: {
 					icon: 'ep:promotion',
 					title: '布局功能',
+					showLink: true
 				},
 			},
 			{
@@ -31,6 +34,7 @@ export const menuData: any[] = [
 				meta: {
 					icon: 'material-symbols:table-outline-sharp',
 					title: '表格',
+					showLink: true
 				},
 			},
 			{
@@ -40,6 +44,7 @@ export const menuData: any[] = [
 				meta: {
 					icon: 'material-symbols:table-view-outline-sharp',
 					title: '虚拟表格',
+					showLink: true
 				},
 			},
 			{
@@ -49,6 +54,7 @@ export const menuData: any[] = [
 				meta: {
 					icon: 'material-symbols:chat-outline',
 					title: 'Dialog对话框',
+					showLink: true
 				},
 			},
 			{
@@ -58,6 +64,7 @@ export const menuData: any[] = [
 				meta: {
 					icon: 'material-symbols:bottom-drawer-outline',
 					title: 'Drawer抽屉',
+					showLink: true
 				},
 			},
 		],

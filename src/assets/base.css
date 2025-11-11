@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import "tailwindcss";
 
+/* 进度条 */
+@import "nprogress/nprogress.css";
+
+/* Element-Plus黑暗模式css */
+@import 'element-plus/theme-chalk/dark/css-vars.css';
+
 html,
 body {
 	margin: 0;
@@ -53,4 +59,20 @@ body {
 /* 进度条 */
 #nprogress .bar {
 	background: var(--el-color-primary) !important;
+}
+
+/* el-dropdown hover有黑框问题解决 */
+.el-tooltip__trigger:focus-visible {
+	outline: unset;
+	cursor: pointer;
+}
+
+.el-menu-outline-none:focus-within {
+	outline: none !important;
+}
+
+/* 暗黑模式下menu弹出层样式优化 */
+.dark .popper-hover .el-menu-item:hover {
+	color: var(--el-menu-hover-text-color) !important;
+	background-color: var(--el-menu-hover-bg-color) !important;
 }

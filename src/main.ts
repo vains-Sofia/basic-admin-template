@@ -2,8 +2,9 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createPersistedStatePlugin } from 'pinia-plugin-persistedstate-2'
 
-// 进度条
-import "nprogress/nprogress.css"
+/* 引入动画库 animate.css */
+import 'animate.css';
+
 import NProgress from 'nprogress'
 
 // 进度条配置
@@ -19,12 +20,6 @@ NProgress.configure({
 	// 初始化时的最小百分比
 	minimum: 0.3
 });
-
-// Element-Plus黑暗模式css
-import 'element-plus/theme-chalk/dark/css-vars.css'
-
-// 引入动画库 animate.css
-import 'animate.css'
 
 import './assets/base.css'
 // Iconify 图标组件注册

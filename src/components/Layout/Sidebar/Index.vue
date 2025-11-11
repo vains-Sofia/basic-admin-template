@@ -38,6 +38,7 @@ const menus = userStore.getRouters()
 		<el-menu
 			router
 			class="sidebar-menu"
+			popper-class="el-menu-outline-none popper-hover"
 			:default-active="activeMenu"
 			:collapse="layoutStore.menuCollapse"
 			unique-opened
