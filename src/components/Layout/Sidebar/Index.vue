@@ -19,11 +19,9 @@ const handleClose = (key: string, keyPath: string[]) => {
 
 // 当前激活的菜单项
 const activeMenu = computed(() => {
-	const { meta, path } = route
-	if (meta?.activeMenu) {
-		return meta.activeMenu as string
-	}
-	return path
+	const { meta } = route
+	// 若设置了 activePath，则使用 activePath，否则用当前路由 path
+	return meta.activePath || route.path
 })
 
 const menus = userStore.getRouters()

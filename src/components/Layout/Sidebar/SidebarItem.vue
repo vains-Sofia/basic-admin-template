@@ -18,7 +18,7 @@ const visibleChildren = computed(() => {
 // 只有一个可见子菜单时
 const onlyOneChild = computed<RouteRecordRaw | null>(() => {
 	const showingChildren = visibleChildren.value
-	if (showingChildren.length === 1) {
+	if (showingChildren.length === 1 && !showingChildren[0].meta?.showParent) {
 		return showingChildren[0]
 	}
 	if (showingChildren.length === 0) {
@@ -43,6 +43,7 @@ const isExternalLink = (path: string): boolean => /^(https?:|mailto:|tel:)/.test
 
 // 处理外部链接点击
 const handleExternalLink = (url: string) => window.open(url, '_blank')
+
 </script>
 
 <template>
@@ -53,7 +54,7 @@ const handleExternalLink = (url: string) => window.open(url, '_blank')
 				hasOneShowingChild && (!onlyOneChild?.children ||
 				onlyOneChild?.children?.length === 0 ||
 				onlyOneChild?.meta?.noShowingChildren ||
-				!item.meta?.showParent)
+				!!onlyOneChild.meta?.showParent)
 			"
 		>
 			<!-- 外部链接 -->
@@ -68,7 +69,11 @@ const handleExternalLink = (url: string) => window.open(url, '_blank')
 				</el-icon>
 				<template #title>
 					<span class="tooltip-container">
-						<TextTooltip :content="onlyOneChild.meta.title" :line-clamp="1" placement="right">
+						<TextTooltip
+							:content="onlyOneChild.meta.title"
+							:line-clamp="1"
+							placement="right"
+						>
 							{{ onlyOneChild.meta.title }}
 						</TextTooltip>
 					</span>
@@ -104,7 +109,7 @@ const handleExternalLink = (url: string) => window.open(url, '_blank')
 		<el-sub-menu
 			v-else
 			:key="item.path"
-			:index="hasOneShowingChild ? basePath : resolvePath(item.path)"
+			:index="resolvePath(item.path)"
 		>
 			<template #title>
 				<el-icon v-if="item.meta?.icon">
@@ -122,7 +127,7 @@ const handleExternalLink = (url: string) => window.open(url, '_blank')
 				v-for="child in visibleChildren"
 				:key="child.path"
 				:item="child"
-				:base-path="basePath"
+				:base-path="resolvePath(item.path)"
 			/>
 		</el-sub-menu>
 	</template>

@@ -10,7 +10,9 @@ declare module 'vue-router' {
 		// 图标颜色
 		iconColor?: string
 		// 是否隐藏
-		hidden?: boolean
+		showLink?: boolean
+		// 指定激活菜单即可获得高亮, `activePath`为指定激活菜单的`path`
+		activePath?: string
 		// 标记某个菜单项"不显示子菜单"，即使它有子菜单也当作叶子节点处理。
 		noShowingChildren?: boolean
 		// 强制显示父级菜单，即使只有一个子菜单也显示为子菜单结构。
