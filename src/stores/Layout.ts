@@ -8,7 +8,7 @@ export interface TabItem {
 	path: string
 	title: string
 	name?: string | symbol
-	affix?: boolean
+	fixedTag?: boolean
 	query?: LocationQuery
 	params?: RouteParamsRawGeneric
 }

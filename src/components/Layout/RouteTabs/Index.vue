@@ -10,7 +10,7 @@
 					@contextmenu.prevent="openContextMenu($event, tab)"
 				>
 					<span class="tab-title">{{ tab.title }}</span>
-					<el-icon v-if="!tab.affix" class="close-icon" @click.stop="closeTab(tab)">
+					<el-icon v-if="!tab.fixedTag" class="close-icon" @click.stop="closeTab(tab)">
 						<el-icon>
 							<Icon icon="ep:close" />
 						</el-icon>
@@ -32,7 +32,7 @@
 				</el-icon>
 				刷新
 			</li>
-			<li v-if="!selectedTab.affix" @click="closeTab(selectedTab)">
+			<li v-if="!selectedTab.fixedTag" @click="closeTab(selectedTab)">
 				<el-icon>
 					<Icon icon="ep:close" />
 				</el-icon>
@@ -114,7 +114,7 @@ const addTab = (): void => {
 		path,
 		title,
 		name,
-		affix: meta.affix || false, // 固定标签（首页等）
+		fixedTag: meta.fixedTag || false, // 固定标签（首页等）
 		query: route.query,
 		params: route.params,
 	})
@@ -183,7 +183,7 @@ const refreshTab = (): void => {
 // 关闭其他标签
 const closeOtherTabs = (): void => {
 	layoutStore.routeTabs = layoutStore.routeTabs.filter(
-		(tab) => tab.affix || tab.path === selectedTab.value.path,
+		(tab) => tab.fixedTag || tab.path === selectedTab.value.path,
 	)
 
 	if (!isActive(selectedTab.value.path)) {
@@ -199,7 +199,7 @@ const closeOtherTabs = (): void => {
 // 关闭左侧标签
 const closeLeftTabs = (): void => {
 	const index = layoutStore.routeTabs.findIndex((tab) => tab.path === selectedTab.value.path)
-	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab, i) => tab.affix || i >= index)
+	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab, i) => tab.fixedTag || i >= index)
 
 	if (!isActive(selectedTab.value.path)) {
 		router.push({
@@ -214,7 +214,7 @@ const closeLeftTabs = (): void => {
 // 关闭右侧标签
 const closeRightTabs = (): void => {
 	const index = layoutStore.routeTabs.findIndex((tab) => tab.path === selectedTab.value.path)
-	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab, i) => tab.affix || i <= index)
+	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab, i) => tab.fixedTag || i <= index)
 
 	if (!isActive(selectedTab.value.path)) {
 		router.push({
@@ -228,7 +228,7 @@ const closeRightTabs = (): void => {
 
 // 关闭所有标签
 const closeAllTabs = (): void => {
-	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab) => tab.affix)
+	layoutStore.routeTabs = layoutStore.routeTabs.filter((tab) => tab.fixedTag)
 
 	// 跳转到第一个固定标签或首页
 	const firstTab = layoutStore.routeTabs[0]
