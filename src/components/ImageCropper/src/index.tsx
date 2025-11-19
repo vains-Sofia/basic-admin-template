@@ -1,12 +1,4 @@
-import {
-	defineComponent,
-	nextTick,
-	onBeforeUnmount,
-	onMounted,
-	type PropType,
-	ref,
-	watch,
-} from 'vue'
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, type PropType, ref, watch } from 'vue'
 import Cropper, { CropperImage } from 'cropperjs'
 import { Icon } from '@iconify/vue'
 
@@ -28,7 +20,7 @@ export default defineComponent({
 		// 裁剪框高度
 		height: { type: Number, default: 300 },
 		// 生成图片的质量
-		quality: { type: Number, default: 0.92 },
+		quality: { type: Number, default: 1 },
 		// 裁剪框比例
 		aspectRatio: { type: Number as PropType<number | undefined>, default: undefined },
 		// 传入的图片 文件/URL
@@ -108,31 +100,70 @@ export default defineComponent({
 			})
 		}
 
+		let hdDebounceTimer: number | null = null
 		const updatePreview = () => {
 			if (!cropper) return
 
-			// v2: 用 selection 元素的 toCanvas 方法
 			const sel = cropper.getCropperSelection?.()
-			const canvas = sel?.$toCanvas({
-				width: props.width,
-				height: props.height,
-			})
-			if (!canvas) return
-
-			canvas.then((canvasElement) => {
-				if (!canvasElement) return
-				canvasElement.toBlob(
-					(blob) => {
+			const cropperImage = cropper.getCropperImage()
+			if (cropperImage && sel) {
+				// 1 —— 实时预览：小尺寸（不卡）
+				sel.$toCanvas({
+					width: props.width,
+					height: props.height,
+				}).then((canvasEl) => {
+					canvasEl.toBlob((blob) => {
 						if (!blob) return
-						const url = URL.createObjectURL(blob)
-						previewUrl.value = url
-						emit('update:blob', blob)
-						emit('update:url', url)
-					},
-					'image/png',
-					props.quality,
-				)
-			})
+
+						previewUrl.value = URL.createObjectURL(blob)
+						// emit('update:blob', blob)
+						// emit('update:url', url)
+					}, 'image/png')
+				})
+
+				if (hdDebounceTimer) {
+					clearTimeout(hdDebounceTimer)
+				}
+
+				// 2️ —— 高清预览：在裁剪框停止移动后 150ms 再生成
+				hdDebounceTimer = window.setTimeout(() => {
+					const matrix = cropperImage.$getTransform()
+
+					// 获取缩放比例
+					const [a, b, c, d] = matrix;
+
+					// 当前图相对于原图的缩放比例
+					const scaleX = Math.sqrt(a * a + b * b);
+					const scaleY = Math.sqrt(c * c + d * d);
+
+					// 计算裁剪区域在原图中的真实大小
+					const realWidth = sel.width / scaleX;
+					const realHeight = sel.height / scaleY;
+
+					console.log('scaleX', scaleX, 'scaleY', scaleY, 'realWidth', realWidth, 'realHeight', realHeight);
+
+					// 转canvas
+					const canvas = sel.$toCanvas({
+						width: realWidth,
+						height: realHeight,
+					})
+
+					canvas.then((canvasElement) => {
+						if (!canvasElement) return
+						canvasElement.toBlob(
+							(blob) => {
+								if (!blob) return
+								const url = URL.createObjectURL(blob)
+								previewUrl.value = url
+								emit('update:blob', blob)
+								emit('update:url', url)
+							},
+							'image/png',
+							props.quality,
+						)
+					})
+				}, 150)
+			}
 		}
 
 		/**
