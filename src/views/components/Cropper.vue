@@ -66,6 +66,7 @@ const saveImage = () => {
 	console.log(preview.value)
 
 	visible.value = false
+	fileVisible.value = false
 }
 
 const handleUpload = (uploadFile: File) => {
