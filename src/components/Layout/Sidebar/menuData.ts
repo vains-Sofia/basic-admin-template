@@ -67,6 +67,16 @@ export const menuData: any[] = [
 					showLink: true
 				},
 			},
+			{
+				path: 'cropper',
+				name: 'Cropper',
+				component: '/components/Cropper',
+				meta: {
+					title: '图片剪裁',
+					icon: 'material-symbols:crop',
+					showLink: true,
+				},
+			}
 		],
 	},
 ]
