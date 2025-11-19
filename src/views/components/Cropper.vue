@@ -71,5 +71,7 @@ const saveImage = () => {
 const handleUpload = (uploadFile: File) => {
 	file.value = uploadFile
 	fileVisible.value = true
+
+	return false
 }
 </script>
