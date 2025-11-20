@@ -69,6 +69,10 @@ service.interceptors.request.use(
 		if (isWhiteUrl) {
 			return config
 		}
+		const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
+		if (config.url?.startsWith(minioBaseUrl)) {
+			return config
+		}
 
 		const token = getToken()
 		if (token) {
@@ -87,45 +91,7 @@ service.interceptors.response.use(
 	(error) => {
 		if (error.response) {
 			console.error(error.response)
-			const { status } = error.response
-			switch (status) {
-				case 401:
-					ElMessage({
-						showClose: true,
-						message: '登录失效，请重新登录',
-						type: 'error',
-					})
-					setToken(null)
-					window.location.href = '/login'
-					break
-				case 403:
-					ElMessage({
-						showClose: true,
-						message: '权限不足，拒绝访问',
-						type: 'error',
-					})
-					break
-				case 404:
-					ElMessage({
-						showClose: true,
-						message: '接口不存在',
-						type: 'error',
-					})
-					break
-				case 500:
-					ElMessage({
-						showClose: true,
-						message: '服务器错误',
-						type: 'error',
-					})
-					break
-				default:
-					ElMessage({
-						showClose: true,
-						message: '未知错误',
-						type: 'error',
-					})
-			}
+			processErrorResponse(error.response)
 		} else {
 			ElMessage({
 				showClose: true,
@@ -144,6 +110,8 @@ const request = async <T = any>(config: RequestConfig<T>): Promise<T> => {
 	const { rawResponse = false, ...axiosConfig } = config
 	const response = await service.request<ApiResponse<T>>(axiosConfig)
 
+	processErrorResponse(response, rawResponse)
+
 	// 如果是特殊接口，不走统一 ApiResponse 格式解析
 	if (rawResponse) {
 		return response.data as T
@@ -151,7 +119,7 @@ const request = async <T = any>(config: RequestConfig<T>): Promise<T> => {
 
 	// 按统一格式解析
 	const res = response.data
-	if (res.code !== 200) {
+	if (res.code && res.code !== 200) {
 		return Promise.reject(res)
 	}
 	return res.data
@@ -200,6 +168,67 @@ const http = {
 			params,
 			...config,
 		}),
+}
+
+/**
+ * 处理异常响应
+ * @param response 响应对象
+ * @param rawResponse 是否保持原始响应
+ */
+const processErrorResponse = (response: AxiosResponse, rawResponse: boolean = false) => {
+	let message = undefined
+	let { status } = response
+	if (status === 200) {
+		if (response.data && response.data.code && response.data.code !== 200 && !rawResponse) {
+			status = response.data.code
+			message = response.data.message
+		} else {
+			// 不处理
+			return
+		}
+	} else if (response.data && response.data.message && !rawResponse) {
+		status = response.data.code
+		message = response.data.message
+	}
+	switch (status) {
+		case 401:
+			if (window.location.pathname !== '/login') {
+				window.location.pathname = '/login'
+			}
+			ElMessage({
+				showClose: true,
+				message: message || '登录失效，请重新登录',
+				type: 'error',
+			})
+			break
+		case 403:
+			ElMessage({
+				showClose: true,
+				message: message || '权限不足，拒绝访问',
+				type: 'error',
+			})
+			break
+		case 404:
+			ElMessage({
+				showClose: true,
+				message: message || '接口不存在',
+				type: 'error',
+			})
+			break
+		case 500:
+			ElMessage({
+				showClose: true,
+				message: message || '服务器错误',
+				type: 'error',
+			})
+			break
+		default:
+			ElMessage({
+				showClose: true,
+				message: message || '未知错误',
+				type: 'error',
+			})
+	}
 }
 
 export { http }
