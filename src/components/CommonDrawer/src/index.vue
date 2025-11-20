@@ -56,6 +56,7 @@ onBeforeUnmount(() => {
 		:key="item.id"
 		v-bind="item"
 		v-model="item.modelValue"
+		class="el-drawer-common"
 		:style="{ '--drawer-body-padding': `${item.bodyPadding ?? 0}px` }"
 		@close="handleClose(item, item.onCancel)"
 	>
@@ -74,7 +75,7 @@ onBeforeUnmount(() => {
 
 		<!-- 底部按钮（Drawer 没有默认 footer 槽，需要自定义） -->
 		<template #footer>
-			<div class="flex justify-end gap-2 pr-4 pb-2">
+			<div class="flex justify-end gap-2">
 				<el-button @click="handleClose(item, item.onCancel)">
 					{{ item.cancelText || '取消' }}
 				</el-button>
@@ -89,3 +90,16 @@ onBeforeUnmount(() => {
 		</template>
 	</el-drawer>
 </template>
+
+<style lang="scss" scoped>
+::v-global(.el-drawer-common .el-drawer__footer) {
+	border-top: 1px solid var(--el-border-color);
+	padding-bottom: calc(var(--el-drawer-padding-primary) / 2);
+}
+::v-global(.el-drawer-common .el-drawer__header) {
+	margin-bottom: 0;
+	border-bottom: 1px solid var(--el-border-color);
+	padding-bottom: calc(var(--el-drawer-padding-primary) / 2);
+	padding-top: calc(var(--el-drawer-padding-primary) / 2);
+}
+</style>
