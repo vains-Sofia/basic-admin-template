@@ -76,7 +76,27 @@ export const menuData: any[] = [
 					icon: 'material-symbols:crop',
 					showLink: true,
 				},
-			}
+			},
+			{
+				path: 'iconSelect',
+				name: 'iconSelect',
+				meta: {
+					title: '图标选择器1',
+					icon: 'ep:house',
+					showLink: true
+				},
+				component: 'components/IconSelect1',
+			},
+			{
+				path: 'iconSelect2',
+				name: 'iconSelect2',
+				meta: {
+					title: '图标选择器2',
+					icon: 'ep:house',
+					showLink: true
+				},
+				component: '/components/IconSelect2',
+			},
 		],
 	},
 ]
