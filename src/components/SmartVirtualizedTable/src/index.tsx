@@ -29,6 +29,8 @@ export interface TableColumnV2<T = any> extends Omit<ElTableColumn<T>, 'width'> 
 	width?: number
 	// 是否为选择列
 	selection?: boolean
+	// 列自定义格式化
+	formatter?: (rowData: any, col: TableColumnV2, value: any, rowIndex: any) => any
 }
 
 interface SelectionCellProps {
@@ -168,10 +170,10 @@ export default defineComponent({
 		})
 
 		const SelectionCell: FunctionalComponent<SelectionCellProps> = ({
-			value,
-			intermediate = false,
-			onChange,
-		}) => {
+																			value,
+																			intermediate = false,
+																			onChange,
+																		}) => {
 			return (
 				<ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 			)
@@ -211,9 +213,11 @@ export default defineComponent({
 						col.width = getWidth()
 					} else {
 						// 标志列的宽度是否为自动计算
-						col.autoWidth = !col.width
+						col.autoWidth = !col.width && !col.minWidth
 						// 列宽默认200
-						col.width = col.width || getWidth()
+						if (!col.minWidth) {
+							col.width = col.width || getWidth()
+						}
 					}
 
 					const slotName = col.slot || col.dataKey
@@ -238,11 +242,6 @@ export default defineComponent({
 								return slotResult
 							}
 
-							// 有 formatter 的情况
-							if (col.formatter) {
-								return h('span', {}, col.formatter(rowData, col, value, rowIndex))
-							}
-
 							// 默认返回值
 							return h('span', {}, value)
 						}
@@ -262,6 +261,15 @@ export default defineComponent({
 								)
 							}
 							return <SelectionCell value={rowData.checked} onChange={onChange} />
+						}
+					}
+
+					// 有 formatter 的情况
+					if (col.formatter) {
+						// 设置单元格展示复选框
+						col.cellRenderer = ({ rowData, rowIndex }: any) => {
+							const value = rowData[col.dataKey]
+							return h('span', {}, col.formatter?.(rowData, col, value, rowIndex))
 						}
 					}
 
@@ -323,6 +331,10 @@ export default defineComponent({
 						{slots.title ? slots.title() : props.title}
 					</div>
 					<div style="display:flex;gap:0px;align-items:center;">
+						{/* 按钮插槽 */}
+						{slots.toolbarSlot?.()}
+
+						{/* 右侧默认工具 */}
 						{props.showRefresh && (
 							<ElTooltip content="刷新" placement="top">
 								<ElButton
@@ -374,7 +386,7 @@ export default defineComponent({
 
 		return () => (
 			<div
-				style="background-color:var(--el-bg-color);padding:12px;box-sizing:border-box;"
+				style="background-color:var(--el-bg-color); padding:12px; box-sizing:border-box;"
 				ref={tableContainerRef}
 			>
 				{/* 工具栏 */}
@@ -405,10 +417,9 @@ export default defineComponent({
 				</ElAutoResizer>
 
 				{paginationConfig.value && (
-					<div style="margin-top:12px;text-align:right">
+					<div style="margin-top:12px; text-align:right" ref={paginationRef}>
 						<ElPagination
 							background
-							ref={paginationRef}
 							style="justify-content:flex-end;"
 							layout={props.paginationLayout}
 							currentPage={paginationConfig.value.currentPage}
