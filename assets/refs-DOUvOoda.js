@@ -1,0 +1,1 @@
+import{Tr as e}from"./index-dNt_JRVh.js";var t=(...t)=>n=>{t.forEach(t=>{e(t)?t(n):t.value=n})};export{t};

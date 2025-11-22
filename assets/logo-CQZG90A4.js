@@ -1,0 +1,1 @@
+var e=`/basic-admin-template/assets/logo-BJCMnUQ4.png`;export{e as t};

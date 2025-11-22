@@ -1,0 +1,1 @@
+var e=class extends Error{constructor(e){super(e),this.name=`ElementPlusError`}};function t(t,n){throw new e(`[${t}] ${n}`)}function n(e,t){}export{t as n,n as t};

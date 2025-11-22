@@ -1,0 +1,1 @@
+import{lr as e}from"./index-dNt_JRVh.js";const t=e({username:[{required:!0,message:`请输入账号`,trigger:`blur`}],password:[{required:!0,message:`请输入密码`,trigger:`blur`}]}),n=e({email:[{required:!0,message:`请输入电子邮箱`,trigger:`blur`}],captcha:[{required:!0,message:`请输入验证`,trigger:`blur`}]});export{n,t};

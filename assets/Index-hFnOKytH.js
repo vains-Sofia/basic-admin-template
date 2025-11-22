@@ -1,0 +1,1 @@
+import{Sn as e,Un as t,r as n}from"./index-dNt_JRVh.js";var r={};function i(n,r){return t(),e(`div`,null,`首页`)}var a=n(r,[[`render`,i]]);export{a as default};
