@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { IconSelect } from '@/components/IconSelect'
 import { Icon } from '@iconify/vue'
 
@@ -68,8 +68,21 @@ export default defineComponent({
 				})
 		}
 
+		// 选择的图标
+		const selectIcon = ref(props.modelValue)
+
+		/**
+		 * 变更图标时同时更新input双向绑定的图标值
+		 *  当前props中的modelValue是只读的，直接绑定会提示警告
+		 * @param icon 选择的图标
+		 */
+		const onUpdateIcon = (icon: string) => {
+			selectIcon.value = icon
+			emit('update:modelValue', icon)
+		}
+
 		return () => (
-			<ElInput modelValue={props.modelValue} placeholder={props.inputPlaceholder} readonly>
+			<ElInput modelValue={selectIcon.value} placeholder={props.inputPlaceholder} readonly>
 				{{
 					suffix: () => (
 						<div style="display: flex; align-items: center;">
@@ -98,10 +111,9 @@ export default defineComponent({
 										<IconSelect
 											tooltip={props.tooltip}
 											pageSize={props.pageSize}
+											modelValue={selectIcon.value}
+											onUpdate:modelValue={onUpdateIcon}
 											placeholder={props.iconSelectPlaceholder}
-											onUpdate:modelValue={(icon) =>
-												emit('update:modelValue', icon)
-											}
 										/>
 									),
 								}}
