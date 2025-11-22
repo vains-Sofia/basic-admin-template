@@ -3,14 +3,16 @@ import { createPinia } from 'pinia'
 import { createPersistedStatePlugin } from 'pinia-plugin-persistedstate-2'
 
 /* 引入动画库 animate.css */
-import 'animate.css';
-
+import 'animate.css'
 import NProgress from 'nprogress'
+
+// 引入防抖指令
+import { vDebounce } from '@/directives/debounce'
 
 // 进度条配置
 NProgress.configure({
 	// 动画方式
-	easing: "ease",
+	easing: 'ease',
 	// 递增进度条的速度
 	speed: 500,
 	// 是否显示加载ico
@@ -18,8 +20,8 @@ NProgress.configure({
 	// 自动递增间隔
 	trickleSpeed: 200,
 	// 初始化时的最小百分比
-	minimum: 0.3
-});
+	minimum: 0.3,
+})
 
 import './assets/base.css'
 // Iconify 图标组件注册
@@ -49,9 +51,12 @@ autoImport(app)
 // 注册图标
 app.component('Icon', Icon)
 
+// 注册指令
+app.directive('debounce', vDebounce)
+
 app.mount('#app')
 
-// 🚀 Vue 挂载完成后，淡出并移除 Loading
+// Vue 挂载完成后，淡出并移除 Loading
 const loader = document.getElementById('app-loading')
 if (loader) {
 	loader.classList.add('fade-out')
