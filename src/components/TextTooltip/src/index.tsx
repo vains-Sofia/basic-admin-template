@@ -48,27 +48,28 @@ export default defineComponent({
 		const textRef = ref<HTMLElement>()
 		const showTooltip = ref(false)
 
-		const checkOverflow = async () => {
+		const checkOverflow = () => {
 			if (props.disabled) return
 
-			await nextTick()
-			const element = textRef.value
-			if (!element) return
+			nextTick().then(() => {
+				const element = textRef.value
+				if (!element) return
 
-			let isOverflow: boolean
+				let isOverflow: boolean
 
-			if (props.lineClamp === 1) {
-				// 单行溢出检测
-				isOverflow = element.scrollWidth > element.clientWidth
-			} else {
-				// 多行溢出检测
-				isOverflow = element.scrollHeight > element.clientHeight
-			}
+				if (props.lineClamp === 1) {
+					// 单行溢出检测
+					isOverflow = element.scrollWidth > element.clientWidth
+				} else {
+					// 多行溢出检测
+					isOverflow = element.scrollHeight > element.clientHeight
+				}
 
-			if (showTooltip.value !== isOverflow) {
-				showTooltip.value = isOverflow
-				emit('overflow-change', isOverflow)
-			}
+				if (showTooltip.value !== isOverflow) {
+					showTooltip.value = isOverflow
+					emit('overflow-change', isOverflow)
+				}
+			})
 		}
 
 		const getTextStyle = (): CSSProperties => {
