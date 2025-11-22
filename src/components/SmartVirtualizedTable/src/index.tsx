@@ -194,7 +194,7 @@ export default defineComponent({
 			// 固定宽度列的dataKey
 			const fixedWidthColKeys = fixedWidthCols.map((c) => c.dataKey)
 			// 固定列的宽度和
-			const fixedWidth = fixedWidthCols.reduce((acc, c) => acc + (c.width ?? 0), 0)
+			const fixedWidth = fixedWidthCols.reduce((acc, c) => acc + (c.width ?? c.minWidth ?? 0), 0)
 
 			// 自动计算宽度列时去除固定宽度列，仅计算剩余列的宽度
 			return (

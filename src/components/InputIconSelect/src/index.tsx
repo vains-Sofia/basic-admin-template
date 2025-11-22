@@ -17,7 +17,6 @@ const styles = `
 }
 
 .input-icon-select-copy {
-  padding: 0 10px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -75,7 +74,7 @@ export default defineComponent({
 					suffix: () => (
 						<div style="display: flex; align-items: center;">
 							{/* 图标选择 popover */}
-							<ElPopover placement="bottom" width={480} trigger="click">
+							<ElPopover placement="bottom" width={450} trigger="click">
 								{{
 									reference: () => (
 										<div class="input-icon-select-suffix">
