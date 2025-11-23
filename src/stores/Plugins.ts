@@ -21,7 +21,9 @@ interface BasicOptions {
 	// 取消事件
 	onCancel?: () => void
 	// 传给content组件的值
-	props?: any
+	props?: any,
+	// 隐藏底部
+	hideFooter?: boolean
 }
 
 /**

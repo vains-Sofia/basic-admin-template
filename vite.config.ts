@@ -9,6 +9,9 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
+import Icons from 'unplugin-icons/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
 	// 加载环境变量
@@ -24,16 +27,26 @@ export default defineConfig(({ mode }) => {
 			devToolsEnabled ? vueDevTools() : null,
 			AutoImport({
 				dts: 'src/auto-imports.d.ts',
-				resolvers: [ElementPlusResolver()]
+				resolvers: [
+					ElementPlusResolver()
+				],
 			}),
 			Components({
 				// 添加 tsx 扩展名
 				extensions: ['vue', 'tsx'],
 				include: [/\.vue$/, /\.vue\?vue/, /\.tsx$/, /\.ts$/],
 				dts: 'src/components.d.ts',
-				resolvers: [ElementPlusResolver()],
+				resolvers: [
+					ElementPlusResolver(),
+					IconsResolver(),
+				],
 				// 允许多层目录结构推断
 				directoryAsNamespace: true,
+			}),
+			// 自动加载图标库
+			Icons({
+				autoInstall: true, // 自动安装图标库
+				compiler: 'vue3',
 			}),
 		].filter(Boolean),
 
@@ -48,6 +61,10 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				'@': fileURLToPath(new URL('./src', import.meta.url)),
 			},
-		}
+		},
+
+		optimizeDeps: {
+			include: ['@iconify/vue'],
+		},
 	}
 })

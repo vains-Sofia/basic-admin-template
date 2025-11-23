@@ -74,7 +74,7 @@ onBeforeUnmount(() => {
 		</template>
 
 		<!-- 底部按钮（Drawer 没有默认 footer 槽，需要自定义） -->
-		<template #footer>
+		<template #footer v-if="!item.hideFooter">
 			<div class="flex justify-end gap-2">
 				<el-button @click="handleClose(item, item.onCancel)">
 					{{ item.cancelText || '取消' }}

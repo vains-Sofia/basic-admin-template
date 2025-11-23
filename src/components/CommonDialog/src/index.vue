@@ -75,7 +75,7 @@ onBeforeUnmount(() => {
 		</template>
 
 		<!-- 底部按钮 -->
-		<template #footer>
+		<template #footer v-if="!item.hideFooter">
 			<el-button @click="handleClose(item, item.onCancel)">
 				{{ item.cancelText || '取消' }}
 			</el-button>
