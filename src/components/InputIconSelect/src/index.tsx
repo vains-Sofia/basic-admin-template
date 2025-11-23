@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { IconSelect } from '@/components/IconSelect'
 import { Icon } from '@iconify/vue'
 
@@ -80,6 +80,11 @@ export default defineComponent({
 			selectIcon.value = icon
 			emit('update:modelValue', icon)
 		}
+
+		watch(
+			() => props.modelValue,
+			val => (selectIcon.value = val)
+		);
 
 		return () => (
 			<ElInput modelValue={selectIcon.value} placeholder={props.inputPlaceholder} readonly>
