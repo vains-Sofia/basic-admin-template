@@ -73,9 +73,40 @@ onBeforeUnmount(() => {
 			<component v-else v-bind="item.props" :is="item.content" />
 		</template>
 
-		<!-- 底部按钮（Drawer 没有默认 footer 槽，需要自定义） -->
-		<template #footer v-if="!item.hideFooter">
-			<div class="flex justify-end gap-2">
+		<!-- footer 插槽 -->
+		<template #footer>
+			<template v-if="item.footerRenderer">
+				<!-- 字符串 -->
+				<div v-if="typeof item.footerRenderer === 'string'">
+					{{ item.footerRenderer }}
+				</div>
+
+				<!-- 带 ctx 的 footerRenderer(ctx) -->
+				<component
+					v-else-if="
+						typeof item.footerRenderer === 'function'
+					"
+					:is="
+						item.footerRenderer({
+							confirm: () => confirm(item),
+							close: () => handleClose(item, item.onCancel),
+							closeLoading: () => {
+								const key = item.id ?? Date.now().toString()
+								loadingHash[key] = false
+								delete loadingHash[key]
+							},
+							item,
+							loading: loadingHash[item.id ?? Date.now()],
+						})
+					"
+				/>
+
+				<!-- vNode/comment 直接渲染 -->
+				<component v-else :is="item.footerRenderer" />
+			</template>
+
+			<!-- 默认 footer -->
+			<template v-else-if="!item.hideFooter">
 				<el-button @click="handleClose(item, item.onCancel)">
 					{{ item.cancelText || '取消' }}
 				</el-button>
@@ -86,7 +117,7 @@ onBeforeUnmount(() => {
 				>
 					{{ item.confirmText || '确认' }}
 				</el-button>
-			</div>
+			</template>
 		</template>
 	</el-drawer>
 </template>

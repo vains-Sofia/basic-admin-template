@@ -6,6 +6,8 @@ import { createPersistedStatePlugin } from 'pinia-plugin-persistedstate-2'
 import 'animate.css'
 import NProgress from 'nprogress'
 
+// 引入复制指令
+import vCopy from './directives/copy'
 // 引入防抖指令
 import { vDebounce } from '@/directives/debounce'
 
@@ -52,6 +54,7 @@ autoImport(app)
 app.component('Icon', Icon)
 
 // 注册指令
+app.directive('copy', vCopy)
 app.directive('debounce', vDebounce)
 
 app.mount('#app')

@@ -11,7 +11,7 @@ const LayoutStore = useLayoutStore()
 	<el-container>
 		<el-aside
 			:width="`${LayoutStore.menuWidth}px`"
-			style="transition: var(--el-transition-all)"
+			style="transition: var(--el-transition-all); z-index: 999;"
 		>
 			<Logo />
 			<Sidebar />

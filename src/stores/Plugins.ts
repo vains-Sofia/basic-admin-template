@@ -2,6 +2,14 @@ import { defineStore } from 'pinia'
 import { type Ref, ref, type VNode } from 'vue'
 import { type DialogProps, type DrawerProps } from 'element-plus'
 
+export interface BasicFooterContext {
+	close: () => void
+	closeLoading: () => void
+	confirm: () => void
+	loading: boolean
+	item: DialogOptions
+}
+
 /**
  * 基础插件配置
  */
@@ -21,9 +29,11 @@ interface BasicOptions {
 	// 取消事件
 	onCancel?: () => void
 	// 传给content组件的值
-	props?: any,
+	props?: any
 	// 隐藏底部
 	hideFooter?: boolean
+	// 底部自定义渲染内容
+	footerRenderer?: string | VNode | ((ctx?: BasicFooterContext) => VNode | Comment) | Comment
 }
 
 /**
