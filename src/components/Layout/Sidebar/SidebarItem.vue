@@ -10,27 +10,11 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// 可见的子菜单项
-const visibleChildren = computed(() => {
-	return props.item.children?.filter((child) => child.meta?.showLink) || []
-})
+// 判断是否外链
+const isExternalLink = (path: string) => /^(https?:|mailto:|tel:)/.test(path)
+const handleExternalLink = (url: string) => window.open(url, '_blank')
 
-// 只有一个可见子菜单时
-const onlyOneChild = computed<RouteRecordRaw | null>(() => {
-	const showingChildren = visibleChildren.value
-	if (showingChildren.length === 1 && !showingChildren[0].meta?.showParent) {
-		return showingChildren[0]
-	}
-	if (showingChildren.length === 0) {
-		return { ...props.item, path: '' }
-	}
-	return null
-})
-
-// 是否只有一个可显示子菜单
-const hasOneShowingChild = computed(() => !!onlyOneChild.value)
-
-// 解析完整路径
+// 解析路径
 const resolvePath = (routePath: string): string => {
 	if (isExternalLink(routePath)) return routePath
 	if (isExternalLink(props.basePath)) return props.basePath
@@ -38,91 +22,83 @@ const resolvePath = (routePath: string): string => {
 	return `${props.basePath}/${routePath}`.replace(/\/+/g, '/')
 }
 
-// 判断是否为外部链接
-const isExternalLink = (path: string): boolean => /^(https?:|mailto:|tel:)/.test(path)
+// ----------------- 菜单分类逻辑 -----------------
 
-// 处理外部链接点击
-const handleExternalLink = (url: string) => window.open(url, '_blank')
+// 所有子节点
+const children = computed(() => props.item.children || [])
 
+// showLink 的可见子菜单
+const visibleChildren = computed(() => children.value.filter((c) => c.meta?.showLink))
+
+// 是否存在任何子节点
+const hasChildren = computed(() => children.value.length > 0)
+
+// 是否有可见子节点
+const hasVisibleChildren = computed(() => visibleChildren.value.length > 0)
+
+// 单子菜单模式（典型场景：只显示 1 项，不做下拉）
+const onlyOneChild = computed<RouteRecordRaw | null>(() => {
+	if (visibleChildren.value.length === 1 && !visibleChildren.value[0].meta?.showParent) {
+		return visibleChildren.value[0]
+	}
+	return null
+})
+
+// 解析父节点最终应该渲染的形态
+const menuType = computed(() => {
+	if (!hasChildren.value) return 'single' // 无 children → el-menu-item
+	if (onlyOneChild.value) return 'single-with-child' // 仅 1 个可见子节点 → 单节点模式
+	if (hasVisibleChildren.value) return 'submenu' // 多个可见子节点 → 下拉菜单
+	return 'single' // 有 children 但全隐藏 → 单节点
+})
 </script>
 
 <template>
 	<template v-if="item.meta?.showLink">
-		<!-- 单个菜单项 -->
-		<template
-			v-if="
-				hasOneShowingChild && (!onlyOneChild?.children ||
-				onlyOneChild?.children?.length === 0 ||
-				onlyOneChild?.meta?.noShowingChildren ||
-				!!onlyOneChild.meta?.showParent)
+		<!-- ①【无 children / 有但全隐藏 / 1 可见子节点】都视为单菜单处理 -->
+		<el-menu-item
+			v-if="menuType !== 'submenu'"
+			:index="resolvePath(onlyOneChild?.path || item.path)"
+			@click="
+				isExternalLink(resolvePath(onlyOneChild?.path || item.path))
+					? handleExternalLink(resolvePath(onlyOneChild?.path || item.path))
+					: null
 			"
 		>
-			<!-- 外部链接 -->
-			<el-menu-item
-				v-if="onlyOneChild?.meta && isExternalLink(resolvePath(onlyOneChild.path))"
-				:key="resolvePath(onlyOneChild.path)"
-				:index="resolvePath(onlyOneChild.path)"
-				@click="handleExternalLink(resolvePath(onlyOneChild.path))"
-			>
-				<el-icon v-if="onlyOneChild.meta.icon">
-					<Icon :icon="onlyOneChild.meta.icon" :color="item.meta?.iconColor" />
-				</el-icon>
-				<template #title>
-					<span class="tooltip-container">
-						<TextTooltip
-							:content="onlyOneChild.meta.title"
-							:line-clamp="1"
-							placement="right"
-						>
-							{{ onlyOneChild.meta.title }}
-						</TextTooltip>
-					</span>
-				</template>
-			</el-menu-item>
+			<el-icon v-if="(onlyOneChild?.meta || item.meta)?.icon">
+				<Icon
+					:icon="(onlyOneChild?.meta || item.meta)?.icon"
+					:color="item.meta?.iconColor"
+				/>
+			</el-icon>
 
-			<!-- 内部路由 -->
-			<el-menu-item
-				v-else
-				:key="resolvePath(onlyOneChild?.path || item.path)"
-				:index="resolvePath(onlyOneChild?.path || item.path)"
-			>
-				<el-icon v-if="(onlyOneChild?.meta || item.meta)?.icon">
-					<Icon
-						:icon="(onlyOneChild?.meta || item.meta)?.icon"
-						:color="item.meta?.iconColor"
-					/>
-				</el-icon>
-				<template #title>
-					<span class="tooltip-container">
-						<TextTooltip
-							:content="(onlyOneChild?.meta || item.meta)?.title"
-							:line-clamp="1"
-						>
-							{{ (onlyOneChild?.meta || item.meta)?.title }}
-						</TextTooltip>
-					</span>
-				</template>
-			</el-menu-item>
-		</template>
+			<template #title>
+				<span class="tooltip-container">
+					<TextTooltip
+						:content="(onlyOneChild?.meta || item.meta)?.title"
+						:line-clamp="1"
+						placement="right"
+					>
+						{{ (onlyOneChild?.meta || item.meta)?.title }}
+					</TextTooltip>
+				</span>
+			</template>
+		</el-menu-item>
 
-		<!-- 多子菜单 -->
-		<el-sub-menu
-			v-else
-			:key="item.path"
-			:index="resolvePath(item.path)"
-		>
+		<!-- ②【多个可见子节点 → 下拉菜单】 -->
+		<el-sub-menu v-else :index="resolvePath(item.path)">
 			<template #title>
 				<el-icon v-if="item.meta?.icon">
 					<Icon :icon="item.meta?.icon" :color="item.meta?.iconColor" />
 				</el-icon>
+
 				<span class="tooltip-container">
-					<TextTooltip :content="item.meta?.title + ''" :line-clamp="1">
+					<TextTooltip :content="item.meta?.title" :line-clamp="1">
 						{{ item.meta?.title }}
 					</TextTooltip>
 				</span>
 			</template>
 
-			<!-- 递归渲染子菜单 -->
 			<SidebarItem
 				v-for="child in visibleChildren"
 				:key="child.path"

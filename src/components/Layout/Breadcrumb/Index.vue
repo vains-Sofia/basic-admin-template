@@ -35,7 +35,7 @@ const breadcrumbList = computed<BreadcrumbItem[]>(() => {
 		breadcrumbs.push({
 			path: '/',
 			title: '首页',
-			icon: 'ep:home',
+			icon: 'ep:house',
 		})
 	}
 
@@ -43,9 +43,10 @@ const breadcrumbList = computed<BreadcrumbItem[]>(() => {
 	matched.forEach((item) => {
 		if (item.meta?.title) {
 			// 除首页外都禁用
-			const isHome = item.name === 'Home' || item.name === 'Dashboard'
+			const enabled = item.name === 'Home' || item.name === 'Dashboard'
+				|| item.components?.default?.name === 'UniversalRouteWrapperInstance'
 			breadcrumbs.push({
-				path: !isHome ? undefined : item.path,
+				path: !enabled ? undefined : item.path,
 				title: item?.meta?.title,
 				icon: item?.meta?.icon,
 			})

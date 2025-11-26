@@ -69,6 +69,7 @@ declare module 'vue' {
     InputIconSelectSrc: typeof import('./components/InputIconSelect/src/index.tsx')['default']
     Layout: typeof import('./components/Layout/index.vue')['default']
     LayoutBreadcrumb: typeof import('./components/Layout/Breadcrumb/Index.vue')['default']
+    LayoutFrame: typeof import('./components/Layout/frame.vue')['default']
     LayoutLogo: typeof import('./components/Layout/Logo/Index.vue')['default']
     LayoutMainContent: typeof import('./components/Layout/MainContent/Index.vue')['default']
     LayoutNavbar: typeof import('./components/Layout/Navbar/Index.vue')['default']
@@ -84,6 +85,7 @@ declare module 'vue' {
     SmartTableSrc: typeof import('./components/SmartTable/src/index.tsx')['default']
     SmartVirtualizedTableSrc: typeof import('./components/SmartVirtualizedTable/src/index.tsx')['default']
     TextTooltipSrc: typeof import('./components/TextTooltip/src/index.tsx')['default']
+    UniversalRouteWrapperSrc: typeof import('./components/UniversalRouteWrapper/src/index.vue')['default']
     VerifyCodeInputSrc: typeof import('./components/VerifyCodeInput/src/index.tsx')['default']
   }
   export interface GlobalDirectives {
@@ -150,6 +152,7 @@ declare global {
   const InputIconSelectSrc: typeof import('./components/InputIconSelect/src/index.tsx')['default']
   const Layout: typeof import('./components/Layout/index.vue')['default']
   const LayoutBreadcrumb: typeof import('./components/Layout/Breadcrumb/Index.vue')['default']
+  const LayoutFrame: typeof import('./components/Layout/frame.vue')['default']
   const LayoutLogo: typeof import('./components/Layout/Logo/Index.vue')['default']
   const LayoutMainContent: typeof import('./components/Layout/MainContent/Index.vue')['default']
   const LayoutNavbar: typeof import('./components/Layout/Navbar/Index.vue')['default']
@@ -165,5 +168,6 @@ declare global {
   const SmartTableSrc: typeof import('./components/SmartTable/src/index.tsx')['default']
   const SmartVirtualizedTableSrc: typeof import('./components/SmartVirtualizedTable/src/index.tsx')['default']
   const TextTooltipSrc: typeof import('./components/TextTooltip/src/index.tsx')['default']
+  const UniversalRouteWrapperSrc: typeof import('./components/UniversalRouteWrapper/src/index.vue')['default']
   const VerifyCodeInputSrc: typeof import('./components/VerifyCodeInput/src/index.tsx')['default']
 }

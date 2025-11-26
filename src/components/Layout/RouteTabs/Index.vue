@@ -5,6 +5,7 @@
 				<div
 					v-for="tab in layoutStore.routeTabs"
 					:key="tab.path"
+					:data-path="tab.path"
 					:class="['tab-item', { active: isActive(tab.path) }]"
 					@click="handleTabClick(tab)"
 					@contextmenu.prevent="openContextMenu($event, tab)"
@@ -106,6 +107,7 @@ const addTab = (): void => {
 	if (existTab) {
 		// 更新标题（可能动态改变）
 		existTab.title = title
+		scrollToTab(path)
 		return
 	}
 
@@ -119,7 +121,7 @@ const addTab = (): void => {
 		params: route.params,
 	})
 
-	scrollToLast()
+	scrollToTab(path)
 }
 
 // 点击标签页
@@ -131,6 +133,7 @@ const handleTabClick = (tab: TabItem): void => {
 		// @ts-expect-error
 		params: tab.params,
 	})
+	scrollToTab(tab.path)
 }
 
 // 关闭标签页
@@ -223,6 +226,7 @@ const closeRightTabs = (): void => {
 		})
 	}
 
+	scrollToTab(selectedTab.value.path)
 	closeContextMenu()
 }
 
@@ -251,16 +255,31 @@ watch(route, () => {
 
 const tabsRef = ref<ScrollbarInstance | null>(null)
 
-// 滚动到最后一个 tab
-const scrollToLast = () => {
-	if (tabsRef.value) {
-		nextTick(() => {
-			tabsRef.value!.scrollTo({
-				left: tabsRef.value!.wrapRef!.clientWidth,
-				behavior: 'smooth',
-			})
-		})
-	}
+/**
+ * 选中某个标签时能够自动滚动，让该标签总是出现在可视区域内。
+ * @param tabPath 路径
+ */
+const scrollToTab = (tabPath: string) => {
+	if (!tabsRef.value) return
+	nextTick(() => {
+		const wrapper = tabsRef.value!.wrapRef!
+		const tabEl = wrapper.querySelector<HTMLElement>(`.tab-item[data-path="${tabPath}"]`)
+		if (!tabEl) return
+
+		const tabLeft = tabEl.offsetLeft
+		const tabRight = tabLeft + tabEl.offsetWidth
+		const scrollLeft = wrapper.scrollLeft
+		const containerWidth = wrapper.clientWidth
+
+		if (tabLeft < scrollLeft) {
+			// 标签在左侧不可见，滚动到左边
+			wrapper.scrollTo({ left: tabLeft - 10, behavior: 'smooth' })
+		} else if (tabRight > scrollLeft + containerWidth) {
+			// 标签在右侧不可见，滚动到右边
+			wrapper.scrollTo({ left: tabRight - containerWidth + 10, behavior: 'smooth' })
+		}
+		// 如果标签已经在可视区域内，不滚动
+	})
 }
 
 // 监听点击事件，关闭右键菜单

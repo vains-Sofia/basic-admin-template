@@ -2,8 +2,8 @@ import { ref } from 'vue'
 import router from '@/router'
 import { defineStore } from 'pinia'
 import { useRoute } from 'vue-router'
-import { transformMenuToRoutes } from '@/router/transform'
-import { staticRoutes, lastRouters } from '@/router/modules'
+import { lastRouters, staticRoutes } from '@/router/modules'
+import { normalizeRoutes, transformMenuToRoutes } from '@/router/transform'
 
 const logo = new URL(`../assets/logo.png`, import.meta.url).href
 
@@ -57,11 +57,14 @@ export const useUserStore = defineStore(
 			}
 
 			// 将组件从字符串转为实际的Vue组件
-			const dynamicRoutes = transformMenuToRoutes(routers.value)
+			const dynamicRoutes = transformMenuToRoutes(routers.value, true)
 
-			// 将所有路由都挂在 Home 路由下，这样所有路由都会有 Index 组件
-			dynamicRoutes.forEach((route: any) => {
-				router.addRoute('Home', route)
+			// 将子路由的绝对路径转为相对路径
+			const normalizedRoutes = normalizeRoutes(dynamicRoutes)
+
+			// 添加路由
+			normalizedRoutes.forEach((route: any) => {
+				router.addRoute(route)
 			})
 
 			// 添加最后的路由(404)
