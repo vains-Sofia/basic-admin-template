@@ -1,6 +1,6 @@
 import NProgress from 'nprogress'
 import { useUserStore } from '@/stores/User.ts'
-import { staticRoutes } from '@/router/modules/default'
+import { staticRoutes } from '@/router/modules'
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 
 // 根据环境变量获取路由模式
@@ -14,25 +14,6 @@ const history =
 
 const router = createRouter({
 	history,
-	// routes: [
-	// 	{
-	// 		path: '/test',
-	// 		component: () => import('@/components/Index/index.vue'),
-	// 		meta: {
-	// 			title: '布局'
-	// 		},
-	// 		children: [
-	// 			{
-	// 				path: 'layout',
-	// 				name: 'layout',
-	// 				component: () => import('@/views/test/TestLayout.vue'),
-	// 				meta: {
-	// 					title: '功能测试'
-	// 				}
-	// 			}
-	// 		]
-	// 	}
-	// ],
 	routes: staticRoutes,
 })
 

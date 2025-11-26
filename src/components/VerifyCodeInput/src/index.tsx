@@ -7,24 +7,24 @@ export default defineComponent({
 	props: {
 		modelValue: {
 			type: String,
-			required: true
+			required: true,
 		},
 		placeholder: {
 			type: String,
-			default: ''
+			default: '',
 		},
 		buttonText: {
 			type: String,
-			default: '获取验证码'
+			default: '获取验证码',
 		},
 		countdownSeconds: {
 			type: Number,
-			default: 60
+			default: 60,
 		},
 		requestFn: {
 			type: Function as PropType<() => Promise<any>>,
-			default: undefined
-		}
+			default: undefined,
+		},
 	},
 	emits: ['update:modelValue'],
 	setup(props, { emit, attrs }) {
@@ -34,7 +34,7 @@ export default defineComponent({
 		const innerValue = ref(props.modelValue)
 		watch(
 			() => props.modelValue,
-			(val) => (innerValue.value = val)
+			(val) => (innerValue.value = val),
 		)
 		watch(innerValue, (val) => emit('update:modelValue', val))
 
@@ -109,18 +109,17 @@ export default defineComponent({
 						append: () => (
 							<ElButton
 								plain
+								style={{ width: '120px' }}
 								loading={isLoading.value}
 								disabled={isCounting.value || isLoading.value}
 								onClick={handleClick}
 							>
-								{isCounting.value
-									? `${countdown.value}s`
-									: props.buttonText}
+								{isCounting.value ? `${countdown.value}s` : props.buttonText}
 							</ElButton>
-						)
+						),
 					}}
 				</ElInput>
 			</div>
 		)
-	}
+	},
 })

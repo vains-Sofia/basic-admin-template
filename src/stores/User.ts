@@ -2,9 +2,8 @@ import { ref } from 'vue'
 import router from '@/router'
 import { defineStore } from 'pinia'
 import { useRoute } from 'vue-router'
-import { staticRoutes } from '@/router/modules/default'
 import { transformMenuToRoutes } from '@/router/transform'
-import { lastRouters } from '@/router/modules/lastRouters'
+import { staticRoutes, lastRouters } from '@/router/modules'
 
 const logo = new URL(`../assets/logo.png`, import.meta.url).href
 

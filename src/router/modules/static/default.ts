@@ -1,4 +1,4 @@
-export const staticRoutes = [
+export default [
 	{
 		path: '/login',
 		name: 'Login',
