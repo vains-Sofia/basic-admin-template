@@ -1,71 +1,83 @@
 import QRCodeStyling, { type Options } from 'qr-code-styling'
-import { defineComponent, onBeforeUnmount, onMounted, type Ref, ref, watch } from 'vue'
+import {
+	defineComponent,
+	onBeforeUnmount,
+	onMounted,
+	type PropType,
+	type Ref,
+	ref,
+	watch,
+} from 'vue'
 import type { FileExtension } from 'qr-code-styling/lib/types'
-import { ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElButton, ElIcon } from 'element-plus'
+import Loading from '~icons/ep/loading'
+import './qr-code.css'
 
 export default defineComponent({
 	name: 'QrCode',
+
 	props: {
-		/** 二维码数据 */
 		data: { type: String, required: true },
-		/** 尺寸 */
 		size: { type: Number, default: 300 },
-		/** logo 图片 */
 		image: { type: String, default: '' },
-		/** logo 图片 */
 		imageSize: { type: Number, default: 0.2 },
-		/** 点样式类型 */
-		dotsType: { type: String, default: 'square' }, // square | dots | rounded 等
-		/** 角块样式 */
+		dotsType: { type: String, default: 'square' },
 		cornersSquareType: { type: String, default: undefined },
-		/** 角点样式 */
 		cornersDotType: { type: String, default: '' },
-		/** 背景色 */
 		background: { type: String, default: '#ffffff' },
-		/** 点颜色 */
 		dotsColor: { type: String, default: '#000000' },
-		// 是否显示下载按钮
 		showDownload: { type: Boolean, default: false },
+
+		/** 新增: 失效蒙版 */
+		expired: { type: Boolean, default: false },
+		onRefresh: { type: Function as PropType<() => void>, default: null },
+
+		/** 新增: loading 蒙版 */
+		loading: { type: Boolean, default: false },
+
+		/** loading文字 */
+		loadingText: { type: String, default: '加载中...' },
+
+		/** 新增: 是否启用二维码淡入效果 */
+		transition: { type: Boolean, default: false },
 	},
-	setup(props) {
+
+	setup(props, { slots }) {
 		const containerRef = ref<HTMLElement>()
 		let qrCode: QRCodeStyling | null = null
 
-		// 初始化
+		/** 控制二维码淡入动画 */
+		const isReady = ref(false)
+
 		onMounted(() => {
 			qrCode = new QRCodeStyling({
 				width: props.size,
 				height: props.size,
 				data: props.data,
 				image: props.image || undefined,
-				imageOptions: {
-					imageSize: props.imageSize,
-				},
-				dotsOptions: {
-					roundSize: true,
-					color: props.dotsColor,
-					type: 'square',
-				},
-				cornersSquareOptions: {
-					type: props.cornersSquareType,
-				},
-				cornersDotOptions: {
-					type: props.cornersDotType,
-				},
-				backgroundOptions: {
-					color: props.background,
-				},
-				qrOptions: {
-					typeNumber: 0,
-					errorCorrectionLevel: 'Q',
-				},
-			} as Options)
+				imageOptions: { imageSize: props.imageSize },
+				dotsOptions: { color: props.dotsColor, type: props.dotsType as any },
+				cornersSquareOptions: { type: props.cornersSquareType as any },
+				cornersDotOptions: { type: props.cornersDotType as any },
+				backgroundOptions: { color: props.background },
+				qrOptions: { typeNumber: 0, errorCorrectionLevel: 'Q' },
+			})
+
 			if (containerRef.value) {
 				qrCode.append(containerRef.value)
+
+				/** 小延迟触发淡入动画 */
+				if (props.transition) {
+					requestAnimationFrame(() => {
+						isReady.value = true
+					})
+				} else {
+					isReady.value = true
+				}
 			}
 		})
 
-		// 监听 props 更新二维码
+		/** 更新二维码 */
 		watch(
 			() => [
 				props.data,
@@ -79,54 +91,102 @@ export default defineComponent({
 			],
 			() => {
 				if (qrCode) {
+					isReady.value = false // 更新时先隐藏，更新后再淡入
+
 					qrCode.update({
 						width: props.size,
 						height: props.size,
 						data: props.data,
 						image: props.image || undefined,
-						imageOptions: {
-							imageSize: props.imageSize,
-						},
-						dotsOptions: {
-							color: props.dotsColor,
-							type: props.dotsType as any,
-						},
-						cornersSquareOptions: {
-							type: props.cornersSquareType as any,
-						},
-						cornersDotOptions: {
-							type: props.cornersDotType as any,
-						},
-						backgroundOptions: {
-							color: props.background,
-						},
+						imageOptions: { imageSize: props.imageSize },
+						dotsOptions: { color: props.dotsColor, type: props.dotsType as any },
+						cornersSquareOptions: { type: props.cornersSquareType as any },
+						cornersDotOptions: { type: props.cornersDotType as any },
+						backgroundOptions: { color: props.background },
 					} as Options)
+
+					if (props.transition) {
+						requestAnimationFrame(() => {
+							isReady.value = true
+						})
+					} else {
+						isReady.value = true
+					}
 				}
 			},
 			{ deep: true },
 		)
 
 		onBeforeUnmount(() => {
-			// 可选：销毁处理
 			qrCode = null
 		})
 
-		// 选择后缀事件
-		const downloadExtension: Ref<FileExtension> = ref('svg');
-		const handlerCommand = (command: string) => {
-			downloadExtension.value = command as FileExtension
-		}
-
-		// 提供导出方法（父组件通过 ref 调用）
-		const download = (fileName = 'qrcode') => {
+		/** 下载 */
+		const downloadExtension: Ref<FileExtension> = ref('svg')
+		const handlerCommand = (command: string) =>
+			(downloadExtension.value = command as FileExtension)
+		const download = (fileName = 'qrcode') =>
 			qrCode?.download({ name: fileName, extension: downloadExtension.value })
-		}
 
 		return () => (
-			<div style={`width: ${props.size}px;text-align: center;`}>
-				<div ref={containerRef}></div>
+			<div class="qr-wrapper" style={`width:${props.size}px;`}>
+				<div
+					class={[
+						'qr-container',
+						props.transition ? 'qr-fade' : '',
+						isReady.value ? 'qr-fade-in' : 'qr-fade-out',
+					]}
+					style={`width:${props.size}px;height:${props.size}px;`}
+				>
+					<div ref={containerRef}></div>
+
+					{/* loading 蒙版 */}
+					{props.loading && (
+						<div class="qr-mask qr-loading-mask">
+							{slots.loading ? (
+								slots.loading()
+							) : (
+								<div class="qr-loading-content">
+									<ElIcon class="qr-loading-icon" size={22}>
+										<Loading />
+									</ElIcon>
+									<div class="qr-loading-text">{props.loadingText}</div>
+								</div>
+							)}
+						</div>
+					)}
+
+					{/* 失效蒙版 */}
+					{props.expired && !props.loading && (
+						<div class="qr-mask">
+							{slots.expired ? (
+								slots.expired()
+							) : (
+								<div class="qr-mask-content">
+									<div class="qr-mask-text">二维码已失效</div>
+									{props.onRefresh && (
+										<ElButton
+											type="primary"
+											size="small"
+											link
+											onClick={props.onRefresh}
+										>
+											重新获取
+										</ElButton>
+									)}
+								</div>
+							)}
+						</div>
+					)}
+				</div>
+
 				{props.showDownload && (
-					<ElDropdown split-button onClick={() => download()} show-arrow={false} onCommand={handlerCommand}>
+					<ElDropdown
+						split-button
+						onClick={() => download()}
+						show-arrow={false}
+						onCommand={handlerCommand}
+					>
 						{{
 							default: () => <span>下载 {downloadExtension.value}</span>,
 							dropdown: () => (

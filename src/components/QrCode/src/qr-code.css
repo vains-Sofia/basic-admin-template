@@ -1,0 +1,89 @@
+/* -------------------- */
+/* QR fade transition   */
+/* -------------------- */
+.qr-fade {
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.qr-fade-in {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.qr-fade-out {
+	opacity: 0;
+	transform: scale(0.96);
+}
+
+/* -------------------- */
+/* Mask styles          */
+/* -------------------- */
+.qr-mask {
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(4px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+}
+
+/* -------------------- */
+/* Loading mask         */
+/* -------------------- */
+.qr-loading-mask {
+	background: rgba(255, 255, 255, 0.85);
+}
+
+.qr-loading-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	color: var(--el-color-primary);
+}
+
+.qr-loading-icon {
+	animation: qr-spin 1s linear infinite;
+}
+
+@keyframes qr-spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.qr-loading-text {
+	font-size: 13px;
+	color: var(--el-color-primary);
+}
+
+/* -------------------- */
+/* expired mask         */
+/* -------------------- */
+.qr-mask-content {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.qr-mask-text {
+	font-size: 14px;
+	color: #333;
+}
+
+/* -------------------- */
+/* Dark mode support    */
+/* -------------------- */
+@media (prefers-color-scheme: dark) {
+	.qr-mask,
+	.qr-loading-mask {
+		background: rgba(0, 0, 0, 0.55);
+	}
+
+	.qr-mask-text,
+	.qr-loading-text {
+		color: #ddd;
+	}
+}
