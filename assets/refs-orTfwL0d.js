@@ -1,0 +1,1 @@
+import{oi as e}from"./index-Cl_4-1AA.js";var t=(...t)=>n=>{t.forEach(t=>{e(t)?t(n):t.value=n})};export{t};

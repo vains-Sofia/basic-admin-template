@@ -1,0 +1,1 @@
+import{Tr as e,ir as t,r as n}from"./index-Cl_4-1AA.js";var r={},i={class:`p-6`};function a(n,r){return e(),t(`div`,i,`首页`)}var o=n(r,[[`render`,a]]);export{o as default};
