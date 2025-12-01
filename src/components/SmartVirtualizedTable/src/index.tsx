@@ -73,7 +73,7 @@ export default defineComponent({
 		},
 		extraGap: {
 			type: Number,
-			default: 50,
+			default: 0,
 		},
 		title: {
 			type: String,
@@ -139,6 +139,7 @@ export default defineComponent({
 		const tableInstanceRef = ref()
 		const paginationRef = ref<HTMLElement | null>(null)
 		const tableWidth = ref<number>(0)
+		const toolbarRef = ref<HTMLElement | null>(null)
 
 		let resizeObserver: ResizeObserver | null = null
 
@@ -148,6 +149,7 @@ export default defineComponent({
 			paginationRef,
 			tableHeight,
 			tableWidth,
+			toolbarRef
 		)
 
 		onMounted(async () => {
@@ -346,6 +348,7 @@ export default defineComponent({
 			}
 			return (
 				<div
+					ref={toolbarRef}
 					style="
           display:flex;justify-content:space-between;align-items:center;
           padding:0 11px 11px;border-bottom:1px solid var(--el-border-color-lighter);
@@ -441,7 +444,7 @@ export default defineComponent({
 				</ElAutoResizer>
 
 				{paginationConfig.value && (
-					<div style="margin-top:12px; text-align:right" ref={paginationRef}>
+					<div style="padding-top:12px; text-align:right" ref={paginationRef}>
 						<ElPagination
 							background
 							style="justify-content:flex-end;"

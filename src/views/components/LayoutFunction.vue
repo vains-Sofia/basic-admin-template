@@ -13,7 +13,7 @@ const testHttpRequest = () => {
 </script>
 
 <template>
-	<div>
+	<div class="p-5">
 		<el-button plain @click="LayoutStore.toggleDark">暗黑模式切换</el-button>
 		<el-button plain @click="LayoutStore.toggleMenuCollapse()">切换菜单展开折叠状态</el-button>
 		<el-button plain @click="testHttpRequest">发起请求</el-button>

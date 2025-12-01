@@ -42,7 +42,7 @@ export const useUserStore = defineStore(
 		}
 
 		function getRouters() {
-			return [...staticRoutes, ...routers.value]
+			return [...staticRoutes, ...lastRouters, ...routers.value]
 		}
 
 		// 初始化Router

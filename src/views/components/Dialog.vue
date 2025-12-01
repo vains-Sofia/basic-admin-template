@@ -106,7 +106,7 @@ const openFormDialog = () => {
 </script>
 
 <template>
-	<div>
+	<div class="p-5">
 		<el-button plain @click="openDialog1()">打开弹框</el-button>
 		<el-button plain @click="openDialog2()">打开弹框2</el-button>
 		<el-button plain @click="openTableDialog()">表格弹窗</el-button>

@@ -58,7 +58,7 @@ const openDrawer4 = () => {
 </script>
 
 <template>
-	<div>
+	<div class="p-5">
 		<el-button plain @click="openDrawer1">打开抽屉</el-button>
 		<el-button plain @click="openDrawer2">表格抽屉</el-button>
 		<el-button plain @click="openDrawer3">虚拟表格抽屉</el-button>

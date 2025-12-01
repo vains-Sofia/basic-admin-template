@@ -3,7 +3,7 @@ import { IconSelect } from '@/components/IconSelect'
 import { Icon } from '@iconify/vue'
 
 const styles = `
-.input-icon-select-suffix {
+.icon-select-container .input-icon-select-suffix {
   padding: 0;
   width: 42px;
   display: flex;
@@ -12,22 +12,22 @@ const styles = `
   cursor: pointer;
 }
 
-.input-icon-select-suffix:hover {
+.icon-select-container .input-icon-select-suffix:hover {
   color: var(--el-color-primary) !important;
 }
 
-.input-icon-select-copy {
+.icon-select-container .input-icon-select-copy {
   display: flex;
   align-items: center;
   cursor: pointer;
   color: var(--el-text-color-secondary);
 }
 
-.input-icon-select-copy:hover {
+.icon-select-container .input-icon-select-copy:hover {
   color: var(--el-color-primary);
 }
 
-.el-input__inner {
+.icon-select-container .el-input__inner {
   pointer-events: none; /* 禁止手动输入 */
 }
 `
@@ -83,11 +83,16 @@ export default defineComponent({
 
 		watch(
 			() => props.modelValue,
-			val => (selectIcon.value = val)
-		);
+			(val) => (selectIcon.value = val),
+		)
 
 		return () => (
-			<ElInput modelValue={selectIcon.value} placeholder={props.inputPlaceholder} readonly>
+			<ElInput
+				class={'icon-select-container'}
+				modelValue={selectIcon.value}
+				placeholder={props.inputPlaceholder}
+				readonly
+			>
 				{{
 					suffix: () => (
 						<div style="display: flex; align-items: center;">
@@ -125,7 +130,7 @@ export default defineComponent({
 							</ElPopover>
 
 							{/* 复制按钮 */}
-							<ElTooltip placement="top" content="点击复制图标">
+							<ElTooltip placement="left" content="点击复制图标">
 								<div
 									class="input-icon-select-copy"
 									onClick={() => copy(props.modelValue)}

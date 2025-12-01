@@ -1,4 +1,4 @@
-export const menuData: any[] = [
+export default [
 	{
 		path: '/components',
 		meta: {
@@ -6,11 +6,12 @@ export const menuData: any[] = [
 			icon: 'ep:menu',
 			showLink: true
 		},
+		component: () => import('@/components/Layout/index.vue'),
 		children: [
 			{
 				path: 'qrcode',
 				name: 'qrcode',
-				component: '/components/QrCode',
+				component: () => import('@/views/components/QrCode.vue'),
 				meta: {
 					title: '二维码',
 					icon: 'material-symbols:qr-code',
@@ -20,7 +21,7 @@ export const menuData: any[] = [
 			{
 				path: 'layout',
 				name: 'layout',
-				component: '/components/LayoutFunction',
+				component: () => import('@/views/components/LayoutFunction.vue'),
 				meta: {
 					icon: 'ep:promotion',
 					title: '布局功能',
@@ -30,7 +31,7 @@ export const menuData: any[] = [
 			{
 				path: 'table',
 				name: 'table',
-				component: '/components/SmartTable',
+				component: () => import('@/views/components/SmartTable.vue'),
 				meta: {
 					icon: 'material-symbols:table-outline-sharp',
 					title: '表格',
@@ -40,7 +41,7 @@ export const menuData: any[] = [
 			{
 				path: 'tableV2',
 				name: 'tableV2',
-				component: '/components/SmartTableV2',
+				component: () => import('@/views/components/SmartTableV2.vue'),
 				meta: {
 					icon: 'material-symbols:table-view-outline-sharp',
 					title: '虚拟表格',
@@ -50,7 +51,7 @@ export const menuData: any[] = [
 			{
 				path: 'dialog',
 				name: 'dialog',
-				component: '/components/Dialog',
+				component: () => import('@/views/components/Dialog.vue'),
 				meta: {
 					icon: 'material-symbols:chat-outline',
 					title: 'Dialog对话框',
@@ -60,7 +61,7 @@ export const menuData: any[] = [
 			{
 				path: 'drawer',
 				name: 'drawer',
-				component: '/components/Drawer',
+				component: () => import('@/views/components/Drawer.vue'),
 				meta: {
 					icon: 'material-symbols:bottom-drawer-outline',
 					title: 'Drawer抽屉',
@@ -70,7 +71,7 @@ export const menuData: any[] = [
 			{
 				path: 'cropper',
 				name: 'Cropper',
-				component: '/components/Cropper',
+				component: () => import('@/views/components/Cropper.vue'),
 				meta: {
 					title: '图片剪裁',
 					icon: 'material-symbols:crop',
@@ -82,21 +83,21 @@ export const menuData: any[] = [
 				name: 'iconSelect',
 				meta: {
 					title: '图标选择器1',
-					icon: 'ep:house',
+					icon: 'ep:grid',
 					showLink: true
 				},
-				component: 'components/IconSelect1',
+				component: () => import('@/views/components/IconSelect1.vue'),
 			},
 			{
 				path: 'iconSelect2',
 				name: 'iconSelect2',
 				meta: {
 					title: '图标选择器2',
-					icon: 'ep:house',
+					icon: 'ep:grid',
 					showLink: true
 				},
-				component: '/components/IconSelect2',
-			},
+				component: () => import('@/views/components/IconSelect2.vue'),
+			}
 		],
 	},
 ]

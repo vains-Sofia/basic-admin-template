@@ -1,5 +1,4 @@
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import { menuData } from '@/components/Layout/Sidebar/menuData'
 import router from '@/router'
 import { useUserStore } from '@/stores/User'
 import type { FormInstance } from 'element-plus'
@@ -17,7 +16,6 @@ export function useLogin(loginFormRef: Ref<FormInstance | undefined>, loginForm:
 				userStore
 					.login(loginType, loginForm)
 					.then(() => {
-						userStore.setupRouters(menuData)
 						userStore.initRouter()
 						userStore.setupUser({
 							username: 'admin',

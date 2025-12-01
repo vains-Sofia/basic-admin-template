@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SidebarItem from './SidebarItem.vue'
 import { useUserStore } from '@/stores/User'
@@ -24,7 +24,10 @@ const activeMenu = computed(() => {
 	return meta.activePath || route.path
 })
 
-const menus = userStore.getRouters()
+const menuLoading = ref(true)
+const menus = ref()
+menus.value = userStore.getRouters()
+menuLoading.value = false
 </script>
 
 <template>
