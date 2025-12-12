@@ -10,6 +10,7 @@
 
 <p align="center">
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vains-Sofia/basic-admin-template)
 [![Vue](https://img.shields.io/badge/Vue-3.5.22-4FC08D?logo=vuedotjs)](https://vuejs.org/)
 [![Vue Router](https://img.shields.io/badge/Vue%20Router-4.6.3-4FC08D?logo=vue.js)](https://router.vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?logo=typescript)](https://www.typescriptlang.org/)
@@ -38,6 +39,10 @@
 - 🐛 提交Issue帮助我们改进
 - 🔧 贡献代码让项目更完善
 
+### DeepWiki
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vains-Sofia/basic-admin-template)<br />
+现在项目已使用 DeepWiki 自动生成wiki，您可访问 https://deepwiki.com/vains-Sofia/basic-admin-template 或点击上方icon来查看。<br />
+DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获取项目相关信息。您可以通过 DeepWiki 提问，获取关于 Basic Admin Template 的详细解答和使用指导。
 
 ## 功能特性
 
