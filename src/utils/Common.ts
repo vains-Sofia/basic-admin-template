@@ -207,3 +207,17 @@ export function deepClone<T>(obj: T): T {
 	}
 	return clonedObj;
 }
+
+export const getContainerHeight = (containerRef: Ref) => {
+	if (!containerRef.value) return
+	const container = getScrollContainer(containerRef.value)
+	const containerHeight =
+		container instanceof Window ? window.innerHeight : container.clientHeight
+
+	const rect = containerRef.value.getBoundingClientRect()
+	const containerRect =
+		container instanceof Window ? { top: 0 } : container.getBoundingClientRect()
+	const containerTop = rect.top - containerRect.top
+
+	return containerHeight - containerTop
+}

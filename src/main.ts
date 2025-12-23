@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createPersistedStatePlugin } from 'pinia-plugin-persistedstate-2'
+import hljs from 'highlight.js'
 
 /* 引入动画库 animate.css */
 import 'animate.css'
@@ -56,6 +57,17 @@ app.component('Icon', Icon)
 // 注册指令
 app.directive('copy', vCopy)
 app.directive('debounce', vDebounce)
+// 代码高亮
+app.directive('highlight', {
+	mounted(el: HTMLElement) {
+		const blocks = el.querySelectorAll('pre code')
+		blocks.forEach((block) => hljs.highlightElement(block as HTMLElement))
+	},
+	updated(el: HTMLElement) {
+		const blocks = el.querySelectorAll('pre code')
+		blocks.forEach((block) => hljs.highlightElement(block as HTMLElement))
+	}
+})
 
 app.mount('#app')
 

@@ -83,7 +83,7 @@ export default [
 				name: 'iconSelect',
 				meta: {
 					title: '图标选择器1',
-					icon: 'ep:grid',
+					icon: 'fa7-solid:navicon',
 					showLink: true
 				},
 				component: () => import('@/views/components/IconSelect1.vue'),
@@ -93,10 +93,30 @@ export default [
 				name: 'iconSelect2',
 				meta: {
 					title: '图标选择器2',
-					icon: 'ep:grid',
+					icon: 'fa7-solid:navicon',
 					showLink: true
 				},
 				component: () => import('@/views/components/IconSelect2.vue'),
+			},
+			{
+				path: 'FormDesigner',
+				name: 'FormDesigner',
+				meta: {
+					title: '表单设计器',
+					icon: 'ri:file-list-line',
+					showLink: true
+				},
+				component: () => import('@/views/components/FormDesigner.vue'),
+			},
+			{
+				path: 'FormDesignerExample',
+				name: 'FormDesignerExample',
+				meta: {
+					title: '动态表单示例',
+					icon: 'ri:file-list-line',
+					showLink: true
+				},
+				component: () => import('@/views/components/FormDesignerExample.vue'),
 			}
 		],
 	},
