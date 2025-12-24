@@ -1,0 +1,1 @@
+import{Ci as e,yi as t}from"./index-DkS91mYz.js";t();var n=(...t)=>n=>{t.forEach(t=>{e(t)?t(n):t.value=n})};export{n as t};

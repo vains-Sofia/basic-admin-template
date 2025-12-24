@@ -1,0 +1,1 @@
+import{n as e}from"./debounce-Bnsqan9y.js";function t(e,t,n){return e===e&&(n!==void 0&&(e=e<=n?e:n),t!==void 0&&(e=e>=t?e:t)),e}var n=t;function r(t,r,i){return i===void 0&&(i=r,r=void 0),i!==void 0&&(i=e(i),i=i===i?i:0),r!==void 0&&(r=e(r),r=r===r?r:0),n(e(t),r,i)}var i=r;export{i as t};
