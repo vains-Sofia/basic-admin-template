@@ -7,6 +7,9 @@ import type {
 } from '@/components/FormDesigner'
 import type { FormItemRule } from 'element-plus'
 
+/**
+ * 校验注册器
+ */
 export class ValidatorRegistry {
 	private static validators = new Map<string, DynamicValidator>()
 
@@ -23,6 +26,9 @@ export class ValidatorRegistry {
 	}
 }
 
+/**
+ * 注册手机号验证器
+ */
 ValidatorRegistry.register('mobile', (rule, value, callback) => {
 	if (!value) return
 	if (!/^1[3-9]\d{9}$/.test(value)) {
@@ -33,6 +39,9 @@ ValidatorRegistry.register('mobile', (rule, value, callback) => {
 	}
 })
 
+/**
+ * 注册正则表达式验证器
+ */
 ValidatorRegistry.register('pattern', (rule, value, callback) => {
 	const valueStr = String(value)
 	if (!valueStr) return
@@ -49,6 +58,9 @@ ValidatorRegistry.register('pattern', (rule, value, callback) => {
 	}
 })
 
+/**
+ * 注册最小长度验证器
+ */
 ValidatorRegistry.register('minLength', (rule, value, callback) => {
 	const { min } = rule
 	if (!min) {
@@ -61,6 +73,9 @@ ValidatorRegistry.register('minLength', (rule, value, callback) => {
 	}
 })
 
+/**
+ * 注册输入一致性验证器
+ */
 ValidatorRegistry.register('confirmEqual', (rule, value, callback, source) => {
 	if (value !== source[rule.targetField]) {
 		callback('两次输入不一致')

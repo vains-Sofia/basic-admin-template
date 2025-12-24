@@ -8,7 +8,7 @@
 		</div>
 
 		<div class="canvas-content" ref="containerRef" :style="{ height: `${containerHeight}px` }">
-			<!-- Form fields with vuedraggable -->
+			<!-- 表单拖拽面板 -->
 			<el-form
 				ref="formRef"
 				:model="formData"
@@ -42,22 +42,20 @@
 								:field="field"
 								:form-schema="formSchema"
 								:selected-field-id="selectedFieldId"
-								:expanded="isLayoutExpanded(field.fieldId)"
 								@field-click="handleFieldClick"
 								@field-delete="handleDeleteField"
 								@select-layout="handleSelectLayout"
 								@delete-layout="handleDeleteLayout"
-								@toggle-layout="handleToggleLayout"
 								@children-update="handleChildrenUpdate"
 								@field-add="onFieldAdd"
 							/>
 						</template>
 
-						<!-- Empty state template -->
+						<!-- 空状态提示 -->
 						<template #footer>
 							<div v-if="formSchema.fields.length === 0" class="empty-placeholder">
 								<Icon icon="ep:upload" class="empty-icon" />
-								<p>Drag components here to start building your form</p>
+								<p>将组件拖到此处即可开始构建表单</p>
 							</div>
 						</template>
 					</draggable>
@@ -85,7 +83,7 @@ import FieldItem from './FieldItem.vue'
 import { collectAllFields, generateFieldName, generateId } from '../fieldRegistry.ts'
 import { getContainerHeight } from '@/utils/Common.ts'
 import { useDebounce } from '@/hooks/useDebounce.ts'
-import { setupComputeEngine } from '@/components/FormDesigner/src/computeEngine.ts'
+import { setupComputeEngine } from '../computeEngine.ts'
 
 const props = defineProps<{
 	formSchema: FormSchema
@@ -97,34 +95,45 @@ const emit = defineEmits<{
 	canvasClick: []
 	deleteField: [field: FieldDefinition]
 	fieldsUpdate: [fields: FieldDefinition[]]
-	addField: [fieldType: FieldDefinition, position: number]
+	addField: [fieldType: FieldDefinition]
 	selectLayout: [layoutId: string]
 	deleteLayout: [layoutId: string]
 	toggleLayout: [layoutId: string]
 	updateLayoutChildren: [layoutId: string, children: FieldDefinition[]]
 }>()
 
+// 表单实例
 const formRef = ref()
+// 表单双向绑定data
 const formData = reactive<Record<string, any>>({})
 
+// 给子组件传递表单数据
 provide('formData', formData)
 
 let watchHandles: WatchStopHandle[] = []
+
+// 监听表单项的变化，动态执行表达式
 watch(
 	props.formSchema,
 	useDebounce(() => {
+		// 提取所有字段(布局中可能有，递归获取)
 		const allFields = collectAllFields(props.formSchema.fields)
+		// 设置默认值
 		allFields.forEach((field) => {
 			formData[field.fieldName] = field.defaultValue
 		})
+		// 停止之前的监听
 		watchHandles.forEach((stop) => stop())
+		// 解析表达式并执行，同时添加监听，属性值改变后执行表达式
 		watchHandles = setupComputeEngine(allFields, formData)
 	}, 1000),
 	{ immediate: true, deep: true },
 )
 
+// 容器实例
 const containerRef = ref<HTMLDivElement>()
 
+// 计算容器高度，防抖
 const containerHeight = ref()
 const initContainerHeight = useDebounce(() => {
 	containerHeight.value = getContainerHeight(containerRef)
@@ -139,9 +148,6 @@ onUnmounted(() => {
 	window.removeEventListener('resize', initContainerHeight)
 })
 
-// 展开的布局容器集合
-const expandedLayouts = ref<Set<string>>(new Set())
-
 // 本地字段列表，用于 v-model 绑定
 const localFields = computed({
 	get: () => props.formSchema.fields,
@@ -151,6 +157,7 @@ const localFields = computed({
 	},
 })
 
+// 点击预览面板
 function handleCanvasClick() {
 	emit('canvasClick')
 }
@@ -169,17 +176,18 @@ function handleCanvasChange(evt: any) {
 					(child: FieldDefinition) => (child.fieldId = generateId()),
 				)
 			}
-			emit('addField', fieldType, added.newIndex)
+			emit('addField', fieldType)
 			// emit('fieldClick', fieldType)
 		}
 	}
-	// vuedraggable 已经更新了 localFields（通过 v-model）
 }
 
+// 点击表单项事件
 function handleFieldClick(field: FieldDefinition) {
 	emit('fieldClick', field)
 }
 
+// 删除表单项事件
 function handleDeleteField(field: FieldDefinition) {
 	emit('deleteField', field)
 }
@@ -194,38 +202,14 @@ function handleDeleteLayout(layoutId: string) {
 	emit('deleteLayout', layoutId)
 }
 
-// 处理切换布局展开/折叠
-function handleToggleLayout(layoutId: string) {
-	if (expandedLayouts.value.has(layoutId)) {
-		expandedLayouts.value.delete(layoutId)
-	} else {
-		expandedLayouts.value.add(layoutId)
-	}
-	emit('toggleLayout', layoutId)
-}
-
+// 添加字段
 function onFieldAdd(field: FieldDefinition) {
-	emit('addField', field, 0)
+	emit('addField', field)
 }
 
 // 处理布局子字段更新
 function handleChildrenUpdate(layoutId: string, children: FieldDefinition[]) {
 	emit('updateLayoutChildren', layoutId, children)
-}
-
-// // 处理嵌套字段点击
-// function handleNestedFieldClick(field: FieldDefinition) {
-// 	emit('fieldClick', field)
-// }
-//
-// // 处理嵌套字段删除
-// function handleNestedFieldDelete(field: FieldDefinition) {
-// 	emit('deleteField', field)
-// }
-
-// 检查布局是否展开
-function isLayoutExpanded(layoutId: string): boolean {
-	return expandedLayouts.value.has(layoutId)
 }
 </script>
 

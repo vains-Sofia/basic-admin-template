@@ -23,6 +23,7 @@
 					</div>
 
 					<el-form :model="properties" label-position="top">
+						<!-- 实际配置项 -->
 						<PropertyPanelContent
 							:form-schema="formSchema"
 							:selected-field="selectedField"
@@ -34,10 +35,10 @@
 					</el-form>
 				</div>
 
-				<!-- No Selection -->
+				<!-- 未选择时提示 -->
 				<div v-else class="no-selection">
 					<Icon icon="ep:info-filled" class="info-icon" />
-					<p>Select a field or click the canvas to edit properties</p>
+					<p>选择一个字段或点击画布即可编辑属性</p>
 				</div>
 			</el-scrollbar>
 		</div>
@@ -45,13 +46,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import PropertyPanelContent from './PropertyPanelContent.vue'
-import type { FieldDefinition, FormSchema, PropertySchema } from '../types.ts'
-import { getFieldTypeConfig } from '../fieldRegistry.ts'
 import { useDebounce } from '@/hooks/useDebounce.ts'
 import { getContainerHeight } from '@/utils/Common.ts'
+import { getFieldTypeConfig } from '../fieldRegistry.ts'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import PropertyPanelContent from './PropertyPanelContent.vue'
+import type { FieldDefinition, FormSchema, PropertySchema } from '../types.ts'
 
 const props = defineProps<{
 	formSchema: FormSchema
@@ -64,9 +65,10 @@ const emit = defineEmits<{
 	updateFieldProperty: [fieldId: string, key: string, value: any]
 }>()
 
+// 如果未选择特定字段属性，则使用表单属性
 const properties = computed(() => props.selectedField ?? formProperties.value)
 
-// Form properties
+// 表单属性
 const formProperties = computed(() => {
 	return {
 		formName: props.formSchema.formName,
@@ -77,7 +79,7 @@ const formProperties = computed(() => {
 	}
 })
 
-// Get property schema for selected field type
+// 获取所选字段类型的属性配置项
 const propertySchema = computed<PropertySchema[]>(() => {
 	if (!properties.value) return []
 
@@ -85,13 +87,13 @@ const propertySchema = computed<PropertySchema[]>(() => {
 	return config || []
 })
 
-// Get field type icon
+// 获取表单项的图标
 const fieldTypeIcon = computed(() => {
 	if (!props.selectedField) return 'ri:file-list-line'
 	return props.selectedField.icon
 })
 
-// Get field type label
+// 表单项Label
 const fieldTypeLabel = computed(() => {
 	if (props.selectedField) {
 		return props.selectedField.label || props.selectedField.type
@@ -99,17 +101,30 @@ const fieldTypeLabel = computed(() => {
 	return formProperties.value.formName || '表单'
 })
 
+/**
+ * 表单属性修改事件
+ * @param key 表单配置属性
+ * @param value 修改后的值
+ */
 function handleUpdateFormProperty(key: string, value: any) {
 	emit('updateFormProperty', key, value)
 }
-// Update field property
+
+/**
+ * 表单项属性修改事件
+ * @param fieldId 表单项唯一id
+ * @param key 表单项配置属性
+ * @param value 修改后的值
+ */
 function handleUpdateFieldProperty(fieldId: string, key: string, value: any) {
 	emit('updateFieldProperty', fieldId, key, value)
 }
 
+// 容器实例
 const containerRef = ref<HTMLDivElement>()
-
+// 容器高度
 const containerHeight = ref()
+// 动态计算容器高度，防抖
 const initContainerHeight = useDebounce(() => {
 	containerHeight.value = getContainerHeight(containerRef)
 })

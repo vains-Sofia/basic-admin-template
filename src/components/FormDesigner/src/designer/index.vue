@@ -34,7 +34,7 @@
 							<Icon icon="ep:view" style="margin-right: 4px" />
 							查看JSON
 						</el-button>
-<!--						<el-button type="primary" link size="small" @click="handleExportSchema">
+						<!--						<el-button type="primary" link size="small" @click="handleExportSchema">
 							<Icon icon="ep:copy-document" style="margin-right: 4px" />
 							复制JSON
 						</el-button>-->
@@ -42,7 +42,11 @@
 							type="primary"
 							link
 							size="small"
-							@click="downloadSchema(JSON.stringify(formSchema, null, 2).replace(/\\/g, '\\\\'))"
+							@click="
+								downloadSchema(
+									JSON.stringify(formSchema, null, 2).replace(/\\/g, '\\\\'),
+								)
+							"
 						>
 							<Icon icon="ep:download" style="margin-right: 4px" />
 							下载JSON
@@ -88,7 +92,12 @@
 			<CodeViewer v-if="viewJsonVisible" :code="JSON.stringify(formSchema, null, 2)" />
 			<template #footer>
 				<el-button plain @click="handleExportSchema"> 复制JSON </el-button>
-				<el-button plain @click="downloadSchema(JSON.stringify(formSchema, null, 2).replace(/\\/g, '\\\\'))">
+				<el-button
+					plain
+					@click="
+						downloadSchema(JSON.stringify(formSchema, null, 2).replace(/\\/g, '\\\\'))
+					"
+				>
 					下载JSON
 				</el-button>
 				<el-button plain @click="viewJsonVisible = false"> 关闭 </el-button>
@@ -216,12 +225,7 @@ function updateFieldById(
 }
 
 // 辅助函数：递归删除字段
-function removeFieldById(
-	id: string,
-	fields = formSchema.value.fields,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	parent: FieldDefinition | null = null,
-): boolean {
+function removeFieldById(id: string, fields = formSchema.value.fields): boolean {
 	for (let i = 0; i < fields.length; i++) {
 		if (fields[i].fieldId === id) {
 			fields.splice(i, 1)
@@ -231,7 +235,7 @@ function removeFieldById(
 		const len = fields[i]?.children?.length ?? 0
 		if (fields[i].children && len > 0) {
 			const children = fields[i].children ?? []
-			if (removeFieldById(id, children ?? [], fields[i])) {
+			if (removeFieldById(id, children ?? [])) {
 				return true
 			}
 		}
@@ -265,8 +269,7 @@ function handleFieldsUpdate(fields: FieldDefinition[]) {
 }
 
 // 处理添加新字段
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handleAddField(fieldTypeConfig: FieldDefinition, position: number) {
+function handleAddField(fieldTypeConfig: FieldDefinition) {
 	if (props.readonly) return
 
 	// 选中新添加的字段

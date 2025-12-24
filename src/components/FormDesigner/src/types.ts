@@ -1,5 +1,4 @@
 /**
- * Form Designer Type Definitions
  * 表单设计器类型定义
  */
 
@@ -20,48 +19,48 @@ export interface RowLayoutProps {
 
 /** 栅格布局属性 Grid Layout Props */
 export interface GridLayoutProps {
-	/** 列数 Number of columns */
+	/** 列数 */
 	columns?: number
-	/** 间隔（px） Gap in pixels */
+	/** 间隔（px） */
 	gutter?: number
 }
 
 /** 布局配置属性（联合类型）Layout Props Union */
 export type LayoutProps = RowLayoutProps | GridLayoutProps
 
-/** Field definition in the form 表单中的字段定义 */
+/** 表单中的字段定义 */
 export interface FieldDefinition {
-	/** Unique identifier within the form 字段唯一标识符 */
+	/** 字段唯一标识符 */
 	fieldId: string
-	/** Type identifier (input, select, datePicker, layout, etc.) 类型标识符 */
+	/** 类型标识符 (input, select, datePicker, layout, etc.) */
 	type: string
-	/** Display label for the field 字段显示标签 */
+	/** 字段显示标签 */
 	label: string
-	/** Display label for the field 字段显示中文标签 */
+	/** 字段显示中文标签 */
 	labelCn: string
-	/** Icon name (iconify format) 图标名称 */
+	/** 图标名称(iconify format) */
 	icon: string
 	/** Label 宽度(px) */
 	labelWidth?: number
-	/** Category for grouping 分类 */
+	/** 分类 */
 	category: 'basic' | 'selector' | 'datetime' | 'advanced' | 'layout'
-	/** Data binding key 数据绑定键 */
+	/** 数据绑定属性名 */
 	fieldName: string
-	/** Type-specific configuration properties 类型特定的配置属性 */
+	/** 类型特定的配置属性 */
 	componentProps: Record<string, any>
-	/** Validation constraints 验证约束 */
+	/** 验证约束 */
 	validationRules: RuleSchema[]
-	/** Initial value for the field 字段初始值 */
+	/** 字段初始值 */
 	defaultValue?: any
-	/** Parent layout ID (字段在布局内时有值) Parent container ID if nested in layout */
+	/** 父布局ID (字段在布局内时有值) */
 	parentId?: string | null
-	/** Layout type (仅布局类型有此属性) Layout type for layout fields */
+	/** 布局类型 (仅布局类型有此属性) */
 	layoutType?: LayoutType
-	/** Layout props (仅布局类型有此属性) Layout configuration for layout fields */
+	/** 布局(el-row)组件属性 (仅布局类型有此属性) */
 	layoutProps?: LayoutProps
-	/** Layout type (仅布局类型有此属性) el-col属性 */
+	/** el-col属性 (仅布局类型有此属性)  */
 	colProps?: Record<string, any>
-	/** Children fields (仅布局类型有此属性) Nested fields for layout containers */
+	/** 布局内的表单项 (仅布局类型有此属性) */
 	children?: Array<FieldDefinition>
 	/** 计算规则 */
 	compute?: ComputeRule
@@ -71,15 +70,15 @@ export interface FieldDefinition {
 
 /** Form configuration */
 export interface FormConfig {
-	/** Global label width for all fields */
+	/** 全局Label宽度，对所有表单项生效 */
 	labelWidth?: number | string
-	/** Alignment of labels (left, right, top) */
+	/** Label的位置(left, right, top) */
 	labelPosition?: 'left' | 'right' | 'top'
-	/** Component size (large, default, small) */
+	/** 组件尺寸 (large, default, small) */
 	size?: 'large' | 'default' | 'small'
-	/** When to validate (blur, change, submit) */
+	/** 验证触发时机 (blur, change, submit) */
 	validateTrigger?: 'blur' | 'change' | 'submit'
-	/** Inline form layout */
+	/** 行内表单 */
 	inline?: boolean
 	/** 字段padding长度(px) */
 	fieldPadding: number
@@ -87,53 +86,63 @@ export interface FormConfig {
 
 /** Complete form schema */
 export interface FormSchema {
-	/** Unique identifier for the form */
+	/** 表单唯一id */
 	formId: string
-	/** Display name of the form */
+	/** 表单名称，下载后文件名 */
 	formName: string
-	/** Global form settings */
+	/** 表单配置 */
 	formConfig: FormConfig
-	/** Ordered collection of form field definitions */
+	/** 表单内所有表单项 */
 	fields: FieldDefinition[]
 }
 
-/** Option item for select/radio/checkbox */
+/** select/radio/checkbox 的选择项  */
 export interface OptionItem {
-	/** Display label */
+	/** 展示文本 */
 	label: string
-	/** Value */
+	/** 值 */
 	value: string | number | boolean
 }
 
-/** Field type configuration for registry 字段类型注册表配置 */
+/** 字段类型注册表配置 */
 export interface FieldTypeConfig {
-	/** Field type identifier 字段类型标识符 */
+	/** 字段类型标识符 */
 	type: string
-	/** Display name in component library 组件库中的显示名称 */
+	/** 组件库中的显示名称 */
 	label: string
-	/** Icon name (iconify format) 图标名称 */
+	/** 图标名称 (iconify format) */
 	icon: string
-	/** Category for grouping 分类 */
+	/** 分类 */
 	category: 'basic' | 'selector' | 'datetime' | 'advanced' | 'layout'
-	/** Default properties for new instances 默认属性 */
+	/** 默认属性 */
 	defaultProps: Partial<FieldDefinition>
-	/** Property schema for property panel 属性面板的属性架构 */
+	/** 属性面板的属性架构 */
 	propertySchema: PropertySchema[]
 }
 
-/** Property definition for property panel */
+/** 属性面板中的属性定义 */
 export interface PropertySchema {
-	/** Property key */
+	/** 配置key(表单项配置名，例如fieldName、componentProps.min) */
 	key: string
-	/** Display label */
+	/** 在属性面板中展示的名称 */
 	label: string
-	/** Input type (input, number, select, switch, textarea, options) */
-	type: 'input' | 'number' | 'select' | 'switch' | 'textarea' | 'options' | 'slider' | 'validator' | 'fieldNames' | 'ComputeFormat'
-	/** Default value */
+	/** 配置面板中呈现的表单项的类型 (input, number, select, switch, textarea, options) */
+	type:
+		| 'input'
+		| 'number'
+		| 'select'
+		| 'switch'
+		| 'textarea'
+		| 'options'
+		| 'slider'
+		| 'validator'
+		| 'fieldNames'
+		| 'ComputeFormat'
+	/** 默认值 */
 	defaultValue?: any
-	/** Options for select type */
+	/** 如果是下拉框则是可选项 */
 	options?: Array<OptionItem>
-	/** Type-specific configuration properties 类型特定的配置属性 */
+	/** 类型特定的配置属性 */
 	componentProps?: Record<string, any>
 }
 
@@ -177,33 +186,52 @@ export interface RuleSchema {
 	validatorOptions?: Record<string, any>
 }
 
+/**
+ * 动态验证器
+ */
 export type DynamicValidator = (
+	// 校验规则
 	rule: FormItemRule & Record<string, any>,
+	// 被校验表单项的值
 	value: any,
+	// 校验成功/失败回调
 	callback: (error?: string | Error) => void,
+	// 表单绑定的数据
 	source: Record<string, any>,
-	options: any
+	// 验证器额外参数
+	options: any,
 ) => void
 
+/**
+ * 表单项校验规则类型定义
+ */
 export interface ValidatorMethod {
+	/** 校验方式 */
 	method: string
+	/** 校验方式名称 */
 	title: string
+	/** 描述，暂未用到 */
 	description?: string
+	/** 校验配置列表 */
 	properties?: PropertySchema[]
 }
 
-export type TimeUnit =
-	| 'ms'
-	| 'second'
-	| 'minute'
-	| 'hour'
-	| 'day'
+/**
+ * 格式化时间单位
+ */
+export type TimeUnit = 'ms' | 'second' | 'minute' | 'hour' | 'day'
 
+/**
+ * 时间单位下拉类型定义
+ */
 export interface TimeUnitItem {
 	value: TimeUnit
 	label: string
 }
 
+/**
+ * 属性计算配置类型定义
+ */
 export interface ComputeRule {
 	/** 公式：price * count */
 	expression: string

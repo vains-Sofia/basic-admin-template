@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import draggable from 'vuedraggable'
-import { getFieldTypesByCategory } from '../fieldRegistry.ts'
 import type { FieldTypeConfig } from '../types.ts'
-import { getContainerHeight } from '@/utils/Common.ts'
 import { useDebounce } from '@/hooks/useDebounce.ts'
+import { getContainerHeight } from '@/utils/Common.ts'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { getFieldTypesByCategory } from '../fieldRegistry.ts'
 
 // 分类列表配置
 const categories = computed(() => [
@@ -72,13 +72,15 @@ function cloneField(fieldType: FieldTypeConfig): FieldTypeConfig {
 	return JSON.parse(JSON.stringify(fieldType))
 }
 
+// 容器实例
 const containerRef = ref<HTMLDivElement>()
 
+// 容器高度
 const containerHeight = ref()
+// 计算容器高度，防抖
 const initContainerHeight = useDebounce(() => {
 	containerHeight.value = getContainerHeight(containerRef)
 })
-
 onMounted(() => {
 	containerHeight.value = getContainerHeight(containerRef)
 	window.addEventListener('resize', initContainerHeight)

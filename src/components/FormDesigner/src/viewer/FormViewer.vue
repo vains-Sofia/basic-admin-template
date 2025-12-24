@@ -19,6 +19,7 @@ const emit = defineEmits<{
 	(e: 'update:formData', value: Record<string, any>): void
 }>()
 
+// 表单配置schema
 const formSchema: ComputedRef<FormSchema> = computed(() => JSON.parse(props.formJson))
 
 /**
@@ -43,8 +44,9 @@ function buildDefaultFormData(fields: FieldDefinition[], result: Record<string, 
 // 内部绑定的表单数据
 const innerFormData = reactive<Record<string, any>>({})
 
+// 合并表单原生属性配置
 const nativeProps = reactive(formSchema.value.formConfig || {})
-// 预览器传入优先
+// 预览器传入的属性配置优先
 Object.assign(nativeProps, props.formNativeProps)
 
 /**
@@ -80,11 +82,15 @@ watch(
 	{ deep: true },
 )
 
+// 获取所有字段
 const allFields = computed(() => collectAllFields(formSchema.value.fields))
+// 解析表达式并根据表单data实时执行表达式
 setupComputeEngine(allFields.value, innerFormData)
 
+// 表单实例
 const formRef = ref<FormInstance>()
 
+// 对外暴露函数
 defineExpose<FormExpose>({
 	getValue(fieldName: string): any {
 		return innerFormData[fieldName]

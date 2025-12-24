@@ -13,7 +13,7 @@ const commonProperties: PropertySchema[] = [
 		defaultValue: '',
 		componentProps: {
 			placeholder: '请输入字段显示文字',
-		}
+		},
 	},
 	{
 		key: 'fieldName',
@@ -21,7 +21,7 @@ const commonProperties: PropertySchema[] = [
 		type: 'input',
 		componentProps: {
 			placeholder: '请输入字段属性名(e.g., username)',
-		}
+		},
 	},
 	{
 		key: 'labelWidth',
@@ -30,7 +30,7 @@ const commonProperties: PropertySchema[] = [
 		defaultValue: 120,
 		componentProps: {
 			min: 1,
-		}
+		},
 	},
 	{
 		key: 'componentProps.placeholder',
@@ -39,7 +39,7 @@ const commonProperties: PropertySchema[] = [
 		defaultValue: '',
 		componentProps: {
 			placeholder: '请输入提示内容',
-		}
+		},
 	},
 	// {
 	// 	key: 'required',
@@ -59,7 +59,7 @@ const commonProperties: PropertySchema[] = [
 		type: 'input',
 		componentProps: {
 			placeholder: '请输入计算公式',
-		}
+		},
 	},
 	{
 		key: 'compute.dependsOn',
@@ -68,7 +68,7 @@ const commonProperties: PropertySchema[] = [
 		componentProps: {
 			multiple: true,
 			readonly: true,
-		}
+		},
 	},
 	{
 		key: 'compute.precision',
@@ -77,7 +77,7 @@ const commonProperties: PropertySchema[] = [
 		componentProps: {
 			min: 0,
 			max: 10,
-		}
+		},
 	},
 	{
 		key: 'componentProps.readonly',
@@ -92,7 +92,7 @@ const commonProperties: PropertySchema[] = [
 		defaultValue: '',
 		componentProps: {
 			placeholder: '初始化表单时会默认填充该值',
-		}
+		},
 	},
 ]
 
@@ -124,7 +124,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			defaultValue: '表单',
 			componentProps: {
 				placeholder: '请输入表单名称',
-			}
+			},
 		},
 		{
 			key: 'labelWidth',
@@ -246,7 +246,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			type: 'number',
 			componentProps: {
 				placeholder: '最小值',
-			}
+			},
 		},
 		{
 			key: 'componentProps.max',
@@ -254,7 +254,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			type: 'number',
 			componentProps: {
 				placeholder: '最大值',
-			}
+			},
 		},
 		{
 			key: 'componentProps.step',
@@ -263,7 +263,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			defaultValue: 1,
 			componentProps: {
 				min: 1,
-			}
+			},
 		},
 		{
 			key: 'componentProps.precision',
@@ -272,7 +272,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 0,
 				placeholder: '小数点位数',
-			}
+			},
 		},
 	],
 	password: [
@@ -416,7 +416,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 		{
 			key: 'componentProps.valueFormat',
@@ -433,7 +433,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 	],
 	timePicker: [
@@ -451,7 +451,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 		{
 			key: 'componentProps.valueFormat',
@@ -466,20 +466,19 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 	],
 	datePickerRange: [
-		...commonProperties.filter(
-			(p) => p.key !== 'componentProps.placeholder'),
+		...commonProperties.filter((p) => p.key !== 'componentProps.placeholder'),
 		{
 			key: 'componentProps.startPlaceholder',
 			label: '开始日期提示内容',
 			type: 'input',
 			defaultValue: '开始日期',
 			componentProps: {
-				placeholder: '开始日期提示内容'
-			}
+				placeholder: '开始日期提示内容',
+			},
 		},
 		{
 			key: 'componentProps.endPlaceholder',
@@ -487,8 +486,8 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			type: 'input',
 			defaultValue: '结束日期',
 			componentProps: {
-				placeholder: '结束日期提示内容'
-			}
+				placeholder: '结束日期提示内容',
+			},
 		},
 		{
 			key: 'componentProps.type',
@@ -512,7 +511,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 		{
 			key: 'componentProps.valueFormat',
@@ -529,7 +528,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 	],
 	timePickerRange: [
@@ -540,8 +539,8 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			type: 'input',
 			defaultValue: '开始时间',
 			componentProps: {
-				placeholder: '开始时间提示内容'
-			}
+				placeholder: '开始时间提示内容',
+			},
 		},
 		{
 			key: 'componentProps.endPlaceholder',
@@ -549,8 +548,8 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			type: 'input',
 			defaultValue: '结束时间',
 			componentProps: {
-				placeholder: '结束时间提示内容'
-			}
+				placeholder: '结束时间提示内容',
+			},
 		},
 		{
 			key: 'componentProps.format',
@@ -565,7 +564,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 		{
 			key: 'componentProps.valueFormat',
@@ -580,11 +579,13 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				filterable: true,
 				allowCreate: true,
 				defaultFirstOption: true,
-			}
+			},
 		},
 	],
 	rate: [
-		...commonProperties.filter((p) => p.key !== 'componentProps.placeholder' && p.key !== 'componentProps.readonly'),
+		...commonProperties.filter(
+			(p) => p.key !== 'componentProps.placeholder' && p.key !== 'componentProps.readonly',
+		),
 		{
 			key: 'componentProps.disabled',
 			label: '禁用',
@@ -599,7 +600,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 10,
-			}
+			},
 		},
 		{
 			key: 'componentProps.allowHalf',
@@ -615,7 +616,9 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 		},
 	],
 	slider: [
-		...commonProperties.filter((p) => p.key !== 'componentProps.placeholder' && p.key !== 'componentProps.readonly'),
+		...commonProperties.filter(
+			(p) => p.key !== 'componentProps.placeholder' && p.key !== 'componentProps.readonly',
+		),
 		{
 			key: 'componentProps.disabled',
 			label: '禁用',
@@ -629,7 +632,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			defaultValue: 0,
 			componentProps: {
 				placeholder: '最小值',
-			}
+			},
 		},
 		{
 			key: 'componentProps.max',
@@ -638,7 +641,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			defaultValue: 100,
 			componentProps: {
 				placeholder: '最大值',
-			}
+			},
 		},
 		{
 			key: 'componentProps.step',
@@ -647,7 +650,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			defaultValue: 1,
 			componentProps: {
 				min: 1,
-			}
+			},
 		},
 		{
 			key: 'componentProps.showStops',
@@ -657,7 +660,9 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 		},
 	],
 	colorPicker: [
-		...commonProperties.filter((p) => p.key !== 'componentProps.placeholder' && p.key !== 'componentProps.readonly'),
+		...commonProperties.filter(
+			(p) => p.key !== 'componentProps.placeholder' && p.key !== 'componentProps.readonly',
+		),
 		{
 			key: 'componentProps.disabled',
 			label: '禁用',
@@ -698,7 +703,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				min: 0,
 				max: 100,
 				placeholder: '设置栅格间隔（px）',
-			}
+			},
 		},
 		{
 			key: 'layoutProps.justify',
@@ -778,7 +783,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				min: 1,
 				max: 12,
 				placeholder: '设置列数',
-			}
+			},
 		},
 		{
 			key: 'layoutProps.gutter',
@@ -789,7 +794,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 				min: 0,
 				max: 100,
 				placeholder: '设置间隔（px）',
-			}
+			},
 		},
 	],
 	col: [
@@ -808,7 +813,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.offset',
@@ -817,7 +822,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 0,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.push',
@@ -826,7 +831,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 0,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.pull',
@@ -835,7 +840,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 0,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.xs',
@@ -844,7 +849,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.sm',
@@ -853,7 +858,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.md',
@@ -862,7 +867,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.lg',
@@ -871,7 +876,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 24,
-			}
+			},
 		},
 		{
 			key: 'componentProps.xl',
@@ -880,7 +885,7 @@ export const propertySchemas: Record<string, PropertySchema[]> = {
 			componentProps: {
 				min: 1,
 				max: 24,
-			}
+			},
 		},
 		// {
 		// 	key: 'layoutType',
@@ -1225,7 +1230,7 @@ export const fieldTypeRegistry: FieldDefinition[] = [
 	},
 ]
 
-/** Get field type config by type identifier */
+/** 根据类型标识符获取字段类型配置 */
 export function getFieldTypeConfig(field?: FieldDefinition): PropertySchema[] | undefined {
 	if (field === undefined) {
 		return propertySchemas['form']
@@ -1237,12 +1242,12 @@ export function getFieldTypeConfig(field?: FieldDefinition): PropertySchema[] | 
 	}
 }
 
-/** Get all field types by category */
+/** 根据分类获取字段列表 */
 export function getFieldTypesByCategory(category: string): FieldDefinition[] {
 	return fieldTypeRegistry.filter((config) => config.category === category)
 }
 
-/** Register a custom field type */
+/** 注册自定义字段类型(如果type已存在则替换默认) */
 export function registerFieldType(config: FieldDefinition): void {
 	const existingIndex = fieldTypeRegistry.findIndex((c) => c.type === config.type)
 	if (existingIndex !== -1) {
@@ -1252,11 +1257,19 @@ export function registerFieldType(config: FieldDefinition): void {
 	}
 }
 
+/**
+ * 生成一个随机id
+ */
 export function generateId(): string {
 	return `field_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 }
 
-// Generate field name
+/**
+ * 生成 field name
+ * @param fields 表单项列表
+ * @param fieldType 表单项类型
+ * @param count 从count开始累加
+ */
 export function generateFieldName(
 	fields: FieldDefinition[],
 	fieldType: string,
@@ -1268,6 +1281,12 @@ export function generateFieldName(
 	return `${fieldType}${typeCount}`
 }
 
+/**
+ * 根据type递归获取对应的类型
+ * @param fields 表单项列表
+ * @param fieldType 表单项类型
+ * @param result 响应数据(递归使用)
+ */
 export function getFieldsByType(
 	fields: FieldDefinition[],
 	fieldType: string,
@@ -1288,7 +1307,10 @@ export function getFieldsByType(
 	return result
 }
 
-// Get the appropriate component for rendering based on field type
+/**
+ * 根据字段类型获取用于渲染的相应组件
+ * @param field 表单项定义
+ */
 export function getFieldComponent(field: FieldDefinition) {
 	const componentMap: Record<string, any> = {
 		input: ElInput,
@@ -1311,6 +1333,10 @@ export function getFieldComponent(field: FieldDefinition) {
 	return componentMap[field.type] || ElInput
 }
 
+/**
+ * 递归获取字段名列表
+ * @param fields 树形字段列表
+ */
 export function collectAllFieldNames(fields: FieldDefinition[]): OptionItem[] {
 	const result: OptionItem[] = []
 
@@ -1335,6 +1361,10 @@ export function collectAllFieldNames(fields: FieldDefinition[]): OptionItem[] {
 	return result
 }
 
+/**
+ * 递归获取所有字段
+ * @param fields 树形结构字段列表
+ */
 export function collectAllFields(fields: FieldDefinition[]): FieldDefinition[] {
 	const result: FieldDefinition[] = []
 

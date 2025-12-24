@@ -10,11 +10,14 @@ export type RuntimeValue = number | string | boolean | Date | null
 export type RuntimeContext = Record<string, RuntimeValue>
 
 /* =====================================================
- * 依赖解析（保留你原实现）
+ * 依赖解析
  * ===================================================== */
 
 const VARIABLE_REG = /[a-zA-Z_]\w*/g
 
+/* =====================================================
+ * 解析表达式并获取依赖字段名
+ * ===================================================== */
 export function extractDependencies(expression: string): string[] {
 	const set = new Set<string>()
 	const matches = expression.match(VARIABLE_REG) || []
@@ -32,7 +35,7 @@ function isReservedWord(word: string) {
 }
 
 /* =====================================================
- * 依赖图 + 循环检测（原样保留）
+ * 依赖图
  * ===================================================== */
 
 export function buildDependencyGraph(fields: FieldDefinition[]): Map<string, Set<string>> {
@@ -52,6 +55,9 @@ export function buildDependencyGraph(fields: FieldDefinition[]): Map<string, Set
 	return graph
 }
 
+/* =====================================================
+ * 循环检测
+ * ===================================================== */
 export function detectCycle(graph: Map<string, Set<string>>): string[] | null {
 	const visited = new Set<string>()
 	const stack = new Set<string>()
@@ -98,6 +104,9 @@ interface Token {
 	value: string
 }
 
+/* =====================================================
+ * 解析表达式
+ * ===================================================== */
 function tokenize(expr: string): Token[] {
 	const tokens: Token[] = []
 	const re =

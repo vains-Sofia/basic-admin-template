@@ -10,6 +10,7 @@ const props = defineProps<{
 	formConfig: FormConfig
 }>()
 
+// 判断是否Layout
 const isLayout = computed(() => isLayoutField(props.field))
 </script>
 

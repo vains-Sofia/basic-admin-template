@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
 import { computed, inject } from 'vue'
-import type { FieldDefinition, FormSchema } from '@/components/FormDesigner'
 import { getFieldComponent } from '../fieldRegistry.ts'
-import { buildElFormRules } from '@/components/FormDesigner/src/ValidatorRegistry.ts'
+import { buildElFormRules } from '../ValidatorRegistry.ts'
+import type { FieldDefinition, FormSchema } from '@/components/FormDesigner'
 
 const props = defineProps<{
 	field: FieldDefinition
@@ -18,10 +19,12 @@ const emit = defineEmits<{
 // formData 从父级 provide
 const formData = inject<Record<string, any>>('formData')!
 
+// 表单项点击事件
 function handleFieldClick(field: FieldDefinition) {
 	emit('fieldClick', field)
 }
 
+// 表单项删除事件
 function handleDeleteField(field: FieldDefinition) {
 	emit('fieldDelete', field)
 }
@@ -140,10 +143,6 @@ const rules = computed(() => buildElFormRules(props.field.validationRules, formD
 		outline: 2px solid var(--el-color-primary);
 		outline-offset: 2px;
 		background: rgba(59, 130, 246, 0.05);
-	}
-
-	&.dragging {
-		opacity: 0.4;
 	}
 
 	.field-content {

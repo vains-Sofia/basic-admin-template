@@ -9,8 +9,10 @@ const props = defineProps<{
 	formConfig: FormConfig
 }>()
 
+// 布局中子元素
 const children = computed(() => props.field.children)
 
+// 获取布局中对应下标的元素(el-col)中的元素列表
 const getColChildren = (colIndex: number) =>
 	computed<FieldDefinition[]>(() => children.value?.[colIndex].children ?? [])
 </script>

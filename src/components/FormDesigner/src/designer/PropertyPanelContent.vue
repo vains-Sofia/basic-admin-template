@@ -8,8 +8,8 @@ import type {
 } from '@/components/FormDesigner'
 import { computed, ref, watch } from 'vue'
 import { getValidatorMethod, validators } from '../ValidatorRegistry.ts'
-import { collectAllFieldNames, collectAllFields, getFormatByValue } from '../fieldRegistry.ts'
 import { extractDependencies, timeUnitLabels } from '../computeEngine.ts'
+import { collectAllFieldNames, collectAllFields, getFormatByValue } from '../fieldRegistry.ts'
 
 const props = defineProps<{
 	formSchema: FormSchema
@@ -40,6 +40,7 @@ watch(
 		const dependsOnFields = computed(() =>
 			dependsOn?.map((key) => allFields.value.find((ff) => ff.fieldName === key)),
 		)
+		// 获取所有日期类型的
 		const dateFields =
 			dependsOnFields.value?.filter((f) => datePickerType.includes(f?.valueType ?? '')) ?? []
 		computeDateType.value = dateFields.length > 0
@@ -47,16 +48,22 @@ watch(
 	{ immediate: true, deep: true },
 )
 
+// 如果未选择特定字段属性，则使用表单属性
 const properties = computed(() => props.ruleProperty ?? props.selectedField ?? props.formProperties)
 
 function handleFieldPropertyChange() {
 	// Emit changes will be handled by setPropertyValue
 }
 
+/**
+ * 根据key获取属性的值
+ * @param key 配置属性key
+ * @param property 配置项
+ */
 function getPropertyValue(key: string, property?: PropertySchema): any {
 	if (!properties.value) return undefined
 
-	// Handle nested properties (e.g., componentProps.maxlength)
+	// 处理嵌套属性 (e.g., componentProps.maxlength)
 	const keys = key.split('.')
 	let value: any = properties.value
 
@@ -71,10 +78,18 @@ function getPropertyValue(key: string, property?: PropertySchema): any {
 	return value ?? property?.defaultValue
 }
 
+/**
+ * 设置属性的值
+ * @param key 属性key
+ * @param value 修改后的值
+ */
 function setPropertyValue(key: string, value: any) {
 	// 日期选择器特殊处理
 	const datePickerTypes = ['datePicker', 'datePickerRange']
-	if (datePickerTypes.includes(props.selectedField?.type ?? '') && key === 'componentProps.type') {
+	if (
+		datePickerTypes.includes(props.selectedField?.type ?? '') &&
+		key === 'componentProps.type'
+	) {
 		const datePickerFormats = ['componentProps.format', 'componentProps.valueFormat']
 		// 根据选择的类型自动设置对应的格式
 		datePickerFormats.forEach((k) => setPropertyValue(k, getFormatByValue(value)))
@@ -138,23 +153,42 @@ const addValidator = (validatorKey: string, properties?: PropertySchema[]) => {
 	setPropertyValue('validationRules', validators)
 }
 
+/**
+ * 添加选项
+ * @param key 选项的配置key
+ */
 function addOption(key: string) {
 	const options = getPropertyValue(key) || []
 	options.push({ label: `Option ${options.length + 1}`, value: String(options.length + 1) })
 	setPropertyValue(key, options)
 }
 
+/**
+ * 删除选项
+ * @param key 选项的配置key
+ * @param index 选项在列表中的下标
+ */
 function removeOption(key: string, index: number) {
 	const options = getPropertyValue(key) || []
 	options.splice(index, 1)
 	setPropertyValue(key, options)
 }
 
+/**
+ * 整形类型值变更事件
+ * @param value 变更后的值
+ * @param key 属性key
+ */
 function handleNumberChange(value: any, key: string) {
 	setPropertyValue(key, value)
 }
 
-// Update field property
+/**
+ * 修改校验规则的属性事件
+ * @param rule 校验规则
+ * @param key 修改的属性key
+ * @param value 修改的值
+ */
 function handleUpdateFieldProperty(rule: RuleSchema, key: string, value: any) {
 	if (!rule) {
 		return

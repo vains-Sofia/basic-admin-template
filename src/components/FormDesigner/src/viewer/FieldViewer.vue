@@ -10,8 +10,10 @@ const props = defineProps<{
 	formConfig: FormConfig
 }>()
 
+// 转为内部实例
 const formDataInline = reactive(props.formData)
 
+// 根据当前字段的校验规则和表单数据生成表单项的校验规则
 const rules = computed(() => buildElFormRules(props.field.validationRules, formDataInline))
 </script>
 
@@ -23,7 +25,6 @@ const rules = computed(() => buildElFormRules(props.field.validationRules, formD
 			:rules="rules"
 			:label-width="field.labelWidth"
 		>
-			<!-- Render different field types -->
 			<!-- Select with options -->
 			<el-select
 				v-if="field.type === 'select'"

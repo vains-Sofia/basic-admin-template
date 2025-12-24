@@ -7,10 +7,8 @@
 			:form-schema="formSchema"
 			:selected="selectedFieldId === field.fieldId"
 			:selected-field-id="selectedFieldId"
-			:expanded="expanded"
 			@select="emit('select-layout', $event)"
 			@delete="emit('delete-layout', $event)"
-			@toggle="emit('toggle-layout', $event)"
 			@children-update="onChildrenUpdate"
 			@field-add="onFieldAdd"
 			@field-click="emit('field-click', $event)"
@@ -39,7 +37,6 @@ import { isLayoutField } from '../types.ts'
 const props = defineProps<{
 	field: FieldDefinition
 	selectedFieldId: string | undefined
-	expanded: boolean
 	formSchema: FormSchema
 }>()
 
@@ -48,7 +45,6 @@ const emit = defineEmits([
 	'field-delete',
 	'select-layout',
 	'delete-layout',
-	'toggle-layout',
 	'children-update',
 	'field-add',
 ])

@@ -52,7 +52,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - 🔐 完整的认证系统，支持登录/登出
 - 📱 多种登录方式（账号、邮箱、二维码）
 - 🧠 基于 Pinia 的状态管理
-- 🎯 内置组件（对话框、抽屉、表格、表单等）
+- 🎯 内置组件（对话框、抽屉、表格、表单设计器等）
 - ⚡ 基于 Vite 的快速开发体验
 - 📦 组件和 API 的自动导入
 - 🎨 支持 Tailwind CSS 和 SCSS
@@ -136,6 +136,7 @@ src/
 │   └── BounceText              # 跳动文字
 │   └── CommonDialog            # 函数式对话框封装
 │   └── CommonDrawer            # 函数式抽屉封装
+│   └── FormDesigner            # 动态表单(设计器/预览器)
 │   └── IconSelect              # 图标选择器
 │   └── InputIconSelect         # 与Input关联的图标选择器
 │   └── ImageCropper            # 图片剪裁

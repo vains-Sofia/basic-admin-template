@@ -33,14 +33,12 @@
 								:field="element"
 								:form-schema="formSchema"
 								:selected-field-id="selectedFieldId"
-								:expanded="true"
 								@field-click="$emit('field-click', $event)"
 								@field-delete="$emit('field-delete', $event)"
 								@field-add="onFieldAdd"
 								@children-update="handleChildrenUpdate"
 								@select-layout="handleSelectLayout"
 								@delete-layout="handleDeleteLayout"
-								@toggle-layout="handleToggleLayout"
 							/>
 						</template>
 					</draggable>
@@ -51,7 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
 import draggable from 'vuedraggable'
 import FieldItem from './FieldItem.vue'
 import type { FieldDefinition, FormSchema } from '../types.ts'
@@ -60,47 +59,46 @@ import { generateFieldName, generateId } from '../fieldRegistry.ts'
 const props = defineProps<{
 	layout: FieldDefinition
 	selectedFieldId: string | undefined
-	expanded: boolean
 	formSchema: FormSchema
 }>()
 
 const emit = defineEmits([
 	'select',
 	'delete',
-	'toggle',
 	'children-update',
 	'field-click',
 	'field-delete',
 	'field-add',
 ])
 
-// 展开的布局容器集合
-const expandedLayouts = ref<Set<string>>(new Set())
-
 const children = computed(() => props.layout.children)
 
+// 获取布局子节点中对应下标的元素的子节点
 const getColChildren = (colIndex: number) =>
 	computed<FieldDefinition[]>({
 		get: () => children.value?.[colIndex].children ?? [],
 		set: (val) => {
 			if (val) {
 				const next = [...(children.value ?? [])]
+				// 生成id和name
 				val.forEach((e) => (e.fieldId = generateId()))
-				val.forEach(
-					(e) => {
-						if (!e.fieldName || !e.fieldName.startsWith(e.type)) {
-							e.fieldName = generateFieldName(props.formSchema.fields, e.type, 1)
-						}
-					},
-				)
+				val.forEach((e) => {
+					// 生成过不需要生成
+					if (!e.fieldName || !e.fieldName.startsWith(e.type)) {
+						e.fieldName = generateFieldName(props.formSchema.fields, e.type, 1)
+					}
+				})
 				next[colIndex].children = val
+				// 触发子节点更新事件
 				emit('children-update', props.layout.fieldId, next)
 			}
 		},
 	})
 
+// 当前Layout是否被选中
 const selected = computed(() => props.selectedFieldId === props.layout.fieldId)
 
+// 子节点内元素变更事件
 function handleCanvasChange(evt: any) {
 	if (evt.added) {
 		const { added } = evt
@@ -113,6 +111,7 @@ function handleCanvasChange(evt: any) {
 	// vuedraggable 已经更新了 localFields（通过 v-model）
 }
 
+// 布局内添加表单项
 function onFieldAdd(field: FieldDefinition) {
 	emit('field-add', field)
 }
@@ -122,6 +121,7 @@ function handleSelectLayout(layoutId: string) {
 	emit('select', layoutId)
 }
 
+// 子节点更新事件(套娃递归)
 function handleChildrenUpdate(layoutId: string, children: FieldDefinition[][]) {
 	emit('children-update', layoutId, children)
 }
@@ -130,23 +130,13 @@ function handleChildrenUpdate(layoutId: string, children: FieldDefinition[][]) {
 function handleDeleteLayout(layoutId: string) {
 	emit('delete', layoutId)
 }
-
-// 处理切换布局展开/折叠
-function handleToggleLayout(layoutId: string) {
-	if (expandedLayouts.value.has(layoutId)) {
-		expandedLayouts.value.delete(layoutId)
-	} else {
-		expandedLayouts.value.add(layoutId)
-	}
-	emit('toggle', layoutId)
-}
 </script>
 
 <style scoped lang="scss">
 .layout-container {
 	border-radius: 4px;
 	margin-bottom: 1px;
-	border: 1px dashed var(--el-border-color);
+	border: 2px dashed var(--el-border-color);
 
 	&.layout-empty {
 		display: flex;
@@ -184,7 +174,7 @@ function handleToggleLayout(layoutId: string) {
 		width: 100%;
 
 		.layout-col {
-			border: 1px dashed var(--el-border-color);
+			border: 2px dashed var(--el-border-color);
 		}
 	}
 	&:hover {
@@ -195,6 +185,6 @@ function handleToggleLayout(layoutId: string) {
 }
 
 .selected {
-	border: 1px solid var(--el-color-primary) !important;
+	border: 2px solid var(--el-color-primary) !important;
 }
 </style>
