@@ -26,8 +26,10 @@ const activeMenu = computed(() => {
 
 const menuLoading = ref(true)
 const menus = ref()
-menus.value = userStore.getRouters()
-menuLoading.value = false
+userStore
+	.getRouters()
+	.then((res) => (menus.value = res))
+	.finally(() => (menuLoading.value = false))
 </script>
 
 <template>

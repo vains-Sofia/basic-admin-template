@@ -3,7 +3,11 @@ import router from '@/router'
 import { useUserStore } from '@/stores/User'
 import type { FormInstance } from 'element-plus'
 
-export function useLogin(loginFormRef: Ref<FormInstance | undefined>, loginForm: any, loginType: string) {
+export function useLogin(
+	loginFormRef: Ref<FormInstance | undefined>,
+	loginForm: any,
+	loginType: string,
+) {
 	// 是否加载中
 	const loading = ref(false)
 	const userStore = useUserStore()
@@ -16,13 +20,13 @@ export function useLogin(loginFormRef: Ref<FormInstance | undefined>, loginForm:
 				userStore
 					.login(loginType, loginForm)
 					.then(() => {
-						userStore.initRouter()
+						userStore
+							.initRouter()
+							.then(() => router.replace({ name: 'Dashboard' }).then())
 						userStore.setupUser({
 							username: 'admin',
 							nickname: '云逸-e',
 						})
-						router.replace({ name: 'Dashboard' })
-							.then(() => console.log('跳转首页'))
 					})
 					.finally(() => (loading.value = false))
 			}

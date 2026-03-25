@@ -2,9 +2,9 @@ export default [
 	{
 		path: '/components',
 		meta: {
-			title: '组件',
+			title: '组件1',
 			icon: 'ep:menu',
-			showLink: true
+			showLink: true,
 		},
 		component: () => import('@/components/Layout/index.vue'),
 		children: [
@@ -15,7 +15,7 @@ export default [
 				meta: {
 					title: '二维码',
 					icon: 'material-symbols:qr-code',
-					showLink: true
+					showLink: true,
 				},
 			},
 			{
@@ -25,7 +25,7 @@ export default [
 				meta: {
 					icon: 'ep:promotion',
 					title: '布局功能',
-					showLink: true
+					showLink: true,
 				},
 			},
 			{
@@ -35,7 +35,7 @@ export default [
 				meta: {
 					icon: 'material-symbols:table-outline-sharp',
 					title: '表格',
-					showLink: true
+					showLink: true,
 				},
 			},
 			{
@@ -45,7 +45,7 @@ export default [
 				meta: {
 					icon: 'material-symbols:table-view-outline-sharp',
 					title: '虚拟表格',
-					showLink: true
+					showLink: true,
 				},
 			},
 			{
@@ -55,7 +55,7 @@ export default [
 				meta: {
 					icon: 'material-symbols:chat-outline',
 					title: 'Dialog对话框',
-					showLink: true
+					showLink: true,
 				},
 			},
 			{
@@ -65,7 +65,7 @@ export default [
 				meta: {
 					icon: 'material-symbols:bottom-drawer-outline',
 					title: 'Drawer抽屉',
-					showLink: true
+					showLink: true,
 				},
 			},
 			{
@@ -84,7 +84,7 @@ export default [
 				meta: {
 					title: '图标选择器1',
 					icon: 'fa7-solid:navicon',
-					showLink: true
+					showLink: true,
 				},
 				component: () => import('@/views/components/IconSelect1.vue'),
 			},
@@ -94,7 +94,7 @@ export default [
 				meta: {
 					title: '图标选择器2',
 					icon: 'fa7-solid:navicon',
-					showLink: true
+					showLink: true,
 				},
 				component: () => import('@/views/components/IconSelect2.vue'),
 			},
@@ -104,7 +104,7 @@ export default [
 				meta: {
 					title: '表单设计器',
 					icon: 'ri:file-list-line',
-					showLink: true
+					showLink: true,
 				},
 				component: () => import('@/views/components/FormDesigner.vue'),
 			},
@@ -114,10 +114,10 @@ export default [
 				meta: {
 					title: '动态表单示例',
 					icon: 'ri:file-list-line',
-					showLink: true
+					showLink: true,
 				},
 				component: () => import('@/views/components/FormDesignerExample.vue'),
-			}
+			},
 		],
 	},
 ]

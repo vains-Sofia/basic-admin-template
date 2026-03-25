@@ -29,7 +29,7 @@ router.beforeEach((to, from, next) => {
 	}
 
 	// 登录后，且还未添加动态路由 → 添加
-	if (!userStore.isRouterInitialized && userStore.routers) {
+	if (!userStore.isRouterInitialized && userStore.routers && userStore.routers.length > 0) {
 		userStore.initRouter()
 		next({ ...to, replace: true })
 		return

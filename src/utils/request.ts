@@ -4,6 +4,7 @@ import axios, {
 	type AxiosResponse,
 	type InternalAxiosRequestConfig,
 } from 'axios'
+import router from '@/router'
 
 // =======================
 // 定义通用 API 响应格式
@@ -37,10 +38,7 @@ const service: AxiosInstance = axios.create({
 // =======================
 // Token 处理
 // =======================
-let authToken: string | null = localStorage.getItem('token')
-
 export const setToken = (token: string | null) => {
-	authToken = token
 	if (token) {
 		localStorage.setItem('token', token)
 	} else {
@@ -48,7 +46,7 @@ export const setToken = (token: string | null) => {
 	}
 }
 
-const getToken = () => authToken
+const getToken = () => localStorage.getItem('token')
 
 // =======================
 // 请求拦截器
@@ -76,7 +74,7 @@ service.interceptors.request.use(
 
 		const token = getToken()
 		if (token) {
-			config.headers.Authorization = `Bearer ${token}`
+			config.headers.Authorization = `${token}`
 		}
 		return config
 	},
@@ -193,13 +191,20 @@ const processErrorResponse = (response: AxiosResponse, rawResponse: boolean = fa
 	switch (status) {
 		case 401:
 			if (window.location.pathname !== '/login') {
-				window.location.pathname = '/login'
+				router.push('/login').then(() =>
+					ElMessage({
+						showClose: true,
+						message: message || '登录失效，请重新登录',
+						type: 'error',
+					}),
+				)
+			} else {
+				ElMessage({
+					showClose: true,
+					message: message || '登录失效，请重新登录',
+					type: 'error',
+				})
 			}
-			ElMessage({
-				showClose: true,
-				message: message || '登录失效，请重新登录',
-				type: 'error',
-			})
 			break
 		case 403:
 			ElMessage({
