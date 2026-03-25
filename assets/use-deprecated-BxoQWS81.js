@@ -1,0 +1,1 @@
+import{Oi as e,li as t}from"./index-oo9OB-cG.js";var n=({from:n,replacement:r,scope:i,version:a,ref:o,type:s=`API`},c)=>{t(()=>e(c),e=>{},{immediate:!0})};export{n as t};

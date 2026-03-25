@@ -1,0 +1,1 @@
+import{c as e,l as t,s as n}from"./use-aria-J_Ne2tnR.js";import{Gn as r,rr as i}from"./index-oo9OB-cG.js";function a(r,i){return e(n(r,i,t),r+``)}var o=a;function s(e){return i(e)&&r(e)}var c=s;export{o as n,c as t};

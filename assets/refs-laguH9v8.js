@@ -1,0 +1,1 @@
+import{Li as e,Vi as t}from"./index-oo9OB-cG.js";e();var n=(...e)=>n=>{e.forEach(e=>{t(e)?e(n):e.value=n})};export{n as t};
