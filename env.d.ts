@@ -23,6 +23,10 @@ interface ImportMetaEnv {
 	 * Vue开发工具开关
 	 */
 	readonly VITE_VUE_DEVTOOLS: string
+	/**
+	 * MinIO 地址
+	 */
+	readonly VITE_MINIO_BASE_URL: string
 }
 
 interface ImportMeta {

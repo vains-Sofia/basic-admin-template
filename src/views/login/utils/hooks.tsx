@@ -23,10 +23,6 @@ export function useLogin(
 						userStore
 							.initRouter()
 							.then(() => router.replace({ name: 'Dashboard' }).then())
-						userStore.setupUser({
-							username: 'admin',
-							nickname: '云逸-e',
-						})
 					})
 					.finally(() => (loading.value = false))
 			}
