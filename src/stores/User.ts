@@ -118,6 +118,15 @@ export const useUserStore = defineStore(
 					case 'qr-code':
 						formLogin(type, data)
 							.then((res) => {
+								if ((res as any)['code'] === 401) {
+									ElMessage({
+										showClose: true,
+										message: (res as any)['message'] || '登录失败',
+										type: 'error',
+									})
+									reject((res as any)['message'] || '登录失败')
+									return
+								}
 								if (res.expires_in && res.expires_in > 0) {
 									// 过期时长转为具体的过期时间
 									res.expires_in = Date.now() + res.expires_in * 1000
