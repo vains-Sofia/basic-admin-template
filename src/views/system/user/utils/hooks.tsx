@@ -18,6 +18,7 @@ import ResetPassword from '@/views/system/user/form/ResetPassword.vue'
 import { getAllRoleList } from '@/api/system/Role.ts'
 import type { FindRoleResponse } from '@/api/types/RoleTypes.ts'
 import UserRoles from '@/views/system/user/form/UserRoles.vue'
+import { generateUUID } from '@/utils/Common.ts'
 
 export function useUser() {
 	// 所有角色
@@ -264,7 +265,7 @@ export function useUser() {
 				// 头像预签名
 				const fileName = file.name
 				const splits = fileName.split('.')
-				const name = splits[0] + '.' + crypto.randomUUID() + '.' + splits[1]
+				const name = splits[0] + '.' + generateUUID() + '.' + splits[1]
 				uploadPreSigned({ name, bucket })
 					.then((res) => {
 						// 使用预签名URL上传
