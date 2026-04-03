@@ -35,6 +35,10 @@ export function useUser() {
 		currentPage: 1,
 	})
 
+	const userPictures = () => {
+		return dataList.value.filter((e) => !!e && !!e.picture).map((e) => e.picture)
+	}
+
 	/**
 	 * 表格列
 	 */
@@ -56,9 +60,10 @@ export function useUser() {
 			formatter: ({ picture }) => (
 				<ElImage
 					fit="cover"
-					preview-teleported={true}
 					src={picture}
-					preview-src-list={Array.of(picture)}
+					initial-index={userPictures().indexOf(picture)}
+					preview-teleported={true}
+					preview-src-list={userPictures()}
 					class={'w-[80px] h-[80px] full align-middle'}
 				/>
 			),
