@@ -124,7 +124,7 @@ export const useUserStore = defineStore(
 										message: (res as any)['message'] || '登录失败',
 										type: 'error',
 									})
-									reject((res as any)['message'] || '登录失败')
+									reject(res)
 									return
 								}
 								if (res.expires_in && res.expires_in > 0) {
