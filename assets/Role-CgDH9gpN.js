@@ -1,0 +1,1 @@
+import{c as e}from"./index-CcjE93Br.js";const t=t=>e.request(`get`,`/role/findByPage`,t),n=t=>e.post(`/role/insertRole`,t),r=t=>e.put(`/role/updateRole`,t),i=t=>e.request(`delete`,`/role/removeById/${t}`),a=t=>e.put(`/role/updateRolePermissions`,t),o=()=>e.request(`get`,`/role/findRoles`);export{r as a,i,t as n,a as o,n as r,o as t};

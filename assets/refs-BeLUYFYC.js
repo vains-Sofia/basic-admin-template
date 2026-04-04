@@ -1,0 +1,1 @@
+import{Hi as e,Ri as t}from"./index-CcjE93Br.js";t();var n=(...t)=>n=>{t.forEach(t=>{e(t)?t(n):t.value=n})};export{n as t};

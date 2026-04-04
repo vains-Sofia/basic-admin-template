@@ -1,0 +1,1 @@
+import{c as e,l as t,s as n}from"./use-aria-CA9__dvH.js";import{Kn as r,ir as i}from"./index-CcjE93Br.js";function a(r,i){return e(n(r,i,t),r+``)}var o=a;function s(e){return i(e)&&r(e)}var c=s;export{o as n,c as t};

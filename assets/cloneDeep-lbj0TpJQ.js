@@ -1,0 +1,1 @@
+import{t as e}from"./_baseClone-CXVll62g.js";var t=1,n=4;function r(r){return e(r,t|n)}var i=r;export{i as t};

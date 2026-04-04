@@ -1,0 +1,1 @@
+import{Nr as e,_ as t,ei as n}from"./index-CcjE93Br.js";var r={},i={class:`p-6`};function a(t,r){return n(),e(`div`,i,`首页`)}var o=t(r,[[`render`,a]]);export{o as default};

@@ -1,0 +1,1 @@
+import{ki as e,ui as t}from"./index-CcjE93Br.js";var n=({from:n,replacement:r,scope:i,version:a,ref:o,type:s=`API`},c)=>{t(()=>e(c),e=>{},{immediate:!0})};export{n as t};
