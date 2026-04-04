@@ -184,9 +184,13 @@ const processErrorResponse = (response: AxiosResponse, rawResponse: boolean = fa
 			// 不处理
 			return
 		}
-	} else if (response.data && response.data.message && !rawResponse) {
-		status = response.data.code
-		message = response.data.message
+	} else if (response.data && !rawResponse) {
+		if (response.data.code) {
+			status = response.data.code
+		}
+		if (response.data.message) {
+			message = response.data.message
+		}
 	}
 	switch (status) {
 		case 401:
