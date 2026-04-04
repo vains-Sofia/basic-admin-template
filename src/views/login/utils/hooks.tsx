@@ -1,6 +1,7 @@
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import router from '@/router'
 import { useUserStore } from '@/stores/User'
+import { useAuthStore } from '@/stores/Auth'
 import type { FormInstance } from 'element-plus'
 
 export function useLogin(
@@ -10,6 +11,7 @@ export function useLogin(
 ) {
 	// 是否加载中
 	const loading = ref(false)
+	const authStore = useAuthStore()
 	const userStore = useUserStore()
 
 	const onLogin = () => {
@@ -17,7 +19,7 @@ export function useLogin(
 		loginFormRef.value.validate((valid) => {
 			if (valid) {
 				loading.value = true
-				userStore
+				authStore
 					.login(loginType, loginForm)
 					.then(() => {
 						userStore

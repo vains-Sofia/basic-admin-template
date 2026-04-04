@@ -32,7 +32,6 @@ const parseValue = (value: DebounceBindingValue): { handler: (...args: any[]) =>
 export const vDebounce: Directive<DebounceDirectiveEl, DebounceBindingValue> = {
 	mounted(el, binding) {
 		const { value, arg: event = 'click', modifiers } = binding
-		console.log(binding)
 
 		if (!value || !value.handler) {
 			console.warn('v-debounce: 必须提供一个处理函数')

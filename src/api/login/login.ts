@@ -20,3 +20,10 @@ export const formLogin = (loginType: string, data: any) => {
 
 	return http.post<OAuth2TokenResult>(url, data, { headers, rawResponse: true })
 }
+
+/**
+ * 退出登录接口，撤销当前 token
+ */
+export const tokenLogout = () => {
+	return http.post<string>('/token/logout')
+}

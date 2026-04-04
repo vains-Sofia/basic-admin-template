@@ -18,7 +18,7 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
 	NProgress.start()
 	const userStore = useUserStore()
 
@@ -29,8 +29,8 @@ router.beforeEach((to, from, next) => {
 	}
 
 	// 登录后，且还未添加动态路由 → 添加
-	if (!userStore.isRouterInitialized && userStore.routers && userStore.routers.length > 0) {
-		userStore.initRouter()
+	if (!userStore.isRouterInitialized) {
+		await userStore.initRouter()
 		next({ ...to, replace: true })
 		return
 	}

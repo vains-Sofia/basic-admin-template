@@ -1,12 +1,10 @@
-import { type Ref, ref } from 'vue'
+import { ref } from 'vue'
 import router from '@/router'
 import { defineStore } from 'pinia'
 import { lastRouters, staticRoutes } from '@/router/modules'
 import { normalizeRoutes, transformMenuToRoutes } from '@/router/transform'
-import { formLogin } from '@/api/login/login.ts'
 import { getAsyncRoutes } from '@/api/system/Permission.ts'
-import { loginUserinfo } from '@/api/system/User.ts'
-import type { OAuth2TokenResult } from '@/api/types/LoginTypes.ts'
+import type { DynamicRouter } from '@/api/types/PermissionTypes.ts'
 
 const logo = new URL(`../assets/logo.png`, import.meta.url).href
 
@@ -23,9 +21,7 @@ export const useUserStore = defineStore(
 		const nickname = ref('')
 
 		// 拥有的菜单
-		const routers = ref()
-
-		const accessToken: Ref<OAuth2TokenResult | undefined> = ref()
+		const routers = ref([] as Array<DynamicRouter>)
 
 		// 路由是否被初始化
 		const isRouterInitialized = ref(false)
@@ -39,11 +35,6 @@ export const useUserStore = defineStore(
 			nickname.value = userinfo.nickname
 		}
 
-		// 设置用户菜单
-		function setupRouters(routerTree: any) {
-			routers.value = routerTree
-		}
-
 		async function getRouters() {
 			if (routers.value && routers.value.length > 0) {
 				// 将子路由的绝对路径转为相对路径
@@ -55,6 +46,8 @@ export const useUserStore = defineStore(
 				if (routerList) {
 					routers.value = routerList
 					return normalizeRoutes([...staticRoutes, ...routers.value, ...lastRouters])
+				} else {
+					return normalizeRoutes([...staticRoutes, ...lastRouters])
 				}
 			} catch (error: any) {
 				if (error.response?.status === 401) {
@@ -75,8 +68,14 @@ export const useUserStore = defineStore(
 			if (!routers.value || routers.value.length === 0) {
 				try {
 					const routerList = await getAsyncRoutes()
-					if (routerList) {
+					if (routerList && routerList.length > 0) {
 						routers.value = routerList
+					} else {
+						console.log(isRouterInitialized.value)
+						isRouterInitialized.value = true
+						// 添加最后的路由(404)
+						lastRouters.forEach((route) => router.addRoute(route))
+						return
 					}
 				} catch (error: any) {
 					if (error.response?.status === 401) {
@@ -84,13 +83,6 @@ export const useUserStore = defineStore(
 					}
 					throw error
 				}
-			}
-
-			if (!routers.value || routers.value.length === 0) {
-				isRouterInitialized.value = true
-				// 添加最后的路由(404)
-				lastRouters.forEach((route) => router.addRoute(route))
-				return
 			}
 
 			// 将组件从字符串转为实际的Vue组件
@@ -109,72 +101,15 @@ export const useUserStore = defineStore(
 			isRouterInitialized.value = true
 		}
 
-		// 登录
-		function login(type: string, data: any) {
-			return new Promise((resolve, reject) => {
-				switch (type) {
-					case 'account':
-					case 'email':
-					case 'qr-code':
-						formLogin(type, data)
-							.then((res) => {
-								if ((res as any)['code'] === 401) {
-									ElMessage({
-										showClose: true,
-										message: (res as any)['message'] || '登录失败',
-										type: 'error',
-									})
-									reject(res)
-									return
-								}
-								if (res.expires_in && res.expires_in > 0) {
-									// 过期时长转为具体的过期时间
-									res.expires_in = Date.now() + res.expires_in * 1000
-								}
-								accessToken.value = res
-								localStorage.setItem(
-									'token',
-									`${res.token_type} ${res.access_token}`,
-								)
-								loginUserinfo()
-									.then((userResult) => {
-										setupUser(userResult)
-										resolve(true)
-									})
-									.catch(reject)
-							})
-							.catch(reject)
-						break
-					default:
-						reject(new Error(`无对应类型: ${type}`))
-						break
-				}
-			})
-		}
-
-		// 登出
-		function logout() {
-			router.push({ path: '/login' }).then(() => {
-				picture.value = logo
-				username.value = ''
-				nickname.value = ''
-				routers.value = []
-				isRouterInitialized.value = false
-			})
-		}
-
 		function reset() {
 			picture.value = logo
+			username.value = ''
 			nickname.value = ''
 			routers.value = []
-			accessToken.value = undefined
-			localStorage.removeItem('token')
 			isRouterInitialized.value = false
 		}
 
 		return {
-			login,
-			logout,
 			routers,
 			picture,
 			username,
@@ -182,7 +117,6 @@ export const useUserStore = defineStore(
 			setupUser,
 			getRouters,
 			initRouter,
-			setupRouters,
 			isRouterInitialized,
 		}
 	},

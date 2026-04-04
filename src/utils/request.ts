@@ -5,6 +5,8 @@ import axios, {
 	type InternalAxiosRequestConfig,
 } from 'axios'
 import router from '@/router'
+import { useAuthStore } from '@/stores/Auth'
+import type { OAuth2TokenResult } from '@/api/types/LoginTypes.ts'
 
 // =======================
 // 定义通用 API 响应格式
@@ -36,26 +38,13 @@ const service: AxiosInstance = axios.create({
 })
 
 // =======================
-// Token 处理
-// =======================
-export const setToken = (token: string | null) => {
-	if (token) {
-		localStorage.setItem('token', token)
-	} else {
-		localStorage.removeItem('token')
-	}
-}
-
-const getToken = () => localStorage.getItem('token')
-
-// =======================
 // 请求拦截器
 // =======================
 service.interceptors.request.use(
 	(config: InternalAxiosRequestConfig) => {
 		/** 请求白名单，放置一些不需要`token`的接口（通过设置请求白名单，防止`token`过期后再请求造成的死循环问题） */
 		const whiteList = [
-			'/refresh-token',
+			'/refresh',
 			'/login',
 			'/check/login',
 			'/oauth2/token',
@@ -72,7 +61,9 @@ service.interceptors.request.use(
 			return config
 		}
 
-		const token = getToken()
+		const authStore = useAuthStore()
+
+		const token = `${authStore.accessToken?.token_type} ${authStore.accessToken?.access_token}`
 		if (token) {
 			config.headers.Authorization = `${token}`
 		}
@@ -81,23 +72,99 @@ service.interceptors.request.use(
 	(error) => Promise.reject(error),
 )
 
+// ==================== 刷新核心 ====================
+let isRefreshing = false
+let requestsQueue: ((newToken: any) => void)[] = []
+
+// 清空队列（优雅失败）
+function clearQueue(callback: any) {
+	requestsQueue.forEach((cb) => cb(callback))
+	requestsQueue = [] // 清空
+}
+
 // =======================
 // 响应拦截器
 // =======================
 service.interceptors.response.use(
 	(response: AxiosResponse) => response,
-	(error) => {
-		if (error.response) {
-			console.error(error.response)
-			processErrorResponse(error.response)
-		} else {
-			ElMessage({
-				showClose: true,
-				message: '网络错误或服务器未响应',
-				type: 'error',
-			})
+	async (error) => {
+		const { response, config } = error
+
+		if (config?.url?.endsWith('/token/logout')) {
+			return Promise.reject(error)
 		}
-		return Promise.reject(error)
+
+		const authStore = useAuthStore()
+		// 如果是刷新接口 401 → 直接登出
+		if (config?.url === '/token/refresh') {
+			clearQueue(false)
+			// 登出
+			router.push({ path: '/login' }).then(() =>
+				ElMessage({
+					showClose: true,
+					message: response?.data?.message || '刷新token失败，请重新登录！',
+					type: 'error',
+				}),
+			)
+			return Promise.reject(error)
+		}
+
+		if (response.status === 401) {
+			// ============== 401 刷新逻辑 ==============
+			if (!isRefreshing) {
+				isRefreshing = true
+
+				try {
+					// 1. 刷新 Token
+					const res = await http.post<OAuth2TokenResult>(
+						'/token/refresh',
+						{
+							refreshToken: authStore.accessToken?.refresh_token,
+						},
+						{ rawResponse: true },
+					)
+
+					authStore.accessToken = res
+
+					// 2. 刷新成功 → 执行队列
+					clearQueue(res)
+
+					// 3. 重发当前请求
+					config.headers.Authorization = `${res.token_type} ${res.access_token}`
+					return service(config)
+				} catch (e) {
+					// 刷新失败 → 登出
+					clearQueue(false)
+					return Promise.reject(e)
+				} finally {
+					isRefreshing = false
+				}
+			} else {
+				// 正在刷新 → 加入队列
+				return new Promise((resolve, reject) => {
+					requestsQueue.push((res) => {
+						if (res && res.access_token) {
+							config.headers.Authorization = `${res.token_type} ${res.access_token}`
+							resolve(service(config))
+						} else {
+							reject(error)
+						}
+					})
+				})
+			}
+		} else {
+			if (response) {
+				console.error(response)
+				processErrorResponse(response)
+			} else {
+				ElMessage({
+					showClose: true,
+					message: '网络错误或服务器未响应',
+					type: 'error',
+				})
+			}
+			return Promise.reject(error)
+		}
 	},
 )
 
@@ -108,7 +175,9 @@ const request = async <T = any>(config: RequestConfig<T>): Promise<T> => {
 	const { rawResponse = false, ...axiosConfig } = config
 	const response = await service.request<ApiResponse<T>>(axiosConfig)
 
-	processErrorResponse(response, rawResponse)
+	if (!config.url?.endsWith('/token/logout')) {
+		processErrorResponse(response, rawResponse)
+	}
 
 	// 如果是特殊接口，不走统一 ApiResponse 格式解析
 	if (rawResponse) {

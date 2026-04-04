@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import { Breadcrumb } from '../index'
+import { useAuthStore } from '@/stores/Auth'
 import { useUserStore } from '@/stores/User'
 import { useLayoutStore } from '@/stores/Layout'
 import SidebarSearch from '../Sidebar/SidebarSearch.vue'
 import { ref } from 'vue'
 import TextTooltip from '@/components/TextTooltip/src'
 
+const authStore = useAuthStore()
 const userStore = useUserStore()
 const layoutStore = useLayoutStore()
 
 const searchVisible = ref(false)
 
 const adminLogout = () => {
-	userStore.logout()
+	authStore.logout()
 	layoutStore.routeTabs = []
 }
+
+const searchMenus = ref()
+
+userStore.getRouters().then((routers) => (searchMenus.value = routers))
 </script>
 
 <template>
@@ -47,7 +53,11 @@ const adminLogout = () => {
 						<span class="flex items-center gap-2">
 							<el-avatar shape="square" size="small" :src="userStore.picture" />
 							<span>
-								<TextTooltip placement="left" :content="userStore.nickname" max-width="120px">
+								<TextTooltip
+									placement="left"
+									:content="userStore.nickname"
+									max-width="120px"
+								>
 									{{ userStore.nickname }}
 								</TextTooltip>
 							</span>
@@ -79,10 +89,7 @@ const adminLogout = () => {
 			style="padding: 0"
 			destroy-on-close
 		>
-			<SidebarSearch
-				:menu-data="userStore.getRouters()"
-				@select="() => (searchVisible = false)"
-			/>
+			<SidebarSearch :menu-data="searchMenus" @select="() => (searchVisible = false)" />
 		</el-dialog>
 	</div>
 </template>
