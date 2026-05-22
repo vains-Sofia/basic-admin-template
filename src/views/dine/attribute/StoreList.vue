@@ -53,9 +53,7 @@ const openStoreDialog = () => {
 	align-items: center;
 	gap: 10px;
 	padding: 10px 16px;
-	//margin-bottom: 8px;
 	background: var(--el-fill-color-blank);
-	//border-radius: 8px;
 	cursor: pointer;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	border: 1px solid var(--el-border-color-lighter);
