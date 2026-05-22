@@ -142,10 +142,6 @@ onMounted(() => {
 	margin-top: 12px;
 }
 
-.store-list {
-	padding-right: 4px;
-}
-
 .store-item {
 	display: flex;
 	align-items: center;

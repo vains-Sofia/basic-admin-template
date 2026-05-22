@@ -1,16 +1,15 @@
 <template>
-	<div class="store-selector" @click="openStoreDialog">
-		<div class="selector-label">当前门店</div>
-		<div class="selector-content" :class="{ placeholder: !selectedStore }">
-			<el-avatar v-if="selectedStore" :size="21" :src="selectedStore.logo" shape="square">
-				{{ selectedStore.name.slice(0, 1) }}
+	<div @click="openStoreDialog">
+		<div class="store-item">
+			<el-avatar :size="47" :src="selectedStore?.logo" shape="square">
+				{{ selectedStore?.name.slice(0, 1) || '选' }}
 			</el-avatar>
-			<span class="selector-name">
-				{{ selectedStore?.name || '请选择门店' }}
-			</span>
-			<el-icon class="selector-icon">
-				<Icon icon="ep:arrow-down" />
-			</el-icon>
+			<div class="store-info">
+				<div class="store-name">{{ selectedStore?.name || '请选择门店' }}</div>
+				<div class="store-status">
+					{{ selectedStore?.address }}
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -49,50 +48,47 @@ const openStoreDialog = () => {
 </script>
 
 <style scoped>
-.store-selector {
-	padding: 10px 14px;
-	background: var(--el-bg-color);
-	cursor: pointer;
-	transition:
-		border-color 0.2s ease,
-		box-shadow 0.2s ease;
-}
-
-.store-selector:hover {
-	border-color: var(--el-color-primary-light-5);
-	box-shadow: 0 2px 8px rgba(var(--el-color-primary-rgb), 0.12);
-}
-
-.selector-label {
-	font-size: 12px;
-	color: var(--el-text-color-regular);
-	margin-bottom: 8px;
-}
-
-.selector-content {
+.store-item {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	min-width: 0;
-	color: var(--el-text-color-primary);
+	gap: 10px;
+	padding: 10px 16px;
+	//margin-bottom: 8px;
+	background: var(--el-fill-color-blank);
+	//border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	border: 1px solid var(--el-border-color-lighter);
 }
 
-.selector-content.placeholder {
-	color: var(--el-text-color-placeholder);
+.store-item:hover {
+	background: var(--el-fill-color);
+	border-color: var(--el-border-color-light);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.selector-name {
+.store-info {
 	flex: 1;
 	min-width: 0;
+	overflow: hidden;
+}
+
+.store-name {
 	font-size: 14px;
 	font-weight: 500;
+	color: var(--el-text-color-primary);
+	margin-bottom: 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.selector-icon {
-	flex-shrink: 0;
-	color: var(--el-text-color-secondary);
+.store-status {
+	font-size: 12px;
+	color: var(--el-text-color-regular);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 </style>
