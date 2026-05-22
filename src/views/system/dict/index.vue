@@ -22,7 +22,7 @@ const {
 	handleDeleteType,
 	handleSizeChange,
 	handleCurrentChange,
-	handleSelectionChange
+	handleSelectionChange,
 } = useDict()
 
 const searchForm = ref()
@@ -30,7 +30,11 @@ const searchForm = ref()
 
 <template>
 	<div class="flex justify-between">
-		<DictType class="min-w-[300px] mr-2" @select="handleSelectType" @delete="handleDeleteType" />
+		<DictType
+			class="min-w-[300px] mr-2"
+			@select="handleSelectType"
+			@delete="handleDeleteType"
+		/>
 		<div class="w-[calc(100%-300px)]">
 			<el-form
 				ref="searchForm"
@@ -69,7 +73,7 @@ const searchForm = ref()
 			</el-form>
 
 			<SmartTable
-				title="用户管理"
+				title="字典项管理"
 				:data="dataList"
 				:columns="columns"
 				:loading="loading"

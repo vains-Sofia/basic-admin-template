@@ -2,11 +2,7 @@
 	<div style="padding: 24px">
 		<div class="flex gap-3">
 			<el-button type="primary" @click="visible = true">打开裁剪器</el-button>
-			<el-upload
-				accept="image/*"
-				:show-file-list="false"
-				:before-upload="handleUpload"
-			>
+			<el-upload accept="image/*" :show-file-list="false" :before-upload="handleUpload">
 				<el-button type="primary">上传后剪裁</el-button>
 			</el-upload>
 		</div>

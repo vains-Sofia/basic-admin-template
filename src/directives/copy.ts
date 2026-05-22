@@ -61,12 +61,12 @@ const vCopy: Directive<HTMLElement, string | (() => string)> = {
 		const event = binding.arg || 'click'
 
 		const handler = function () {
-				const value = binding.value
-				const text = typeof value === 'function' ? value() : value
-				doCopy(text || '')
-			}
+			const value = binding.value
+			const text = typeof value === 'function' ? value() : value
+			doCopy(text || '')
+		}
 
-			// 挂到元素上，方便解绑
+		// 挂到元素上，方便解绑
 		;(el as any).__vCopyEvent = event
 		;(el as any).__vCopyHandler = handler
 

@@ -1,4 +1,4 @@
-import type { PageableRequest } from '@/api/types/ModelTypes.ts'
+import type { PageableRequest } from '@/api/types/SharedTypes.ts'
 import { GenderEnum } from '@/api/types/Enums.ts'
 
 /**
@@ -156,129 +156,129 @@ export interface BasicGrantedAuthority {
 	/**
 	 * 主键id
 	 */
-	id?: number;
+	id?: number
 
 	/**
 	 * 权限码
 	 */
-	authority: string;
+	authority: string
 
 	/**
 	 * 路径
 	 */
-	path?: string;
+	path?: string
 
 	/**
 	 * 权限码
 	 */
-	permission?: string;
+	permission?: string
 
 	/**
 	 * 请求方式
 	 */
-	requestMethod?: string;
+	requestMethod?: string
 
 	/**
 	 * 是否需要鉴权
 	 */
-	needAuthentication?: boolean;
+	needAuthentication?: boolean
 
 	/**
 	 * 权限类型
 	 */
-	permissionType: number;
+	permissionType: number
 }
 
 export type UserInfo = {
 	/**
 	 * 用户账号，发行方的最终用户标识符。
 	 */
-	sub: string;
+	sub: string
 
 	/**
 	 * 昵称
 	 */
-	nickname: string;
+	nickname: string
 
 	/**
 	 * 用户个人资料页面的 URL。
 	 */
-	profile: string;
+	profile: string
 
 	/**
 	 * 用户个人资料图片的 URL。
 	 */
-	picture: string;
+	picture: string
 
 	/**
 	 * 用户的首选电子邮件地址。
 	 */
-	email: string;
+	email: string
 
 	/**
 	 * 邮箱是否已验证
 	 */
-	emailVerified: boolean;
+	emailVerified: boolean
 
 	/**
 	 * 用户的性别
 	 */
-	gender: GenderEnum;
+	gender: GenderEnum
 
 	/**
 	 * 出生日期，ISO 8601 格式：YYYY-MM-DD
 	 */
-	birthdate: string;
+	birthdate: string
 
 	/**
 	 * 手机号
 	 */
-	phoneNumber: string;
+	phoneNumber: string
 
 	/**
 	 * 手机号是否已验证
 	 */
-	phoneNumberVerified: boolean;
+	phoneNumberVerified: boolean
 
 	/**
 	 * 用户的首选邮政地址。
 	 */
-	address: string;
+	address: string
 
 	/**
 	 * 用户信息最后更新时间。以时间戳表示。
 	 */
-	updatedAt: number;
+	updatedAt: number
 
 	// -----------扩展信息-----------
 
 	/**
 	 * 自增id
 	 */
-	id: number;
+	id: number
 
 	/**
 	 * 账号
 	 */
-	account: string;
+	account: string
 
 	/**
 	 * 账号来源类型
 	 */
-	accountPlatform: string;
+	accountPlatform: string
 
 	/**
 	 * 检查过，即是否已确认绑定
 	 */
-	bindBasicUserChecked: boolean;
+	bindBasicUserChecked: boolean
 
 	/**
 	 * 用户角色
 	 */
-	roles: Array<string>;
+	roles: Array<string>
 
 	/**
 	 * 用户角色
 	 */
-	authorities: Array<BasicGrantedAuthority>;
-};
+	authorities: Array<BasicGrantedAuthority>
+}

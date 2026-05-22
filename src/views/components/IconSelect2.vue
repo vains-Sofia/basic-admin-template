@@ -20,7 +20,8 @@ const visible = ref(false)
 		</div>
 
 		<div class="p-5 flex" style="background-color: var(--el-bg-color)">
-			<span>已选图标：</span><Icon :icon="icon" width="24" /> <span class="ml-1">{{ icon }}</span>
+			<span>已选图标：</span><Icon :icon="icon" width="24" />
+			<span class="ml-1">{{ icon }}</span>
 		</div>
 	</div>
 </template>

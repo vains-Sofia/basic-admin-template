@@ -24,6 +24,7 @@ export enum PermissionTypeEnum {
 export enum StatusEnum {
 	ENABLE = 'Y',
 	DISABLE = 'N',
+	ALL = '',
 }
 
 export enum DefinitionStatusEnum {
@@ -65,14 +66,13 @@ export enum SuspensionStateEnum {
 export function getSuspensionStateDescription(state: SuspensionStateEnum): string {
 	switch (state) {
 		case SuspensionStateEnum.ACTIVE:
-			return "激活";
+			return '激活'
 		case SuspensionStateEnum.SUSPENDED:
-			return "挂起";
+			return '挂起'
 		default:
-			return "未知状态";
+			return '未知状态'
 	}
 }
-
 
 /**
  * 重定向信息(前端使用)
@@ -94,5 +94,46 @@ export enum RedirectTypeEnum {
 	/**
 	 * NONE - 不跳转
 	 */
-	NONE = 'NONE'
+	NONE = 'NONE',
+}
+
+export enum RecommendEnum {
+	/**
+	 * 普通
+	 */
+	NORMAL = 1,
+
+	/**
+	 * 推荐
+	 */
+	RECOMMEND = 2,
+}
+
+export enum SelectTypeEnum {
+	/**
+	 * 单选
+	 */
+	SINGLE = 1,
+
+	/**
+	 * 多选
+	 */
+	MULTIPLE = 2,
+}
+
+export enum TableStatusEnum {
+	/**
+	 * 空闲
+	 */
+	IDLE = 0,
+
+	/**
+	 * 占用
+	 */
+	OCCUPY = 1,
+
+	/**
+	 * 留座
+	 */
+	RESERVE_A_SEAT = 2,
 }

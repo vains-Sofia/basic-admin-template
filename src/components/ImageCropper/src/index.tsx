@@ -1,4 +1,12 @@
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, type PropType, ref, watch } from 'vue'
+import {
+	defineComponent,
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
+	type PropType,
+	ref,
+	watch,
+} from 'vue'
 import Cropper, { CropperImage } from 'cropperjs'
 import { Icon } from '@iconify/vue'
 
@@ -63,7 +71,7 @@ export default defineComponent({
 			)
 
 			cropper.getCropperImage?.()?.$ready(() => {
-				const ima = cropper?.getCropperImage?.();
+				const ima = cropper?.getCropperImage?.()
 				if (ima) {
 					// 居中
 					ima.$center()
@@ -84,7 +92,7 @@ export default defineComponent({
 				}
 				zoomOut()
 
-				const elements = containerRef.value?.getElementsByTagName('cropper-handle');
+				const elements = containerRef.value?.getElementsByTagName('cropper-handle')
 				if (elements && elements.length) {
 					for (const handle of elements) {
 						if (handle.getAttribute('action') === 'select') {
@@ -130,17 +138,26 @@ export default defineComponent({
 					const matrix = cropperImage.$getTransform()
 
 					// 获取缩放比例
-					const [a, b, c, d] = matrix;
+					const [a, b, c, d] = matrix
 
 					// 当前图相对于原图的缩放比例
-					const scaleX = Math.sqrt(a * a + b * b);
-					const scaleY = Math.sqrt(c * c + d * d);
+					const scaleX = Math.sqrt(a * a + b * b)
+					const scaleY = Math.sqrt(c * c + d * d)
 
 					// 计算裁剪区域在原图中的真实大小
-					const realWidth = sel.width / scaleX;
-					const realHeight = sel.height / scaleY;
+					const realWidth = sel.width / scaleX
+					const realHeight = sel.height / scaleY
 
-					console.log('scaleX', scaleX, 'scaleY', scaleY, 'realWidth', realWidth, 'realHeight', realHeight);
+					console.log(
+						'scaleX',
+						scaleX,
+						'scaleY',
+						scaleY,
+						'realWidth',
+						realWidth,
+						'realHeight',
+						realHeight,
+					)
 
 					// 转canvas
 					const canvas = sel.$toCanvas({
@@ -173,48 +190,48 @@ export default defineComponent({
 		const onTransformChange = (e?: CustomEvent) => {
 			if (!cropper || !e) return
 
-			const cropperImage = cropper.getCropperImage();
-			const cropperSelection = cropper.getCropperSelection();
+			const cropperImage = cropper.getCropperImage()
+			const cropperSelection = cropper.getCropperSelection()
 			const cropperCanvas = cropper.getCropperCanvas()
 
 			if (!cropperCanvas || !cropperImage || !cropperSelection) return
-			const cropperCanvasRect = cropperCanvas.getBoundingClientRect();
+			const cropperCanvasRect = cropperCanvas.getBoundingClientRect()
 
 			// 1. Clone the cropper image.
-			const cropperImageClone = cropperImage.cloneNode() as CropperImage;
+			const cropperImageClone = cropperImage.cloneNode() as CropperImage
 
 			// 2. Apply the new matrix to the cropper image clone.
 			if (e.detail.matrix) {
-				cropperImageClone.style.transform = `matrix(${e.detail.matrix.join(', ')})`;
+				cropperImageClone.style.transform = `matrix(${e.detail.matrix.join(', ')})`
 			}
 
 			// 3. Make the cropper image clone invisible.
-			cropperImageClone.style.opacity = '0';
+			cropperImageClone.style.opacity = '0'
 
 			// 4. Append the cropper image clone to the cropper canvas.
-			cropperCanvas.appendChild(cropperImageClone);
+			cropperCanvas.appendChild(cropperImageClone)
 
 			// 5. Compute the boundaries of the cropper image clone.
-			const cropperImageRect = cropperImageClone.getBoundingClientRect();
+			const cropperImageRect = cropperImageClone.getBoundingClientRect()
 
 			// 6. Remove the cropper image clone.
-			cropperCanvas.removeChild(cropperImageClone);
+			cropperCanvas.removeChild(cropperImageClone)
 
 			const selection: SelectionType = {
 				x: cropperSelection.x,
 				y: cropperSelection.y,
 				width: cropperSelection.width,
 				height: cropperSelection.height,
-			};
+			}
 			const maxSelection: SelectionType = {
 				x: cropperImageRect.left - cropperCanvasRect.left,
 				y: cropperImageRect.top - cropperCanvasRect.top,
 				width: cropperImageRect.width,
 				height: cropperImageRect.height,
-			};
+			}
 
 			if (!inSelection(selection, maxSelection)) {
-				e.preventDefault();
+				e.preventDefault()
 			}
 		}
 
@@ -224,23 +241,23 @@ export default defineComponent({
 		 */
 		const onSelectionChange = (e?: CustomEvent) => {
 			if (!cropper || !e) return
-			const cropperImage = cropper.getCropperImage();
+			const cropperImage = cropper.getCropperImage()
 			const cropperCanvas = cropper.getCropperCanvas()
 
 			if (!cropperCanvas || !cropperImage) return
-			const cropperCanvasRect = cropperCanvas.getBoundingClientRect();
+			const cropperCanvasRect = cropperCanvas.getBoundingClientRect()
 
-			const cropperImageRect = cropperImage.getBoundingClientRect();
+			const cropperImageRect = cropperImage.getBoundingClientRect()
 			const maxSelection: SelectionType = {
 				x: cropperImageRect.left - cropperCanvasRect.left,
 				y: cropperImageRect.top - cropperCanvasRect.top,
 				width: cropperImageRect.width,
 				height: cropperImageRect.height,
-			};
+			}
 
-			const selection = e.detail as SelectionType;
+			const selection = e.detail as SelectionType
 			if (!inSelection(selection, maxSelection)) {
-				e.preventDefault();
+				e.preventDefault()
 			}
 		}
 
@@ -251,11 +268,11 @@ export default defineComponent({
 		 */
 		const inSelection = (selection: SelectionType, maxSelection: SelectionType) => {
 			return (
-				selection.x >= maxSelection.x
-				&& selection.y >= maxSelection.y
-				&& (selection.x + selection.width) <= (maxSelection.x + maxSelection.width)
-				&& (selection.y + selection.height) <= (maxSelection.y + maxSelection.height)
-			);
+				selection.x >= maxSelection.x &&
+				selection.y >= maxSelection.y &&
+				selection.x + selection.width <= maxSelection.x + maxSelection.width &&
+				selection.y + selection.height <= maxSelection.y + maxSelection.height
+			)
 		}
 
 		/**
@@ -338,7 +355,7 @@ export default defineComponent({
 		watch(
 			() => props.modelValue,
 			(value) => {
-				if (!value) return;
+				if (!value) return
 				if (value instanceof File) {
 					rawUrl.value = URL.createObjectURL(value)
 				} else {
@@ -346,7 +363,7 @@ export default defineComponent({
 				}
 				nextTick().then(initCropper)
 			},
-			{ immediate: true }
+			{ immediate: true },
 		)
 
 		return () => (

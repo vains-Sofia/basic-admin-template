@@ -16,7 +16,12 @@ const isLayout = computed(() => isLayoutField(props.field))
 
 <template>
 	<div>
-		<LayoutViewer v-if="isLayout" :form-data="formData" :field="field" :form-config="formConfig" />
+		<LayoutViewer
+			v-if="isLayout"
+			:form-data="formData"
+			:field="field"
+			:form-config="formConfig"
+		/>
 		<FieldViewer v-else :form-data="formData" :field="field" :form-config="formConfig" />
 	</div>
 </template>

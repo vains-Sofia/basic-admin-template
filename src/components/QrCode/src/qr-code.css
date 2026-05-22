@@ -2,7 +2,9 @@
 /* QR fade transition   */
 /* -------------------- */
 .qr-fade {
-	transition: opacity 0.35s ease, transform 0.35s ease;
+	transition:
+		opacity 0.35s ease,
+		transform 0.35s ease;
 }
 
 .qr-fade-in {
@@ -49,8 +51,12 @@
 }
 
 @keyframes qr-spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 .qr-loading-text {

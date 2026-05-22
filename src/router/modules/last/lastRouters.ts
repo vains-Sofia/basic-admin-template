@@ -6,5 +6,5 @@ export default [
 		name: 'NotFound',
 		component: () => import('@/views/error/404.vue'),
 		meta: { title: '404' },
-	}
+	},
 ] as RouteRecordRaw[]

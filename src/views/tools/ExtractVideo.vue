@@ -27,13 +27,15 @@ const onExtractUrl = () => {
 			`https://competent-jilly-vains-0431fff4.koyeb.app/douyin/extract?shareUrl=${encodeURIComponent(extractedUrl.value)}`,
 			null,
 			{ rawResponse: true },
-		).then((res) => {
-			if (res.error) {
-				ElMessage(res.error)
-			} else {
-				result.value = res
-			}
-		}).finally(() => loading.value = false)
+		)
+			.then((res) => {
+				if (res.error) {
+					ElMessage(res.error)
+				} else {
+					result.value = res
+				}
+			})
+			.finally(() => (loading.value = false))
 	} else {
 		ElMessage('请输入分享链接.')
 	}

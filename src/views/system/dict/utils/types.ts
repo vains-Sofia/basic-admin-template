@@ -5,9 +5,9 @@ interface FormItemProps extends SysDictItemRequest {
 }
 
 interface FormProps {
-	formInline?: FormItemProps,
-	typeCode?: string,
-	sortOrder?: number,
+	formInline?: FormItemProps
+	typeCode?: string
+	sortOrder?: number
 	allTypes?: FindSysDictTypeResponse[]
 }
 

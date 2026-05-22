@@ -4,8 +4,8 @@ import { RouterView } from 'vue-router'
 import { computed } from 'vue'
 
 const props = defineProps<{
-	path: string,
-	component: any,
+	path: string
+	component: any
 }>()
 
 const route = useRoute()

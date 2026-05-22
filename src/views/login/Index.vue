@@ -286,7 +286,7 @@ watch(loginType, () => {
 	);
 }
 
-:deep(.el-switch__core .el-switch__action ) {
+:deep(.el-switch__core .el-switch__action) {
 	background: var(--el-bg-color-page);
 	border: 1px solid var(--el-border-color);
 }

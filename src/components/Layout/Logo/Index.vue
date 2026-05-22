@@ -8,7 +8,7 @@ const layoutStore = useLayoutStore()
 <template>
 	<div class="logo-container" :class="layoutStore.darkMenu ? 'dark' : 'light'">
 		<img src="@/assets/logo.png" class="logo-image" alt="Vue logo" />
-<!--		<div v-if="!layoutStore.menuCollapse" class="logo-text">Basic Cloud</div>-->
+		<!--		<div v-if="!layoutStore.menuCollapse" class="logo-text">Basic Cloud</div>-->
 		<BounceText
 			v-if="!layoutStore.menuCollapse"
 			size="16px"

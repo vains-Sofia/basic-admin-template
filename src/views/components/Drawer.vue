@@ -10,7 +10,7 @@ const openDrawer1 = () => {
 	openDrawer({
 		title: '抽屉',
 		content: '123',
-		bodyPadding: 30
+		bodyPadding: 30,
 	})
 }
 const openDrawer2 = () => {

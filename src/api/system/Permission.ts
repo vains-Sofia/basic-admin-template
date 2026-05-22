@@ -13,11 +13,7 @@ export const getAsyncRoutes = () => {
 
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (params?: FindPermissionRequest) => {
-	return http.request<Array<FindPermissionResponse>>(
-		'get',
-		'/permission/findPermissions',
-		params,
-	)
+	return http.request<Array<FindPermissionResponse>>('get', '/permission/findPermissions', params)
 }
 
 /** 添加权限信息 */
@@ -42,8 +38,5 @@ export const removePermissionById = (id?: string) => {
 
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getRoleMenuIds = (roleId?: string) => {
-	return http.request<Array<string>>(
-		'get',
-		`/permission/findPermissionIdsByRoleId/${roleId}`,
-	)
+	return http.request<Array<string>>('get', `/permission/findPermissionIdsByRoleId/${roleId}`)
 }

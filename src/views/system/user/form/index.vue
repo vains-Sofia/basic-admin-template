@@ -59,7 +59,12 @@ defineExpose({
 						:show-file-list="false"
 						:before-upload="(file) => handleUpload(file, newFormInline, false)"
 					>
-						<img alt="" v-if="newFormInline.picture" :src="newFormInline.picture" class="avatar" />
+						<img
+							alt=""
+							v-if="newFormInline.picture"
+							:src="newFormInline.picture"
+							class="avatar"
+						/>
 						<el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
 					</el-upload>
 				</el-form-item>

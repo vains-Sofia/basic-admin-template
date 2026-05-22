@@ -39,7 +39,7 @@ export function sortByKey<T extends Record<string, unknown>>(
 }
 
 export class AdaptiveTable {
-	props: { adaptive: boolean; extraGap: number; pagination: any, showToolbar: boolean }
+	props: { adaptive: boolean; extraGap: number; pagination: any; showToolbar: boolean }
 	tableContainerRef: Ref<HTMLElement | null>
 	paginationRef: Ref<HTMLElement | null>
 	tableHeight: Ref<number>
@@ -47,12 +47,12 @@ export class AdaptiveTable {
 	toolbarRef?: Ref<HTMLElement | null>
 
 	constructor(
-		props: { adaptive: boolean; extraGap: number; pagination: any, showToolbar: boolean },
+		props: { adaptive: boolean; extraGap: number; pagination: any; showToolbar: boolean },
 		tableContainerRef: Ref<HTMLElement | null>,
 		paginationRef: Ref<HTMLElement | null>,
 		tableHeight: Ref<number>,
 		tableWidth?: Ref<number>,
-		toolbarRef?: Ref<HTMLElement | null>
+		toolbarRef?: Ref<HTMLElement | null>,
 	) {
 		this.props = props
 		this.tableWidth = tableWidth
@@ -79,13 +79,15 @@ export class AdaptiveTable {
 
 		// 表格高度
 		this.tableHeight.value =
-			containerHeight - tableTop
+			containerHeight -
+			tableTop -
 			// 分页组件高度
-			- paginationHeight
+			paginationHeight -
 			// 工具栏高度
-			- this.props.extraGap - (this.props.showToolbar ? toolbarHeight : 0)
+			this.props.extraGap -
+			(this.props.showToolbar ? toolbarHeight : 0) -
 			// 表格外层容器padding高度
-		    - 24
+			24
 
 		if (this.tableHeight.value < 200) this.tableHeight.value = 200
 
@@ -117,11 +119,11 @@ export function listToTree<T extends TreeNode>(list: T[]): T[] {
 	const map = new Map<string | number, T>()
 
 	// 预创建所有节点的 children
-	list.forEach(item => {
+	list.forEach((item) => {
 		map.set(item.id, { ...item, children: [] })
 	})
 
-	list.forEach(item => {
+	list.forEach((item) => {
 		const node = map.get(item.id)!
 		if (item.parentId == null || !map.has(item.parentId)) {
 			// 顶级节点
@@ -137,7 +139,7 @@ export function listToTree<T extends TreeNode>(list: T[]): T[] {
 }
 
 export function generateUUID() {
-	let dt = new Date().getTime();
+	let dt = new Date().getTime()
 
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
 		const r = (dt + Math.random() * 16) % 16 | 0
@@ -154,21 +156,21 @@ export function generateUUID() {
  */
 export function makeValidBpmnId(id: string, prefix = 'Process'): string {
 	if (!id) {
-		throw new Error('id 不能为空');
+		throw new Error('id 不能为空')
 	}
 
 	// 替换所有非法字符为下划线
-	let validId = id.replace(/[^A-Za-z0-9_\-\.]/g, '_');
+	let validId = id.replace(/[^A-Za-z0-9_\-\.]/g, '_')
 
 	// 确保首字符是字母或下划线
 	if (!/^[A-Za-z_]/.test(validId)) {
-		validId = `${prefix}_${validId}`;
+		validId = `${prefix}_${validId}`
 	}
 
 	// 避免连续下划线过多
-	validId = validId.replace(/_+/g, '_');
+	validId = validId.replace(/_+/g, '_')
 
-	return validId;
+	return validId
 }
 
 /**
@@ -178,34 +180,34 @@ export function makeValidBpmnId(id: string, prefix = 'Process'): string {
  * @returns boolean 是否通过校验
  */
 export function isValidBpmnProcessKey(key: string, options?: { allowQName?: boolean }): boolean {
-	if (key.length === 0) return false;
+	if (key.length === 0) return false
 
 	// NCName: starts with letter or underscore, then letters/digits/dot/underscore/hyphen
-	const ncName = /^[A-Za-z_][A-Za-z0-9._-]*$/;
+	const ncName = /^[A-Za-z_][A-Za-z0-9._-]*$/
 
 	if (options?.allowQName) {
 		// QName: prefix:local where both prefix and local are NCName, only one colon allowed
-		const qName = /^[A-Za-z_][A-Za-z0-9._-]*:[A-Za-z_][A-Za-z0-9._-]*$/;
-		return ncName.test(key) || qName.test(key);
+		const qName = /^[A-Za-z_][A-Za-z0-9._-]*:[A-Za-z_][A-Za-z0-9._-]*$/
+		return ncName.test(key) || qName.test(key)
 	}
 
 	// 默认只允许 NCName（不允许冒号）
-	return ncName.test(key);
+	return ncName.test(key)
 }
 
 export function deepClone<T>(obj: T): T {
-	if (obj === null || typeof obj !== 'object') return obj;
+	if (obj === null || typeof obj !== 'object') return obj
 
 	if (Array.isArray(obj)) {
-		return obj.map(item => deepClone(item)) as unknown as T;
+		return obj.map((item) => deepClone(item)) as unknown as T
 	}
 
-	const clonedObj: any = {};
+	const clonedObj: any = {}
 	for (const key in obj) {
-		const value = (obj as any)[key];
-		clonedObj[key] = typeof value === 'function' ? value : deepClone(value);
+		const value = (obj as any)[key]
+		clonedObj[key] = typeof value === 'function' ? value : deepClone(value)
 	}
-	return clonedObj;
+	return clonedObj
 }
 
 export const getContainerHeight = (containerRef: Ref) => {

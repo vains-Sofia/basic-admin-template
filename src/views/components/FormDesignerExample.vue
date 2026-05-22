@@ -4,7 +4,9 @@
 		<div class="pl-[125px]">
 			<el-button plain @click="() => formViewerRef?.reset?.()"> 重置表单 </el-button>
 			<el-button plain @click="() => formViewerRef?.validate?.()"> 验证表单 </el-button>
-			<el-button plain @click="() => formViewerRef?.clearAllValidate?.()"> 清除验证 </el-button>
+			<el-button plain @click="() => formViewerRef?.clearAllValidate?.()">
+				清除验证
+			</el-button>
 			<el-button plain @click="viewFormData"> 查看数据 </el-button>
 		</div>
 	</div>
@@ -32,6 +34,4 @@ const viewFormData = () => {
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

@@ -92,7 +92,7 @@ export function useMenu() {
 		{
 			title: '路由路径',
 			dataKey: 'path',
-			tooltip: true
+			tooltip: true,
 		},
 		{
 			title: '组件路径',
@@ -107,14 +107,12 @@ export function useMenu() {
 			title: '权限标识',
 			dataKey: 'permission',
 			formatter: ({ permission }: any) => (
-				<TextTooltip content={permission}>
-					{permission}
-				</TextTooltip>
+				<TextTooltip content={permission}>{permission}</TextTooltip>
 			),
 		},
 		{
 			title: '排序',
-			dataKey: 'rank',
+			dataKey: 'sortOrder',
 			width: 100,
 		},
 		{
@@ -150,13 +148,13 @@ export function useMenu() {
 	 * 打开新增、修改框
 	 * @param title 新增/修改
 	 * @param row 用户数据
-	 * @param rank 排序号
+	 * @param sortOrder 排序号
 	 * @param parentId 父节点
 	 */
 	const openUpdatePanel = (
 		title = '新增',
 		row?: FindPermissionResponse,
-		rank?: number,
+		sortOrder?: number,
 		parentId?: string,
 	) => {
 		openDrawer({
@@ -166,7 +164,7 @@ export function useMenu() {
 			confirmLoading: true,
 			props: {
 				formInline: row,
-				rank,
+				sortOrder,
 				parentId,
 				higherMenuOptions: JSON.parse(JSON.stringify(dataList.value)),
 			},

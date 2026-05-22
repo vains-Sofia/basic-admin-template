@@ -21,7 +21,7 @@ export const useLayoutStore = defineStore('Layout', () => {
 	const darkMenu = ref(true)
 
 	// tab标签列表
-	const routeTabs: Ref<Array<TabItem>> = ref([]);
+	const routeTabs: Ref<Array<TabItem>> = ref([])
 
 	// 菜单是否折叠
 	const menuCollapse = ref(false)
@@ -47,7 +47,6 @@ export const useLayoutStore = defineStore('Layout', () => {
 	 * @param event 鼠标点击事件
 	 */
 	const toggleDark = (event: MouseEvent = {} as MouseEvent) => {
-
 		// 获取到 transition API 实例
 		const transition = document.startViewTransition(() => {
 			isDark.value = !isDark.value
@@ -75,7 +74,7 @@ export const useLayoutStore = defineStore('Layout', () => {
 				},
 				{
 					duration: 500,
-					fill: "both",
+					fill: 'both',
 					// 如果要切换到暗色主题，我们应该裁剪 view-transition-old(root) 的内容
 					pseudoElement: isDark.value
 						? '::view-transition-old(root)'

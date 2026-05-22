@@ -1,5 +1,5 @@
 import { http } from '@/utils/request.ts'
-import type { Pageable } from '@/api/types/ModelTypes.ts'
+import type { Pageable } from '@/api/types/SharedTypes.ts'
 import type {
 	FindRolePageRequest,
 	FindRoleResponse,

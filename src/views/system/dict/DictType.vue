@@ -438,6 +438,8 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 
 .dict-info {
 	flex: 1;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .dict-name {
@@ -445,15 +447,23 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 	font-weight: 500;
 	color: var(--el-text-color-primary);
 	margin-bottom: 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .dict-code {
 	font-size: 12px;
 	color: var(--el-text-color-regular);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .dict-actions {
 	display: flex;
+	flex-shrink: 0;
+	margin-left: 8px;
 	.el-button + .el-button {
 		margin-left: 0;
 	}

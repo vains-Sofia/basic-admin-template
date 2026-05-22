@@ -4,7 +4,7 @@ import type {
 	FindSysDictTypeResponse,
 	SysDictItemRequest,
 } from '@/api/types/DictTypes.ts'
-import type { Pageable } from '@/api/types/ModelTypes.ts'
+import type { Pageable } from '@/api/types/SharedTypes.ts'
 
 /**
  * 分页查询字典类型

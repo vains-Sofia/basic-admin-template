@@ -1,17 +1,17 @@
-import type { PageableRequest } from '@/api/types/ModelTypes.ts'
+import type { PageableRequest } from '@/api/types/SharedTypes.ts'
 
 /**
  * 分页查询角色信息入参
  */
 export interface FindRolePageRequest extends PageableRequest {
 	/** 角色代码 */
-	code?: string;
+	code?: string
 
 	/** 角色名称 */
-	name?: string;
+	name?: string
 
 	/** 角色描述 */
-	description?: string;
+	description?: string
 }
 
 /**
@@ -19,16 +19,16 @@ export interface FindRolePageRequest extends PageableRequest {
  */
 export interface SaveRoleRequest {
 	/** 主键id（修改时必传） */
-	id?: string;
+	id?: string
 
 	/** 角色代码 */
-	code: string;
+	code: string
 
 	/** 角色名称 */
-	name: string;
+	name: string
 
 	/** 角色描述 */
-	description?: string;
+	description?: string
 }
 
 /**
@@ -36,10 +36,10 @@ export interface SaveRoleRequest {
  */
 export interface UpdateRolePermissionsRequest {
 	/** 角色id */
-	roleId: string;
+	roleId: string
 
 	/** 权限id列表 */
-	permissionIds?: string[];
+	permissionIds?: string[]
 }
 
 /**

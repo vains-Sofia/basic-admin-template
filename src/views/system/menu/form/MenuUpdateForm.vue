@@ -38,7 +38,7 @@ const {
 		name: '',
 		path: '',
 		component: '',
-		rank: 99,
+		sortOrder: 99,
 		redirect: '',
 		icon: '',
 		extraIcon: '',
@@ -58,7 +58,7 @@ const {
 		requestMethod: '',
 		needAuthentication: true,
 	},
-	rank = -99,
+	sortOrder = -99,
 	parentId = '-1',
 	higherMenuOptions = [],
 } = defineProps<FormProps>()
@@ -66,9 +66,9 @@ const {
 const ruleFormRef = ref()
 const newFormInline = ref(JSON.parse(JSON.stringify(formInline)))
 
-if (rank !== -99 && parentId !== '-1') {
+if (sortOrder !== -99 && parentId !== '-1') {
 	// 添加某个权限的子级时，如果直接由formInline传入则无其它默认值
-	newFormInline.value.rank = rank ?? newFormInline.value.rank
+	newFormInline.value.sortOrder = sortOrder ?? newFormInline.value.sortOrder
 	newFormInline.value.parentId = parentId ?? newFormInline.value.parentId
 }
 if (newFormInline.value?.children) {
@@ -154,7 +154,7 @@ defineExpose({
 			<el-col :md="12" :xs="24" :sm="24">
 				<el-form-item label="菜单排序">
 					<el-input-number
-						v-model="newFormInline.rank"
+						v-model="newFormInline.sortOrder"
 						class="!w-full"
 						:min="1"
 						:max="9999"

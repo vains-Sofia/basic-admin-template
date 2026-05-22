@@ -66,7 +66,7 @@ app.directive('highlight', {
 	updated(el: HTMLElement) {
 		const blocks = el.querySelectorAll('pre code')
 		blocks.forEach((block) => hljs.highlightElement(block as HTMLElement))
-	}
+	},
 })
 
 app.mount('#app')

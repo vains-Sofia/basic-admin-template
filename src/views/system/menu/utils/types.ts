@@ -6,7 +6,7 @@ interface FormItemProps extends SavePermissionRequest {
 
 interface FormProps {
 	formInline?: FormItemProps
-	rank?: number
+	sortOrder?: number
 	parentId?: string
 	higherMenuOptions?: []
 }

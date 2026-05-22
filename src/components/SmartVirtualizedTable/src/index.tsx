@@ -149,7 +149,7 @@ export default defineComponent({
 			paginationRef,
 			tableHeight,
 			tableWidth,
-			toolbarRef
+			toolbarRef,
 		)
 
 		onMounted(async () => {

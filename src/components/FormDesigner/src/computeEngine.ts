@@ -336,7 +336,7 @@ export function buildRuntimeContext(
 
 	fieldKeys.forEach((key) => {
 		const raw = values[key]
-		const field = fields?.find(e => e.fieldName === key)
+		const field = fields?.find((e) => e.fieldName === key)
 		switch (field?.valueType) {
 			case 'number':
 				ctx[key] = raw == null ? 0 : Number(raw)
@@ -358,11 +358,7 @@ export function buildRuntimeContext(
 	return ctx
 }
 
-export function applyUnit(
-	value: any,
-	unit?: TimeUnit,
-	precision?: number,
-) {
+export function applyUnit(value: any, unit?: TimeUnit, precision?: number) {
 	if (typeof value !== 'number') {
 		return value
 	}
@@ -394,22 +390,22 @@ export const TIME_UNIT_MAP: Record<TimeUnit, number> = {
 export const timeUnitLabels: TimeUnitItem[] = [
 	{
 		label: '毫秒',
-		value: 'ms'
+		value: 'ms',
 	},
 	{
 		label: '秒数',
-		value: 'second'
+		value: 'second',
 	},
 	{
 		label: '分钟',
-		value: 'minute'
+		value: 'minute',
 	},
 	{
 		label: '小时',
-		value: 'hour'
+		value: 'hour',
 	},
 	{
 		label: '天数',
-		value: 'day'
-	}
+		value: 'day',
+	},
 ]

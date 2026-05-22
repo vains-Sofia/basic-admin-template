@@ -15,11 +15,11 @@ export default [
 				name: 'video',
 				meta: {
 					title: '视频提取',
-					icon: 'ep:house'
+					icon: 'ep:house',
 				},
 				component: () => import('@/views/tools/ExtractVideo.vue'),
-			}
-		]
+			},
+		],
 	},
 	{
 		path: '/',
@@ -32,7 +32,7 @@ export default [
 				path: '/dashboard',
 				name: 'Dashboard',
 				component: () => import('@/views/dashboard/Index.vue'),
-				meta: { title: '首页', icon: 'ep:house', fixedTag: true, showLink: true  },
+				meta: { title: '首页', icon: 'ep:house', fixedTag: true, showLink: true },
 			},
 		],
 	},

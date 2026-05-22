@@ -43,8 +43,10 @@ const breadcrumbList = computed<BreadcrumbItem[]>(() => {
 	matched.forEach((item) => {
 		if (item.meta?.title) {
 			// 除首页外都禁用
-			const enabled = item.name === 'Home' || item.name === 'Dashboard'
-				|| item.components?.default?.name === 'UniversalRouteWrapperInstance'
+			const enabled =
+				item.name === 'Home' ||
+				item.name === 'Dashboard' ||
+				item.components?.default?.name === 'UniversalRouteWrapperInstance'
 			breadcrumbs.push({
 				path: !enabled ? undefined : item.path,
 				title: item?.meta?.title,

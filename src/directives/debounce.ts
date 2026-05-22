@@ -2,9 +2,8 @@ import { type Directive } from 'vue'
 import { useDebounce, type DebounceOptions } from '../hooks/useDebounce'
 
 // 指令值的类型定义
-type DebounceBindingValue =
-	((...args: any[]) => any) // 直接传入函数
-	& {
+type DebounceBindingValue = ((...args: any[]) => any) & {
+	// 直接传入函数
 	handler: (...args: any[]) => any
 	wait?: number
 	options?: DebounceOptions
@@ -21,7 +20,9 @@ interface DebounceDirectiveEl extends HTMLElement {
 }
 
 // 解析指令值
-const parseValue = (value: DebounceBindingValue): { handler: (...args: any[]) => any; wait?: number; options?: DebounceOptions } => {
+const parseValue = (
+	value: DebounceBindingValue,
+): { handler: (...args: any[]) => any; wait?: number; options?: DebounceOptions } => {
 	if (typeof value === 'function') {
 		return { handler: value }
 	}
@@ -44,11 +45,11 @@ export const vDebounce: Directive<DebounceDirectiveEl, DebounceBindingValue> = {
 		const config: DebounceOptions = {
 			wait: wait ?? options.wait ?? 300,
 			leading: options.leading || modifiers.leading || false,
-			trailing: options.trailing ?? (modifiers.trailing !== false),
+			trailing: options.trailing ?? modifiers.trailing !== false,
 		}
 
 		// 如果有数字修饰符，将其作为等待时间
-		Object.keys(modifiers).forEach(key => {
+		Object.keys(modifiers).forEach((key) => {
 			const waitTime = parseInt(key)
 			if (!isNaN(waitTime)) {
 				config.wait = waitTime
@@ -63,7 +64,7 @@ export const vDebounce: Directive<DebounceDirectiveEl, DebounceBindingValue> = {
 			handler,
 			wrappedHandler: debouncedHandler,
 			event,
-			options: config
+			options: config,
 		}
 
 		// 添加事件监听
@@ -97,7 +98,7 @@ export const vDebounce: Directive<DebounceDirectiveEl, DebounceBindingValue> = {
 				handler,
 				wrappedHandler: debouncedHandler,
 				event,
-				options: config
+				options: config,
 			}
 
 			el.addEventListener(event, debouncedHandler)
@@ -111,5 +112,5 @@ export const vDebounce: Directive<DebounceDirectiveEl, DebounceBindingValue> = {
 			data.wrappedHandler.cancel()
 			delete el._debounce
 		}
-	}
+	},
 }

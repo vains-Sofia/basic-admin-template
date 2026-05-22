@@ -5,7 +5,12 @@ import FormViewer from './src/viewer/FormViewer.vue'
 export * from './src/types'
 
 // Export field registry utilities
-export { fieldTypeRegistry, getFieldTypeConfig, getFieldTypesByCategory, registerFieldType } from './src/fieldRegistry'
+export {
+	fieldTypeRegistry,
+	getFieldTypeConfig,
+	getFieldTypesByCategory,
+	registerFieldType,
+} from './src/fieldRegistry'
 
 export { FormViewer }
 

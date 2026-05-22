@@ -87,7 +87,7 @@ const columns: TableColumnV2[] = [
 		key: 'index',
 		dataKey: 'index',
 		selection: true,
-		width: 50
+		width: 50,
 	},
 	{
 		key: 'name',

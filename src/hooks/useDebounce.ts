@@ -1,26 +1,22 @@
 export interface DebounceOptions {
-	wait?: number;             // 防抖延迟，默认 300ms
-	leading?: boolean;         // 是否在开始时立即触发，默认 false
-	trailing?: boolean;        // 是否在结束时触发，默认 true
-	maxWait?: number;          // 可选：最大等待时间
+	wait?: number // 防抖延迟，默认 300ms
+	leading?: boolean // 是否在开始时立即触发，默认 false
+	trailing?: boolean // 是否在结束时触发，默认 true
+	maxWait?: number // 可选：最大等待时间
 }
 
 export interface DebouncedFunction<T extends (...args: any[]) => any> {
-	(...args: Parameters<T>): ReturnType<T> | undefined;
-	cancel: () => void;
-	flush: () => ReturnType<T> | undefined;
+	(...args: Parameters<T>): ReturnType<T> | undefined
+	cancel: () => void
+	flush: () => ReturnType<T> | undefined
 }
 
 export function useDebounce<T extends (...args: any[]) => any>(
 	fn: T,
 	wait = 300,
-	options: DebounceOptions = {}
+	options: DebounceOptions = {},
 ): DebouncedFunction<T> {
-	const {
-		leading = false,
-		trailing = true,
-		maxWait
-	} = options
+	const { leading = false, trailing = true, maxWait } = options
 
 	let timerId: ReturnType<typeof setTimeout> | null = null
 	let lastCallTime: number | null = null
@@ -38,8 +34,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
 
 		// 超过等待时间或者有最大等待时间且超过最大等待时间
 		return (
-			timeSinceLastCall >= wait ||
-			(maxWait !== undefined && timeSinceLastInvoke >= maxWait)
+			timeSinceLastCall >= wait || (maxWait !== undefined && timeSinceLastInvoke >= maxWait)
 		)
 	}
 
@@ -71,10 +66,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
 		const timeSinceLastInvoke = time - lastInvokeTime
 
 		if (maxWait !== undefined) {
-			return Math.min(
-				wait - timeSinceLastCall,
-				maxWait - timeSinceLastInvoke
-			)
+			return Math.min(wait - timeSinceLastCall, maxWait - timeSinceLastInvoke)
 		}
 
 		return wait - timeSinceLastCall

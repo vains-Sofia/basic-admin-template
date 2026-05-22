@@ -5,9 +5,9 @@ import type {
 	ResetPasswordRequest,
 	SaveBasicUserRequest,
 	UpdateUserRolesRequest,
-	UserInfo
+	UserInfo,
 } from '@/api/types/UserTypes.ts'
-import type { Pageable } from '@/api/types/ModelTypes.ts'
+import type { Pageable } from '@/api/types/SharedTypes.ts'
 
 /** 个人信息 */
 export const loginUserinfo = () => {

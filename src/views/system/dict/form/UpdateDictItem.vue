@@ -5,17 +5,17 @@ import type { FormProps } from '../utils/types'
 
 const {
 	formInline = {
-		title: "新增",
-		typeCode: "",
-		itemCode: "",
-		itemName: "",
+		title: '新增',
+		typeCode: '',
+		itemCode: '',
+		itemName: '',
 		sortOrder: 0,
-		i18nJson: "",
-		status: "Y"
+		i18nJson: '',
+		status: 'Y',
 	},
 	allTypes = [],
 	typeCode = '',
-	sortOrder = -99
+	sortOrder = -99,
 } = defineProps<FormProps>()
 
 const ruleFormRef = ref()
@@ -31,9 +31,8 @@ const allDictTypes = ref(allTypes)
 
 defineExpose({
 	getRef: () => ruleFormRef.value,
-	getData: () => newFormInline
+	getData: () => newFormInline,
 })
-
 </script>
 
 <template>

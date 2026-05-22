@@ -63,7 +63,6 @@ function handleSave(schema: FormSchema) {
 
 // Load a sample form for demonstration
 function handleLoadSampleForm() {
-
 	// designerRef.value?.setSchema(sampleSchema)
 	ElMessage.success('Sample form loaded!')
 }
@@ -94,6 +93,4 @@ function handleCopySchema() {
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

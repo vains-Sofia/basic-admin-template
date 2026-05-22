@@ -3,8 +3,8 @@ import { ref } from 'vue'
 
 const {
 	formInline = {
-		password: ''
-	}
+		password: '',
+	},
 } = defineProps<{
 	formInline: {
 		password: string
@@ -12,7 +12,6 @@ const {
 }>()
 
 const newFormInline = ref(formInline)
-
 </script>
 
 <template>

@@ -5,32 +5,32 @@ import { PermissionTypeEnum } from '@/api/types/Enums.ts'
  */
 export interface DynamicRouter {
 	/** 唯一数据id */
-	id?: number;
+	id?: number
 
 	/**
 	 * 路由名称
 	 * 必须唯一并且和当前路由 `component` 对应页面里 `defineOptions` 包起来的 `name` 保持一致
 	 */
-	name?: string;
+	name?: string
 
 	/** 路由路径 */
-	path?: string;
+	path?: string
 
 	/**
 	 * 组件路径
 	 * 如果传 `component`，那么 `path` 可随意填写；
 	 * 如果不传，则 `component` 会与 `path` 保持一致
 	 */
-	component?: string;
+	component?: string
 
 	/** 路由重定向地址 */
-	redirect?: string;
+	redirect?: string
 
 	/** 当前路由元数据 */
-	meta?: DynamicRouterMeta;
+	meta?: DynamicRouterMeta
 
 	/** 路由子节点 */
-	children?: DynamicRouter[];
+	children?: DynamicRouter[]
 }
 
 /**
@@ -41,49 +41,49 @@ export interface DynamicRouterMeta {
 	 * 菜单名称
 	 * 若使用国际化写法，需在根目录的 `locales` 文件夹下对应添加
 	 */
-	title?: string;
+	title?: string
 
 	/** 菜单图标 */
-	icon?: string;
+	icon?: string
 
 	/** 右侧图标 */
-	extraIcon?: string;
+	extraIcon?: string
 
 	/** 是否显示该菜单 */
-	showLink?: boolean;
+	showLink?: boolean
 
 	/** 是否显示父级菜单 */
-	showParent?: boolean;
+	showParent?: boolean
 
 	/**
 	 * 是否缓存该路由页面
 	 * 开启后会保存页面整体状态，刷新后清空
 	 */
-	keepAlive?: boolean;
+	keepAlive?: boolean
 
 	/** 当路由是内嵌 iframe 时使用此字段指定链接地址 */
-	frameSrc?: string;
+	frameSrc?: string
 
 	/** 内嵌 iframe 时的加载状态显示方式 */
-	frameLoading?: string;
+	frameLoading?: string
 
 	/** 是否在标签栏中隐藏此路由对应的标签页 */
-	hiddenTag?: boolean;
+	hiddenTag?: boolean
 
 	/** 是否固定标签页，固定后不可关闭 */
-	fixedTag?: boolean;
+	fixedTag?: boolean
 
 	/** 用于指定菜单高亮的路径 */
-	activePath?: string;
+	activePath?: string
 
 	/** 菜单的排序序号，数字越小越靠前 */
-	rank?: number;
+	rank?: number
 
 	/** 路由动画配置 */
-	transition?: DynamicRouterTransition;
+	transition?: DynamicRouterTransition
 
 	/** 展示菜单需要的权限列表 */
-	auths?: string[];
+	auths?: string[]
 }
 
 /**
@@ -91,13 +91,13 @@ export interface DynamicRouterMeta {
  */
 export interface DynamicRouterTransition {
 	/** 当前路由动画效果 */
-	name?: string;
+	name?: string
 
 	/** 页面进入时的动画效果配置 */
-	enterTransition?: string;
+	enterTransition?: string
 
 	/** 页面离开时的动画效果配置 */
-	leaveTransition?: string;
+	leaveTransition?: string
 }
 
 /**
@@ -105,16 +105,16 @@ export interface DynamicRouterTransition {
  */
 export interface FindPermissionRequest {
 	/** 权限名 */
-	name?: string;
+	name?: string
 
 	/** 权限码 */
-	permission?: string;
+	permission?: string
 
 	/** 路径 */
-	path?: string;
+	path?: string
 
 	/** 菜单类型 */
-	permissionType?: PermissionTypeEnum;
+	permissionType?: PermissionTypeEnum
 }
 
 /**
@@ -123,97 +123,97 @@ export interface FindPermissionRequest {
  */
 export interface FindPermissionResponse {
 	/** 主键id */
-	id?: string;
+	id?: string
 
 	/** 路由名称 */
-	name?: string;
+	name?: string
 
 	/** 菜单名称（兼容国际化、非国际化） */
-	title?: string;
+	title?: string
 
 	/** 权限码，例如 system:user:create */
-	permission?: string;
+	permission?: string
 
 	/** API路径或前端路由路径 */
-	path?: string;
+	path?: string
 
 	/** HTTP请求方式，例如 GET、POST、PUT、DELETE */
-	requestMethod?: string;
+	requestMethod?: string
 
 	/** 权限类型，包括菜单、按钮、接口等 */
-	permissionType?: PermissionTypeEnum;
+	permissionType?: PermissionTypeEnum
 
 	/** 所属模块名字 */
-	moduleName?: string;
+	moduleName?: string
 
 	/** 权限描述 */
-	description?: string;
+	description?: string
 
 	/** 是否需要鉴权 */
-	needAuthentication?: boolean;
+	needAuthentication?: boolean
 
 	/** 父节点id，用于权限树结构 */
-	parentId?: number;
+	parentId?: number
 
 	/** 前端路由对应的组件文件路径 */
-	component?: string;
+	component?: string
 
 	/** 路由重定向 */
-	redirect?: string;
+	redirect?: string
 
 	/** 菜单图标 */
-	icon?: string;
+	icon?: string
 
 	/** 右侧图标 */
-	extraIcon?: string;
+	extraIcon?: string
 
 	/** 页面进场动画 */
-	enterTransition?: string;
+	enterTransition?: string
 
 	/** 页面离场动画 */
-	leaveTransition?: string;
+	leaveTransition?: string
 
 	/** 内嵌iframe链接地址 */
-	frameSrc?: string;
+	frameSrc?: string
 
 	/** iframe加载动画控制 */
-	frameLoading?: string;
+	frameLoading?: string
 
 	/** 是否缓存页面 */
-	keepAlive?: boolean;
+	keepAlive?: boolean
 
 	/** 是否显示该菜单 */
-	showLink?: boolean;
+	showLink?: boolean
 
 	/** 隐藏标签页 */
-	hiddenTag?: boolean;
+	hiddenTag?: boolean
 
 	/** 固定标签页 */
-	fixedTag?: boolean;
+	fixedTag?: boolean
 
 	/** 是否显示父级菜单 */
-	showParent?: boolean;
+	showParent?: boolean
 
 	/** 菜单排序权重 */
-	rank?: number;
+	rank?: number
 
 	/** 指定激活菜单的 path */
-	activePath?: string;
+	activePath?: string
 
 	/** 创建人名称 */
-	createName?: string;
+	createName?: string
 
 	/** 修改人名称 */
-	updateName?: string;
+	updateName?: string
 
 	/** 创建时间 (ISO 8601) */
-	createTime?: string;
+	createTime?: string
 
 	/** 修改时间 (ISO 8601) */
-	updateTime?: string;
+	updateTime?: string
 
 	/** 子节点 */
-	children?: FindPermissionResponse[];
+	children?: FindPermissionResponse[]
 }
 
 /**
@@ -221,83 +221,83 @@ export interface FindPermissionResponse {
  */
 export interface SavePermissionRequest {
 	/** 主键id（修改时必传） */
-	id?: string;
+	id?: string
 
 	/** 权限名 */
-	name: string;
+	name: string
 
 	/**
 	 * 菜单名称（兼容国际化、非国际化）
 	 * 如果用国际化的写法必须在根目录的 locales 文件夹下对应添加
 	 */
-	title: string;
+	title: string
 
 	/** 权限码 */
-	permission?: string;
+	permission?: string
 
 	/** 路径 */
-	path: string;
+	path: string
 
 	/** HTTP请求方式 */
-	requestMethod?: string;
+	requestMethod?: string
 
 	/** 菜单类型 */
-	permissionType: PermissionTypeEnum;
+	permissionType: PermissionTypeEnum
 
 	/** 所属模块名字 */
-	moduleName?: string;
+	moduleName?: string
 
 	/** 描述 */
-	description?: string;
+	description?: string
 
 	/** 是否需要鉴权 */
-	needAuthentication?: boolean;
+	needAuthentication?: boolean
 
 	/** 父节点id */
-	parentId?: string;
+	parentId?: string
 
 	/** 组件路径 */
-	component?: string;
+	component?: string
 
 	/** 路由重定向 */
-	redirect?: string;
+	redirect?: string
 
 	/** 菜单图标 */
-	icon?: string;
+	icon?: string
 
 	/** 右侧图标 */
-	extraIcon?: string;
+	extraIcon?: string
 
 	/** 页面进场动画 */
-	enterTransition?: string;
+	enterTransition?: string
 
 	/** 页面离场动画 */
-	leaveTransition?: string;
+	leaveTransition?: string
 
 	/** iframe 链接地址 */
-	frameSrc?: string;
+	frameSrc?: string
 
 	/** iframe 加载动画控制 */
-	frameLoading?: string;
+	frameLoading?: string
 
 	/** 是否缓存页面 */
-	keepAlive?: boolean;
+	keepAlive?: boolean
 
 	/** 是否显示该菜单 */
-	showLink?: boolean;
+	showLink?: boolean
 
 	/** 隐藏标签页 */
-	hiddenTag?: boolean;
+	hiddenTag?: boolean
 
 	/** 固定标签页 */
-	fixedTag?: boolean;
+	fixedTag?: boolean
 
 	/** 是否显示父级菜单 */
-	showParent?: boolean;
+	showParent?: boolean
 
 	/** 菜单排序 */
-	rank?: number;
+	sortOrder?: number
 
 	/** 指定激活菜单的 path，用于高亮显示当前激活的菜单项 */
-	activePath?: string;
+	activePath?: string
 }

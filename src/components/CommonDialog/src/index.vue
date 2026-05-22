@@ -84,9 +84,7 @@ onBeforeUnmount(() => {
 
 				<!-- 带 ctx 的 footerRenderer(ctx) -->
 				<component
-					v-else-if="
-						typeof item.footerRenderer === 'function'
-					"
+					v-else-if="typeof item.footerRenderer === 'function'"
 					:is="
 						item.footerRenderer({
 							confirm: () => confirm(item),
