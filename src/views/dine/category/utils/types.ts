@@ -1,8 +1,8 @@
 import type { CategoryRequest } from '@/api/types/CategoryTypes.ts'
 
 interface FormItemProps extends Omit<CategoryRequest, 'storeId'> {
-	id?: number
-	storeId?: number
+	id?: string
+	storeId?: string
 	[key: string]: any
 }
 

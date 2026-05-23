@@ -101,12 +101,12 @@ export enum RecommendEnum {
 	/**
 	 * 普通
 	 */
-	NORMAL = 1,
+	NORMAL = 0,
 
 	/**
 	 * 推荐
 	 */
-	RECOMMEND = 2,
+	RECOMMEND = 1,
 }
 
 export enum SelectTypeEnum {

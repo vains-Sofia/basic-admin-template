@@ -5,9 +5,13 @@ import type { FilePreSignedRequest, FilePreSignedResponse } from '@/api/types/Co
 export const uploadPreSigned = (data?: FilePreSignedRequest) => {
 	return http.put<FilePreSignedResponse>(`/file/pre/signed`, data)
 }
+/** 文件删除预签名 */
+export const deletePreSigned = (data?: FilePreSignedRequest) => {
+	return http.delete<FilePreSignedResponse>(`/file/pre/signed`, data)
+}
 
 /** 使用预签名地址上传 */
-export const uploadByPreSignedUrl = (preSignedUrl: string, data: object, fileType: string) => {
+export const uploadByPreSignedUrl = (preSignedUrl: string, data: Blob | File, fileType: string) => {
 	return http.put<any>(preSignedUrl, data, {
 		headers: {
 			'Content-Type': fileType,

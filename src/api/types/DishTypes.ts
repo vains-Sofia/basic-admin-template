@@ -2,8 +2,8 @@ import { RecommendEnum, StatusEnum } from '@/api/types/Enums.ts'
 import type { AuditFields, PageableRequest } from '@/api/types/SharedTypes.ts'
 
 export interface DishRequest {
-	storeId: number
-	categoryId: number
+	storeId: string
+	categoryId: string
 	name: string
 	image?: string
 	images?: string[]
@@ -19,14 +19,14 @@ export interface DishRequest {
 
 export interface DishPageRequest extends PageableRequest {
 	keyword?: string
-	storeId?: number
-	categoryId?: number
+	storeId?: string
+	categoryId?: string
 }
 
 export interface FindDishResponse extends AuditFields {
-	id: number
-	storeId: number
-	categoryId: number
+	id: string
+	storeId: string
+	categoryId: string
 	name: string
 	image: string
 	images: string[]

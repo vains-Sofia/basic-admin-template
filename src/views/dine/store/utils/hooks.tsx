@@ -12,6 +12,152 @@ import { generateUUID } from '@/utils/Common.ts'
 
 type UploadTarget = 'logo' | 'albums'
 
+const STORE_LOGO_BUCKET = 'store-logo'
+const STORE_ALBUM_BUCKET = 'store-album'
+const PENDING_UPLOADS = Symbol('pendingUploads')
+
+type PendingUpload = {
+	file: File
+	blob: Blob
+	previewUrl: string
+	bucket: string
+	fileType: string
+}
+
+type StorePendingUploads = {
+	logo?: PendingUpload
+	albums?: Record<string, PendingUpload>
+	initialAlbums?: string[]
+	removedAlbums?: Set<string>
+}
+
+type StoreUploadTarget = StoreRequest & {
+	[PENDING_UPLOADS]?: StorePendingUploads
+}
+
+function getUploadExtension(fileType: string) {
+	const extension = fileType.split('/').pop()?.split(';')[0] || 'png'
+	return extension === 'jpeg' ? 'jpg' : extension
+}
+
+function buildUploadName(fileName: string, fileType: string) {
+	const splits = fileName.split('.')
+	if (splits.length > 1) {
+		splits.pop()
+	}
+	const baseName = splits.join('.') || 'image'
+	return `${baseName}.${generateUUID()}.${getUploadExtension(fileType)}`
+}
+
+function getPendingUploads(row: StoreUploadTarget) {
+	if (!row[PENDING_UPLOADS]) {
+		Object.defineProperty(row, PENDING_UPLOADS, {
+			value: {},
+			enumerable: false,
+			configurable: true,
+		})
+	}
+	return row[PENDING_UPLOADS]!
+}
+
+function revokePendingUpload(pending?: PendingUpload) {
+	if (pending?.previewUrl) {
+		URL.revokeObjectURL(pending.previewUrl)
+	}
+}
+
+function setPendingLogo(row: StoreUploadTarget, pending: PendingUpload) {
+	const uploads = getPendingUploads(row)
+	revokePendingUpload(uploads.logo)
+	uploads.logo = pending
+	row.logo = pending.previewUrl
+}
+
+function initStoreAlbums(row: StoreUploadTarget) {
+	const uploads = getPendingUploads(row)
+	uploads.initialAlbums = [...(row.albums ?? [])]
+	uploads.removedAlbums = new Set()
+}
+
+function addPendingAlbum(row: StoreUploadTarget, pending: PendingUpload) {
+	const uploads = getPendingUploads(row)
+	uploads.albums = uploads.albums ?? {}
+	uploads.albums[pending.previewUrl] = pending
+	row.albums = [...(row.albums ?? []), pending.previewUrl]
+}
+
+async function uploadPendingImage(pending: PendingUpload) {
+	const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
+	const res = await uploadPreSigned({
+		name: buildUploadName(pending.file.name, pending.fileType),
+		bucket: pending.bucket,
+	})
+	await uploadByPreSignedUrl(res.url, pending.blob, pending.fileType)
+	return `${minioBaseUrl}/${res.bucket}/${res.name}`
+}
+
+async function flushStorePendingUploads(row: StoreUploadTarget) {
+	const uploads = row[PENDING_UPLOADS]
+	if (!uploads) return
+
+	if (uploads.logo) {
+		row.logo = await uploadPendingImage(uploads.logo)
+		revokePendingUpload(uploads.logo)
+		delete uploads.logo
+	}
+
+	if (uploads.albums) {
+		const currentAlbums = row.albums ?? []
+		const uploadedMap = new Map<string, string>()
+		for (const album of currentAlbums) {
+			const pendingAlbum = uploads.albums[album]
+			if (pendingAlbum) {
+				uploadedMap.set(album, await uploadPendingImage(pendingAlbum))
+				revokePendingUpload(pendingAlbum)
+				delete uploads.albums[album]
+			}
+		}
+
+		const initialAlbums = uploads.initialAlbums ?? []
+		const removedAlbums = uploads.removedAlbums ?? new Set<string>()
+		const retainedInitialAlbums = initialAlbums.filter(
+			(album) => !removedAlbums.has(album) && !uploadedMap.has(album),
+		)
+		const currentRemoteAlbums = currentAlbums.filter((album) => !uploads.albums?.[album])
+		row.albums = Array.from(
+			new Set([
+				...retainedInitialAlbums,
+				...currentRemoteAlbums.map((album) => uploadedMap.get(album) ?? album),
+			]),
+		)
+	}
+}
+
+function removePendingAlbum(row: StoreUploadTarget, url: string) {
+	const uploads = getPendingUploads(row)
+	const pending = uploads.albums?.[url]
+	if (pending) {
+		revokePendingUpload(pending)
+		delete uploads.albums?.[url]
+		return
+	}
+
+	uploads.removedAlbums = uploads.removedAlbums ?? new Set()
+	uploads.removedAlbums.add(url)
+}
+
+function disposeStorePendingUploads(row?: StoreUploadTarget) {
+	const uploads = row?.[PENDING_UPLOADS]
+	if (!uploads) return
+
+	revokePendingUpload(uploads.logo)
+	Object.values(uploads.albums ?? {}).forEach(revokePendingUpload)
+	delete uploads.logo
+	delete uploads.albums
+	delete uploads.initialAlbums
+	delete uploads.removedAlbums
+}
+
 export function useStore(loadOnMounted = true) {
 	const switchLoadMap = ref<Record<string, boolean>>({})
 	const loading = ref(true)
@@ -256,7 +402,9 @@ export function useStore(loadOnMounted = true) {
 			content: () => <StoreUpdateForm ref={formRef} />,
 			onConfirm(close, closeLoading) {
 				const updateFormRef = formRef.value?.getRef()
-				const formData = formRef.value?.getData()?.value
+				const formData = formRef.value?.getData()?.value as StoreUploadTarget & {
+					id?: string
+				}
 
 				function chores() {
 					ElMessage({
@@ -267,19 +415,24 @@ export function useStore(loadOnMounted = true) {
 					onSearch()
 				}
 
-				updateFormRef.validate((valid: unknown) => {
-					if (valid) {
+				updateFormRef.validate(async (valid: unknown) => {
+					if (!valid) {
+						closeLoading()
+						return
+					}
+
+					try {
+						await flushStorePendingUploads(formData)
 						const data = pickStoreForm(formData)
 						if (title === '新增') {
-							createStore(data)
-								.then(() => chores())
-								.finally(() => closeLoading())
+							await createStore(data)
 						} else {
-							updateStore(formData.id, data)
-								.then(() => chores())
-								.finally(() => closeLoading())
+							await updateStore(formData.id!, data)
 						}
-					} else {
+						chores()
+					} catch {
+						ElMessage.error('图片上传或门店保存失败，请重试')
+					} finally {
 						closeLoading()
 					}
 				})
@@ -297,66 +450,44 @@ export function useStore(loadOnMounted = true) {
 		})
 	}
 
-	const handleUpload = (
+	const handleStoreImageSelect = (
 		file: File,
-		row: StoreRequest,
-		updateData = true,
+		row: StoreUploadTarget,
 		target: UploadTarget = 'logo',
 	) => {
-		const bucket = target === 'logo' ? 'store-logo' : 'store-album'
-		const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
-		const imageBlob = ref()
+		const imageBlob = ref<Blob>()
 
 		openDialog({
-			title: target === 'logo' ? '裁剪、上传门店 Logo' : '裁剪、上传商家相册',
+			title: target === 'logo' ? '裁剪门店 Logo' : '裁剪商家相册',
 			width: '900px',
 			props: {
 				modelValue: file,
 			},
 			destroyOnClose: true,
 			confirmLoading: true,
-			content: h(ImageCropper, { 'onUpdate:blob': (blob) => (imageBlob.value = blob) }),
+			content: h(ImageCropper, { 'onUpdate:blob': (blob: Blob) => (imageBlob.value = blob) }),
 			onConfirm: (close, closeLoading) => {
-				if (!imageBlob.value) return
+				if (!imageBlob.value) {
+					ElMessage.warning('请先完成图片裁剪')
+					closeLoading()
+					return
+				}
 
-				const fileName = file.name
-				const splits = fileName.split('.')
-				const extension = splits.length > 1 ? splits.pop() : 'png'
-				const name = `${splits.join('.')}.${generateUUID()}.${extension}`
-				uploadPreSigned({ name, bucket })
-					.then((res) => {
-						uploadByPreSignedUrl(res.url, imageBlob.value, file.type)
-							.then(() => {
-								const url = `${minioBaseUrl}/${res.bucket}/${res.name}`
-								if (target === 'logo') {
-									row.logo = url
-								} else {
-									row.albums = [...(row.albums ?? []), url]
-								}
+				const blob = imageBlob.value
+				const pending: PendingUpload = {
+					file,
+					blob,
+					previewUrl: URL.createObjectURL(blob),
+					bucket: target === 'logo' ? STORE_LOGO_BUCKET : STORE_ALBUM_BUCKET,
+					fileType: blob.type || file.type || 'image/png',
+				}
 
-								if (updateData) {
-									updateStore((row as FindStoreResponse).id, pickStoreForm(row))
-										.then(() => {
-											ElMessage({
-												type: 'success',
-												message: '门店图片上传成功',
-											})
-											close()
-											onSearch()
-										})
-										.finally(() => closeLoading())
-								} else {
-									close()
-								}
-							})
-							.catch(() => closeLoading())
-							.finally(() => {
-								if (!updateData) {
-									closeLoading()
-								}
-							})
-					})
-					.catch(() => closeLoading())
+				if (target === 'logo') {
+					setPendingLogo(row, pending)
+				} else {
+					addPendingAlbum(row, pending)
+				}
+				close()
 			},
 		})
 
@@ -379,7 +510,10 @@ export function useStore(loadOnMounted = true) {
 		dataList,
 		pagination,
 		handleDelete,
-		handleUpload,
+		handleStoreImageSelect,
+		initStoreAlbums,
+		removePendingAlbum,
+		disposeStorePendingUploads,
 		openUpdatePanel,
 		handleSizeChange,
 		handleCurrentChange,

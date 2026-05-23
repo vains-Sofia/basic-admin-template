@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import Plus from '~icons/ep/plus'
 import { formRules } from '../utils/rule'
 import type { FormProps } from '../utils/types'
@@ -22,15 +22,23 @@ const {
 
 const ruleFormRef = ref()
 const newFormInline = ref(JSON.parse(JSON.stringify(formInline)))
-const { handleUpload } = useStore(false)
+const { handleStoreImageSelect, initStoreAlbums, removePendingAlbum, disposeStorePendingUploads } =
+	useStore(false)
 
 if (!newFormInline.value.albums) {
 	newFormInline.value.albums = []
 }
+initStoreAlbums(newFormInline.value)
 
 const removeAlbum = (index: number) => {
+	const url = newFormInline.value.albums[index]
+	removePendingAlbum(newFormInline.value, url)
 	newFormInline.value.albums.splice(index, 1)
 }
+
+onBeforeUnmount(() => {
+	disposeStorePendingUploads(newFormInline.value)
+})
 
 defineExpose({
 	getRef: () => ruleFormRef.value,
@@ -46,7 +54,7 @@ defineExpose({
 				action="#"
 				accept="image/*"
 				:show-file-list="false"
-				:before-upload="(file) => handleUpload(file, newFormInline, false)"
+				:before-upload="(file) => handleStoreImageSelect(file, newFormInline, 'logo')"
 			>
 				<img v-if="newFormInline.logo" :src="newFormInline.logo" alt="" class="logo" />
 				<el-icon v-else class="logo-uploader-icon"><Plus /></el-icon>
@@ -95,7 +103,7 @@ defineExpose({
 					action="#"
 					accept="image/*"
 					:show-file-list="false"
-					:before-upload="(file) => handleUpload(file, newFormInline, false, 'albums')"
+					:before-upload="(file) => handleStoreImageSelect(file, newFormInline, 'albums')"
 				>
 					<el-icon class="album-uploader-icon"><Plus /></el-icon>
 				</el-upload>

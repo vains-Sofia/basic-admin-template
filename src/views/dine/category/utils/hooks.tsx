@@ -24,7 +24,7 @@ export function useCategory() {
 
 	const form = reactive({
 		keyword: '',
-		storeId: undefined as number | undefined,
+		storeId: '',
 		status: StatusEnum.ALL,
 		current: pagination.currentPage,
 		size: pagination.pageSize,

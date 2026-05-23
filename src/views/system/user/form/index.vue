@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import Plus from '~icons/ep/plus'
 import { formRules } from '../utils/rule'
 import type { FormProps } from '../utils/types'
@@ -40,7 +40,11 @@ const disabledDate = (time: Date) => {
 	return time.getTime() > Date.now()
 }
 
-const { handleUpload } = useUser()
+const { handleAvatarSelect, disposeUserPendingUploads } = useUser()
+
+onBeforeUnmount(() => {
+	disposeUserPendingUploads(newFormInline.value)
+})
 
 defineExpose({
 	getRef,
@@ -57,7 +61,7 @@ defineExpose({
 						class="avatar-uploader"
 						action="#"
 						:show-file-list="false"
-						:before-upload="(file) => handleUpload(file, newFormInline, false)"
+						:before-upload="(file) => handleAvatarSelect(file, newFormInline)"
 					>
 						<img
 							alt=""

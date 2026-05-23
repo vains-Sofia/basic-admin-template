@@ -47,7 +47,7 @@ const searchForm = ref()
 			/>
 		</div>
 
-		<div class="w-[calc(100%-300px)]">
+		<div class="min-w-0 flex-1">
 			<el-form
 				ref="searchForm"
 				:inline="true"

@@ -20,6 +20,91 @@ import type { FindRoleResponse } from '@/api/types/RoleTypes.ts'
 import UserRoles from '@/views/system/user/form/UserRoles.vue'
 import { generateUUID } from '@/utils/Common.ts'
 
+const USER_PICTURE_BUCKET = 'user-picture'
+const PENDING_UPLOADS = Symbol('pendingUploads')
+
+type PendingUpload = {
+	file: File
+	blob: Blob
+	previewUrl: string
+	bucket: string
+	fileType: string
+}
+
+type UserPendingUploads = {
+	picture?: PendingUpload
+}
+
+type UserUploadTarget = (FindBasicUserResponse | SaveBasicUserRequest) & {
+	[PENDING_UPLOADS]?: UserPendingUploads
+}
+
+function getUploadExtension(fileType: string) {
+	const extension = fileType.split('/').pop()?.split(';')[0] || 'png'
+	return extension === 'jpeg' ? 'jpg' : extension
+}
+
+function buildUploadName(fileName: string, fileType: string) {
+	const splits = fileName.split('.')
+	if (splits.length > 1) {
+		splits.pop()
+	}
+	const baseName = splits.join('.') || 'image'
+	return `${baseName}.${generateUUID()}.${getUploadExtension(fileType)}`
+}
+
+function getPendingUploads(row: UserUploadTarget) {
+	if (!row[PENDING_UPLOADS]) {
+		Object.defineProperty(row, PENDING_UPLOADS, {
+			value: {},
+			enumerable: false,
+			configurable: true,
+		})
+	}
+	return row[PENDING_UPLOADS]!
+}
+
+function revokePendingUpload(pending?: PendingUpload) {
+	if (pending?.previewUrl) {
+		URL.revokeObjectURL(pending.previewUrl)
+	}
+}
+
+function setPendingPicture(row: UserUploadTarget, pending: PendingUpload) {
+	const uploads = getPendingUploads(row)
+	revokePendingUpload(uploads.picture)
+	uploads.picture = pending
+	row.picture = pending.previewUrl
+}
+
+async function uploadPendingImage(pending: PendingUpload) {
+	const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
+	const res = await uploadPreSigned({
+		name: buildUploadName(pending.file.name, pending.fileType),
+		bucket: pending.bucket,
+	})
+	await uploadByPreSignedUrl(res.url, pending.blob, pending.fileType)
+	return `${minioBaseUrl}/${res.bucket}/${res.name}`
+}
+
+async function flushUserPendingUploads(row: UserUploadTarget) {
+	const uploads = row[PENDING_UPLOADS]
+	if (!uploads?.picture) return
+
+	const picture = await uploadPendingImage(uploads.picture)
+	row.picture = picture
+	revokePendingUpload(uploads.picture)
+	delete uploads.picture
+}
+
+function disposeUserPendingUploads(row?: UserUploadTarget) {
+	const uploads = row?.[PENDING_UPLOADS]
+	if (!uploads) return
+
+	revokePendingUpload(uploads.picture)
+	delete uploads.picture
+}
+
 export function useUser() {
 	// 所有角色
 	const allRoles = ref<Array<FindRoleResponse>>([])
@@ -187,7 +272,7 @@ export function useUser() {
 			content: () => h(UpdateUserForm, { ref: formRef }),
 			onConfirm: (close, closeLoading) => {
 				const updateFormRef = formRef.value?.getRef()
-				const formData = formRef.value?.getData()?.value
+				const formData = formRef.value?.getData()?.value as UserUploadTarget
 
 				function chores() {
 					ElMessage({
@@ -198,26 +283,23 @@ export function useUser() {
 					onSearch() //
 				}
 
-				updateFormRef.validate((valid: unknown) => {
-					if (valid) {
-						// console.log("curData", curData);
-						// 表单规则校验通过
+				updateFormRef.validate(async (valid: unknown) => {
+					if (!valid) {
+						closeLoading()
+						return
+					}
+
+					try {
+						await flushUserPendingUploads(formData)
 						if (title === '新增') {
-							// chores();
-							insertBasicUser(formData)
-								.then(() => {
-									chores()
-								})
-								.finally(() => closeLoading())
+							await insertBasicUser(formData as SaveBasicUserRequest)
 						} else {
-							// chores();
-							updateBasicUser(formData)
-								.then(() => {
-									chores()
-								})
-								.finally(() => closeLoading())
+							await updateBasicUser(formData as SaveBasicUserRequest)
 						}
-					} else {
+						chores()
+					} catch {
+						ElMessage.error('图片上传或用户保存失败，请重试')
+					} finally {
 						closeLoading()
 					}
 				})
@@ -239,69 +321,83 @@ export function useUser() {
 		})
 	}
 
-	/**
-	 * 上传文件
-	 * @param file 文件
-	 * @param row 行数据
-	 * @param updateData 是否同时上传数据
-	 */
-	const handleUpload = (file: File, row: FindBasicUserResponse, updateData: boolean = true) => {
-		const bucket: string = 'user-picture'
-		const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
-		// 剪切后的图片blob
-		const imageBlob = ref()
+	const handleAvatarSelect = (file: File, row: UserUploadTarget) => {
+		const imageBlob = ref<Blob>()
 		openDialog({
-			title: '裁剪、上传头像',
+			title: '裁剪头像',
 			width: '900px',
 			props: {
 				modelValue: file,
 			},
 			destroyOnClose: true,
 			confirmLoading: true,
-			content: h(ImageCropper, { 'onUpdate:blob': (blob) => (imageBlob.value = blob) }),
+			content: h(ImageCropper, { 'onUpdate:blob': (blob: Blob) => (imageBlob.value = blob) }),
 			onConfirm: (close, closeLoading) => {
-				if (!imageBlob.value) return
+				if (!imageBlob.value) {
+					ElMessage.warning('请先完成图片裁剪')
+					closeLoading()
+					return
+				}
 
-				// 头像预签名
-				const fileName = file.name
-				const splits = fileName.split('.')
-				const name = splits[0] + '.' + generateUUID() + '.' + splits[1]
-				uploadPreSigned({ name, bucket })
-					.then((res) => {
-						// 使用预签名URL上传
-						uploadByPreSignedUrl(res.url, imageBlob.value, file.type)
-							.then(() => {
-								row.picture = minioBaseUrl + '/' + res.bucket + '/' + res.name
-								if (updateData) {
-									// 执行修改
-									updateBasicUser(row as SaveBasicUserRequest)
-										.then(() => {
-											ElMessage({
-												type: 'success',
-												message: '头像上传成功.',
-											})
-											close() // 关闭弹框
-											onSearch() // 刷新表格数据
-										})
-										.finally(() => closeLoading())
-								} else {
-									close() // 关闭弹框
-								}
-							})
-							.catch(() => closeLoading())
-							.finally(() => {
-								if (!updateData) {
-									// 不修改数据时不管是否正常都关闭loading
-									closeLoading()
-								}
-							})
-					})
-					.catch(() => closeLoading())
+				const blob = imageBlob.value
+				setPendingPicture(row, {
+					file,
+					blob,
+					previewUrl: URL.createObjectURL(blob),
+					bucket: USER_PICTURE_BUCKET,
+					fileType: blob.type || file.type || 'image/png',
+				})
+				close()
 			},
 		})
 		return false
 	}
 
+	const handleInlineAvatarUpload = (file: File, row: FindBasicUserResponse) => {
+		const imageBlob = ref<Blob>()
+		openDialog({
+			title: '裁剪头像',
+			confirmText: '保存头像',
+			width: '900px',
+			props: {
+				modelValue: file,
+			},
+			destroyOnClose: true,
+			confirmLoading: true,
+			content: h(ImageCropper, { 'onUpdate:blob': (blob: Blob) => (imageBlob.value = blob) }),
+			onConfirm: async (close, closeLoading) => {
+				if (!imageBlob.value) {
+					ElMessage.warning('请先完成图片裁剪')
+					closeLoading()
+					return
+				}
+
+				const blob = imageBlob.value
+				const pending: PendingUpload = {
+					file,
+					blob,
+					previewUrl: URL.createObjectURL(blob),
+					bucket: USER_PICTURE_BUCKET,
+					fileType: blob.type || file.type || 'image/png',
+				}
+
+				try {
+					const picture = await uploadPendingImage(pending)
+					await updateBasicUser({ ...(row as SaveBasicUserRequest), picture })
+					row.picture = picture
+					ElMessage.success('头像上传成功.')
+					close()
+					onSearch()
+				} catch {
+					ElMessage.error('头像上传失败，请重试')
+					closeLoading()
+				} finally {
+					revokePendingUpload(pending)
+				}
+			},
+		})
+		return false
+	}
 	/**
 	 * 重置用户密码
 	 * @param row 用户数据
@@ -413,7 +509,9 @@ export function useUser() {
 		pagination,
 		handleReset,
 		handleDelete,
-		handleUpload,
+		handleAvatarSelect,
+		handleInlineAvatarUpload,
+		disposeUserPendingUploads,
 		openUpdatePanel,
 		handleUserRoles,
 		handleSizeChange,

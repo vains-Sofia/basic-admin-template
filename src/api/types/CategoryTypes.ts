@@ -2,7 +2,7 @@ import type { AuditFields, PageableRequest } from '@/api/types/SharedTypes'
 import type { StatusEnum } from '@/api/types/Enums'
 
 export interface CategoryRequest {
-	storeId: number
+	storeId: string
 	name: string
 	sort?: number
 	status?: StatusEnum
@@ -10,12 +10,12 @@ export interface CategoryRequest {
 
 export interface CategoryPageRequest extends PageableRequest {
 	keyword?: string
-	storeId?: number
+	storeId?: string
 }
 
 export interface FindCategoryResponse extends AuditFields {
-	id: number
-	storeId: number
+	id: string
+	storeId: string
 	name: string
 	sort: number
 	status: StatusEnum

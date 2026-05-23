@@ -13,7 +13,7 @@ const {
 	pagination,
 	handleReset,
 	handleDelete,
-	handleUpload,
+	handleInlineAvatarUpload,
 	openUpdatePanel,
 	handleUserRoles,
 	handleSizeChange,
@@ -106,7 +106,9 @@ const searchForm = ref()
 									<ElUpload
 										accept="image/*"
 										:show-file-list="false"
-										:before-upload="(file) => handleUpload(file, row)"
+										:before-upload="
+											(file) => handleInlineAvatarUpload(file, row)
+										"
 									>
 										<Icon icon="ep:upload" /> 上传头像
 									</ElUpload>
