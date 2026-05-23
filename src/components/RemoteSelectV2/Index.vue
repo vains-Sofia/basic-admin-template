@@ -119,5 +119,7 @@ const handleScroll = async (e: any) => {
 
 const debouncedSearch = useDebounce((keyword = '') => handleRemoteSearch(keyword), 300)
 
-loadData(true)
+loadData(true).then(() => {
+	hasLoaded.value = true
+})
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<div class="dict-type-manager">
+	<div class="attribute-group-manager">
 		<!-- 操作栏 -->
 		<div ref="operationBar" class="operation-bar">
 			<el-input
@@ -24,27 +24,27 @@
 			</div>
 		</div>
 
-		<!-- 字典类型列表 -->
-		<div class="dict-list-container">
-			<el-scrollbar ref="dictScrollbar" class="dict-scrollbar">
-				<div class="dict-list">
+		<!-- 属性组列表 -->
+		<div class="attribute-group-list-container">
+			<el-scrollbar ref="attributeGroupScrollbar" class="attribute-group-scrollbar">
+				<div>
 					<div
-						v-for="item in dictTypeList"
+						v-for="item in attributeGroupList"
 						:key="item.id"
-						class="dict-item"
+						class="attribute-group-item"
 						:class="{ active: selectedId === item.id }"
-						@click="selectDictType(item)"
+						@click="selectAttributeGroup(item)"
 					>
-						<div class="dict-info">
-							<!--							<div class="dict-name" style="max-width: 60%">-->
+						<div class="attribute-group-info">
+							<!--							<div class="attribute-group-name" style="max-width: 60%">-->
 							<!--								<text-tooltip :content="item.name" />-->
 							<!--							</div>-->
-							<div class="dict-name">{{ item.name }}</div>
-							<div class="dict-code">
+							<div class="attribute-group-name">{{ item.name }}</div>
+							<div class="attribute-group-type">
 								{{ item.selectType === 1 ? '单选' : '多选' }}
 							</div>
 						</div>
-						<div class="dict-actions">
+						<div class="attribute-group-actions">
 							<el-button text size="small" @click.stop="handleEdit(item)">
 								<el-icon>
 									<Icon icon="ep:edit" />
@@ -69,12 +69,15 @@
 					<div v-show="!noMore" ref="loadTrigger" class="load-trigger" />
 
 					<!-- 无更多数据 -->
-					<div v-if="noMore && dictTypeList.length > 0" class="no-more">
+					<div v-if="noMore && attributeGroupList.length > 0" class="no-more">
 						没有更多数据了
 					</div>
 
 					<!-- 空数据 -->
-					<el-empty v-if="dictTypeList.length === 0 && !loading" description="暂无数据" />
+					<el-empty
+						v-if="attributeGroupList.length === 0 && !loading"
+						description="暂无数据"
+					/>
 				</div>
 			</el-scrollbar>
 		</div>
@@ -84,6 +87,9 @@
 			<el-form ref="formRef" :model="form" :rules="rules" label-width="130px">
 				<el-form-item label="所属门店" prop="storeId">
 					<remote-select-v2 :fetch-function="fetchStores" :modelValue="form.storeId" />
+				</el-form-item>
+				<el-form-item label="属性组名称" prop="name">
+					<el-input v-model="form.name" placeholder="请输入属性组名称名称" />
 				</el-form-item>
 				<el-form-item label="属性组类型" prop="selectType">
 					<el-segmented
@@ -95,9 +101,6 @@
 							}
 						"
 					/>
-				</el-form-item>
-				<el-form-item label="属性组名称" prop="name">
-					<el-input v-model="form.name" placeholder="请输入属性组名称名称" />
 				</el-form-item>
 				<el-form-item label="属性组排序" prop="sort">
 					<el-input-number
@@ -136,12 +139,12 @@ const pageSize = ref(15)
 const noMore = ref(false)
 const currentPage = ref(1)
 const loading = ref(false)
-const dictTypeList = ref<FindAttributeGroupResponse[]>([])
+const attributeGroupList = ref<FindAttributeGroupResponse[]>([])
 const selectedId = ref<string>()
 const searchKeyword = ref('')
 
 // 滚动列表
-const dictScrollbar = ref<ScrollbarInstance>()
+const attributeGroupScrollbar = ref<ScrollbarInstance>()
 // 操作栏
 const operationBar = ref()
 
@@ -159,21 +162,14 @@ const form = reactive({
 
 // 表单验证规则
 const rules = {
-	name: [{ required: true, message: '请输入字典类型名称', trigger: 'blur' }],
+	name: [{ required: true, message: '请输入属性组名称', trigger: 'blur' }],
 	storeId: [{ required: true, message: '请选择门店', trigger: 'blur' }],
-	selectType: [
-		{ required: true, message: '请输入字典类型编码', trigger: 'blur' },
-		{
-			pattern: /^[a-zA-Z0-9_]+$/,
-			message: '编码只能包含字母、数字和下划线',
-			trigger: 'blur',
-		},
-	],
+	selectType: [{ required: true, message: '请选择属性组类型', trigger: 'blur' }],
 }
 
 // 自适应调整滚动列表高度
-const handleDictScrollbarResize = useDebounce(() => {
-	const wrapRef = dictScrollbar.value?.wrapRef
+const handleAttributeGroupScrollbarResize = useDebounce(() => {
+	const wrapRef = attributeGroupScrollbar.value?.wrapRef
 	if (wrapRef && wrapRef.style) {
 		wrapRef.style.height = `${window.innerHeight - operationBar.value?.getBoundingClientRect().top - 101}px`
 	}
@@ -186,7 +182,7 @@ const { storeId = '' } = defineProps<{
 }>()
 
 // 分页查询
-const fetchDictTypes = async (current = 1, size = 12, keyword = '') => {
+const fetchAttributeGroups = async (current = 1, size = 12, keyword = '') => {
 	return pageGroup({ current, size, keyword, storeId })
 }
 
@@ -195,8 +191,8 @@ const fetchStores = async (params: any) => {
 	return pageStore(params)
 }
 
-// 加载字典类型列表
-const loadDictTypes = async (reset = false) => {
+// 加载属性组列表
+const loadAttributeGroups = async (reset = false) => {
 	if (loading.value) return
 
 	loading.value = true
@@ -207,12 +203,16 @@ const loadDictTypes = async (reset = false) => {
 			noMore.value = false
 		}
 
-		const result = await fetchDictTypes(currentPage.value, pageSize.value, searchKeyword.value)
+		const result = await fetchAttributeGroups(
+			currentPage.value,
+			pageSize.value,
+			searchKeyword.value,
+		)
 
 		if (reset) {
-			dictTypeList.value = result.records
+			attributeGroupList.value = result.records
 		} else {
-			dictTypeList.value.push(...result.records)
+			attributeGroupList.value.push(...result.records)
 		}
 
 		noMore.value = !result.records || result.records.length === 0
@@ -230,7 +230,7 @@ const loadDictTypes = async (reset = false) => {
 watch(
 	() => storeId,
 	() => {
-		loadDictTypes(true)
+		loadAttributeGroups(true)
 		console.log(storeId)
 		form.storeId = storeId
 	},
@@ -238,25 +238,25 @@ watch(
 
 // 搜索处理
 const handleSearch = () => {
-	loadDictTypes(true)
+	loadAttributeGroups(true)
 }
 
-// 选择字典类型
-const selectDictType = (item: FindAttributeGroupResponse) => {
+// 选择属性组
+const selectAttributeGroup = (item: FindAttributeGroupResponse) => {
 	selectedId.value = item.id
 	emit('select', item)
 }
 
-// 新增字典类型
+// 新增属性组
 const handleAdd = () => {
-	dialogTitle.value = '新增字典类型'
+	dialogTitle.value = '新增属性组'
 	resetForm()
 	dialogVisible.value = true
 }
 
-// 编辑字典类型
+// 编辑属性组
 const handleEdit = (item: FindAttributeGroupResponse) => {
-	dialogTitle.value = '编辑字典类型'
+	dialogTitle.value = '编辑属性组'
 	form.id = item.id
 	form.name = item.name
 	form.storeId = item.storeId
@@ -265,10 +265,10 @@ const handleEdit = (item: FindAttributeGroupResponse) => {
 	dialogVisible.value = true
 }
 
-// 删除字典类型
+// 删除属性组
 const handleDelete = (item: FindAttributeGroupResponse) => {
 	ElMessageBox.confirm(
-		`确定要删除字典类型"${item.name}"吗？<br />注意：关联的字典项也会被删除！`,
+		`确定要删除属性组"${item.name}"吗？<br />注意：关联的属性项也会被删除！`,
 		'删除确认',
 		{
 			confirmButtonText: '确定',
@@ -279,9 +279,9 @@ const handleDelete = (item: FindAttributeGroupResponse) => {
 	)
 		.then(() => {
 			deleteGroup(item.id).then(() => {
-				const index = dictTypeList.value.findIndex((dict) => dict.id === item.id)
+				const index = attributeGroupList.value.findIndex((group) => group.id === item.id)
 				if (index > -1) {
-					dictTypeList.value.splice(index, 1)
+					attributeGroupList.value.splice(index, 1)
 				}
 				ElMessage.success('删除成功')
 				emit('delete', item)
@@ -301,9 +301,9 @@ const handleSubmit = () => {
 			if (isEdit) {
 				updateGroup(form.id, form).then((res) => {
 					// 编辑操作
-					const index = dictTypeList.value.findIndex((item) => item.id === res.id)
+					const index = attributeGroupList.value.findIndex((item) => item.id === res.id)
 					if (index > -1) {
-						dictTypeList.value[index] = { ...res }
+						attributeGroupList.value[index] = { ...res }
 					}
 					ElMessage.success('编辑成功')
 					emit('edit', { ...form })
@@ -314,7 +314,7 @@ const handleSubmit = () => {
 				// 新增操作
 				createGroup(form).then((res) => {
 					const newItem = { ...res }
-					dictTypeList.value.unshift(newItem)
+					attributeGroupList.value.unshift(newItem)
 					ElMessage.success('新增成功')
 					emit('add', newItem)
 					dialogVisible.value = false
@@ -340,14 +340,14 @@ const resetForm = () => {
 
 // 初始化
 onMounted(() => {
-	handleDictScrollbarResize()
-	window.addEventListener('resize', handleDictScrollbarResize)
-	loadDictTypes(true)
+	handleAttributeGroupScrollbarResize()
+	window.addEventListener('resize', handleAttributeGroupScrollbarResize)
+	loadAttributeGroups(true)
 })
 
 // 取消挂载之前
 onUnmounted(() => {
-	window.removeEventListener('resize', handleDictScrollbarResize)
+	window.removeEventListener('resize', handleAttributeGroupScrollbarResize)
 })
 
 const loadTrigger = ref<HTMLElement | null>(null)
@@ -355,13 +355,13 @@ const loadTrigger = ref<HTMLElement | null>(null)
 // 加载更多
 useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 	if (isIntersecting && !loading.value && !noMore.value) {
-		loadDictTypes(false)
+		loadAttributeGroups(false)
 	}
 })
 </script>
 
 <style scoped>
-.dict-type-manager {
+.attribute-group-manager {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -382,29 +382,24 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 	margin-left: 15px;
 }
 
-.dict-list-container {
+.attribute-group-list-container {
 	flex: 1;
 	background: var(--el-bg-color);
 	/* 确保容器可以撑满剩余空间 */
 	min-height: 0;
 }
 
-.dict-scrollbar {
+.attribute-group-scrollbar {
 	/* 高度设为100%，自动适应父容器 */
 	height: 100%;
 }
 
-.dict-scrollbar :deep(.el-scrollbar__view) {
+.attribute-group-scrollbar :deep(.el-scrollbar__view) {
 	/* 确保滚动视图高度正确 */
 	height: 100%;
 }
 
-.dict-list {
-	padding: 15px;
-	/* 移除之前可能的高度限制 */
-}
-
-.dict-item {
+.attribute-group-item {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -418,19 +413,19 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 }
 
 /* 只有非active状态的项目才应用hover效果 */
-.dict-item:hover:not(.active) {
+.attribute-group-item:hover:not(.active) {
 	background: var(--el-fill-color);
 	border-color: var(--el-border-color-light);
 	transform: translateY(-1px);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.dict-item:hover:not(.active)::before {
+.attribute-group-item:hover:not(.active)::before {
 	opacity: 1;
 }
 
 /* active状态的项目保持固定样式 */
-.dict-item.active {
+.attribute-group-item.active {
 	background: linear-gradient(
 		135deg,
 		var(--el-color-primary-light-9) 0%,
@@ -440,7 +435,7 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 	box-shadow: 0 2px 8px rgba(var(--el-color-primary-rgb), 0.15);
 }
 
-.dict-item.active::before {
+.attribute-group-item.active::before {
 	opacity: 1;
 	background: linear-gradient(
 		135deg,
@@ -450,40 +445,40 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 }
 
 /* active项目的hover效果（可选：可以添加轻微的交互反馈） */
-.dict-item.active:hover {
+.attribute-group-item.active:hover {
 	box-shadow: 0 3px 10px rgba(var(--el-color-primary-rgb), 0.2);
 }
 
 /* 增强聚焦状态的可访问性 */
-.dict-item:focus-visible {
+.attribute-group-item:focus-visible {
 	outline: 2px solid var(--el-color-primary);
 	outline-offset: 2px;
 }
 
 /* 禁用状态样式 */
-.dict-item:disabled,
-.dict-item.disabled {
+.attribute-group-item:disabled,
+.attribute-group-item.disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 	transform: none !important;
 	box-shadow: none !important;
 }
 
-.dict-item:disabled:hover,
-.dict-item.disabled:hover {
+.attribute-group-item:disabled:hover,
+.attribute-group-item.disabled:hover {
 	background: var(--el-fill-color-blank);
 	border-color: var(--el-border-color-lighter);
 	transform: none;
 	box-shadow: none;
 }
 
-.dict-info {
+.attribute-group-info {
 	flex: 1;
 	min-width: 0;
 	overflow: hidden;
 }
 
-.dict-name {
+.attribute-group-name {
 	font-size: 14px;
 	font-weight: 500;
 	color: var(--el-text-color-primary);
@@ -493,7 +488,7 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 	white-space: nowrap;
 }
 
-.dict-code {
+.attribute-group-type {
 	font-size: 12px;
 	color: var(--el-text-color-regular);
 	overflow: hidden;
@@ -501,7 +496,7 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 	white-space: nowrap;
 }
 
-.dict-actions {
+.attribute-group-actions {
 	display: flex;
 	flex-shrink: 0;
 	margin-left: 8px;

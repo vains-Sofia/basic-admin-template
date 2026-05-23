@@ -30,6 +30,7 @@ const {
 	handleSizeChange,
 	handleCurrentChange,
 	handleSelectionChange,
+	refreshAllTypes,
 } = useDict()
 
 const searchForm = ref()
@@ -43,6 +44,8 @@ const searchForm = ref()
 				class="attribute-group-list"
 				@select="handleSelectType"
 				@delete="handleDeleteType"
+				@add="refreshAllTypes"
+				@edit="refreshAllTypes"
 				:store-id="storeId"
 			/>
 		</div>

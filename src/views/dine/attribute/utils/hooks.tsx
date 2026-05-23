@@ -283,12 +283,18 @@ export function useDict() {
 		console.log(val)
 	}
 
-	onMounted(() => {
-		onSearch()
-
+	/**
+	 * 刷新所有属性组列表
+	 */
+	function refreshAllTypes() {
 		allGroup().then((res) => {
 			allTypes.value = res
 		})
+	}
+
+	onMounted(() => {
+		onSearch()
+		refreshAllTypes()
 	})
 
 	return {
@@ -305,5 +311,6 @@ export function useDict() {
 		handleSizeChange,
 		handleCurrentChange,
 		handleSelectionChange,
+		refreshAllTypes,
 	}
 }
