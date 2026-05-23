@@ -16,6 +16,7 @@ export interface CategoryPageRequest extends PageableRequest {
 export interface FindCategoryResponse extends AuditFields {
 	id: string
 	storeId: string
+	storeName: string
 	name: string
 	sort: number
 	status: StatusEnum

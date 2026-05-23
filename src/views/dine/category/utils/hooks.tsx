@@ -45,8 +45,8 @@ export function useCategory() {
 			align: 'center',
 		},
 		{
-			title: '门店编号',
-			dataKey: 'storeId',
+			title: '所属门店',
+			dataKey: 'storeName',
 			align: 'center',
 			minWidth: 120,
 		},

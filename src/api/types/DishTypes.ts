@@ -27,6 +27,7 @@ export interface FindDishResponse extends AuditFields {
 	id: string
 	storeId: string
 	categoryId: string
+	categoryName: string
 	name: string
 	image: string
 	images: string[]

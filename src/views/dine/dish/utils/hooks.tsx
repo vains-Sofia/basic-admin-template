@@ -80,8 +80,8 @@ export function useDish(loadOnMounted = false) {
 			showOverflowTooltip: true,
 		},
 		{
-			title: '分类编号',
-			dataKey: 'categoryId',
+			title: '所属分类',
+			dataKey: 'categoryName',
 			align: 'center',
 			minWidth: 160,
 			showOverflowTooltip: true,
