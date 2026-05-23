@@ -27,7 +27,7 @@
 		<!-- 属性组列表 -->
 		<div class="attribute-group-list-container">
 			<el-scrollbar ref="attributeGroupScrollbar" class="attribute-group-scrollbar">
-				<div>
+				<div class="attribute-group-list">
 					<div
 						v-for="item in attributeGroupList"
 						:key="item.id"
@@ -397,6 +397,11 @@ useIntersectionObserver(loadTrigger, ([{ isIntersecting }]) => {
 .attribute-group-scrollbar :deep(.el-scrollbar__view) {
 	/* 确保滚动视图高度正确 */
 	height: 100%;
+}
+
+.attribute-group-list {
+	padding: 15px;
+	/* 移除之前可能的高度限制 */
 }
 
 .attribute-group-item {

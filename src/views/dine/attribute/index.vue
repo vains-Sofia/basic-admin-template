@@ -41,7 +41,7 @@ const searchForm = ref()
 		<div class="attribute-sidebar min-w-[300px] mr-2 flex flex-col gap-2">
 			<StoreList @select="handleSelectStore" />
 			<AttributeGroup
-				class="attribute-group-list"
+				class="attribute-group-box"
 				@select="handleSelectType"
 				@delete="handleDeleteType"
 				@add="refreshAllTypes"
@@ -144,7 +144,7 @@ const searchForm = ref()
 	min-height: 0;
 }
 
-.attribute-group-list {
+.attribute-group-box {
 	flex: 1;
 	min-height: 0;
 }
