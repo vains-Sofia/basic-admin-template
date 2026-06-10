@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "build-staging-only": "vite build --mode staging",
+    "build-staging-ipv6-only": "vite build --mode staging-ipv6",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
