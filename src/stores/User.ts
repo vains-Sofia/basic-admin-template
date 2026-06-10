@@ -5,6 +5,7 @@ import { lastRouters, staticRoutes } from '@/router/modules'
 import { normalizeRoutes, transformMenuToRoutes } from '@/router/transform'
 import { getAsyncRoutes } from '@/api/system/Permission.ts'
 import type { DynamicRouter } from '@/api/types/PermissionTypes.ts'
+import { buildMinioUrl } from '@/utils/minio.ts'
 
 const logo = new URL(`../assets/logo.png`, import.meta.url).href
 
@@ -29,7 +30,7 @@ export const useUserStore = defineStore(
 		// 设置用户基础信息
 		function setupUser(userinfo: any) {
 			if (userinfo.picture) {
-				picture.value = userinfo.picture
+				picture.value = buildMinioUrl(userinfo.picture)
 			}
 			username.value = userinfo.username
 			nickname.value = userinfo.nickname

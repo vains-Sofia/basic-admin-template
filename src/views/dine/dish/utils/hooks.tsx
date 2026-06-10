@@ -6,6 +6,7 @@ import type { DishRequest, FindDishResponse } from '@/api/types/DishTypes.ts'
 import { RecommendEnum, StatusEnum } from '@/api/types/Enums.ts'
 import type { FindCategoryResponse } from '@/api/types/CategoryTypes.ts'
 import DishUpdateForm from '@/views/dine/dish/form/DishUpdateForm.vue'
+import { buildMinioUrl, stripMinioBaseUrl } from '@/utils/minio.ts'
 
 const recommendTextMap: Record<RecommendEnum, string> = {
 	[RecommendEnum.NORMAL]: '普通',
@@ -27,7 +28,8 @@ export function useDish(loadOnMounted = false) {
 		currentPage: 1,
 	})
 
-	const dishImages = () => dataList.value.filter((item) => !!item.image).map((item) => item.image)
+	const dishImages = () =>
+		dataList.value.filter((item) => !!item.image).map((item) => buildMinioUrl(item.image))
 
 	const form = reactive({
 		keyword: '',
@@ -60,8 +62,8 @@ export function useDish(loadOnMounted = false) {
 				image ? (
 					<ElImage
 						fit="cover"
-						src={image}
-						initial-index={dishImages().indexOf(image)}
+						src={buildMinioUrl(image)}
+						initial-index={dishImages().indexOf(buildMinioUrl(image))}
 						preview-teleported={true}
 						preview-src-list={dishImages()}
 						class="w-[64px] h-[64px] rounded align-middle"
@@ -209,8 +211,8 @@ export function useDish(loadOnMounted = false) {
 			storeId: normalizeString(row.storeId),
 			categoryId: normalizeString(row.categoryId),
 			name: row.name ?? '',
-			image: row.image ?? '',
-			images: row.images ?? [],
+			image: stripMinioBaseUrl(row.image),
+			images: row.images?.map(stripMinioBaseUrl) ?? [],
 			description: row.description ?? '',
 			price: Number(row.price ?? 0),
 			labels: row.labels ?? [],

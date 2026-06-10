@@ -5,6 +5,7 @@ import { formRules } from '../utils/rule'
 import type { FormProps } from '../utils/types'
 import { dictItems } from '@/api/system/Dict'
 import { useUser } from '@/views/system/user/utils/hooks.tsx'
+import { buildMinioUrl } from '@/utils/minio.ts'
 
 const {
 	formInline = {
@@ -66,7 +67,7 @@ defineExpose({
 						<img
 							alt=""
 							v-if="newFormInline.picture"
-							:src="newFormInline.picture"
+							:src="buildMinioUrl(newFormInline.picture)"
 							class="avatar"
 						/>
 						<el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>

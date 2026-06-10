@@ -9,6 +9,7 @@ import type { FindStoreResponse, StoreRequest } from '@/api/types/StoreTypes.ts'
 import { StatusEnum } from '@/api/types/Enums.ts'
 import StoreUpdateForm from '@/views/dine/store/form/StoreUpdateForm.vue'
 import { generateUUID } from '@/utils/Common.ts'
+import { buildMinioObjectPath, buildMinioUrl, stripMinioBaseUrl } from '@/utils/minio.ts'
 
 type UploadTarget = 'logo' | 'albums'
 
@@ -87,13 +88,12 @@ function addPendingAlbum(row: StoreUploadTarget, pending: PendingUpload) {
 }
 
 async function uploadPendingImage(pending: PendingUpload) {
-	const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
 	const res = await uploadPreSigned({
 		name: buildUploadName(pending.file.name, pending.fileType),
 		bucket: pending.bucket,
 	})
 	await uploadByPreSignedUrl(res.url, pending.blob, pending.fileType)
-	return `${minioBaseUrl}/${res.bucket}/${res.name}`
+	return buildMinioObjectPath(res.bucket, res.name)
 }
 
 async function flushStorePendingUploads(row: StoreUploadTarget) {
@@ -169,8 +169,10 @@ export function useStore(loadOnMounted = true) {
 		currentPage: 1,
 	})
 
-	const storeLogos = () => dataList.value.filter((item) => !!item.logo).map((item) => item.logo)
-	const storeAlbums = () => dataList.value.flatMap((item) => item.albums ?? [])
+	const storeLogos = () =>
+		dataList.value.filter((item) => !!item.logo).map((item) => buildMinioUrl(item.logo))
+	const storeAlbums = () =>
+		dataList.value.flatMap((item) => item.albums?.map(buildMinioUrl) ?? [])
 
 	const form = reactive({
 		keyword: '',
@@ -202,8 +204,8 @@ export function useStore(loadOnMounted = true) {
 				logo ? (
 					<ElImage
 						fit="cover"
-						src={logo}
-						initial-index={storeLogos().indexOf(logo)}
+						src={buildMinioUrl(logo)}
+						initial-index={storeLogos().indexOf(buildMinioUrl(logo))}
 						preview-teleported={true}
 						preview-src-list={storeLogos()}
 						class="w-[64px] h-[64px] rounded align-middle"
@@ -248,8 +250,8 @@ export function useStore(loadOnMounted = true) {
 							<ElImage
 								key={album}
 								fit="cover"
-								src={album}
-								initial-index={storeAlbums().indexOf(album)}
+								src={buildMinioUrl(album)}
+								initial-index={storeAlbums().indexOf(buildMinioUrl(album))}
 								preview-teleported={true}
 								preview-src-list={storeAlbums()}
 								class="w-[36px] h-[36px] rounded align-middle"
@@ -345,12 +347,12 @@ export function useStore(loadOnMounted = true) {
 	function pickStoreForm(row: StoreRequest): StoreRequest {
 		return {
 			name: row.name,
-			logo: row.logo,
+			logo: stripMinioBaseUrl(row.logo),
 			status: row.status,
 			address: row.address,
 			longitude: row.longitude,
 			latitude: row.latitude,
-			albums: row.albums ?? [],
+			albums: row.albums?.map(stripMinioBaseUrl) ?? [],
 			businessHours: row.businessHours,
 			description: row.description,
 		}

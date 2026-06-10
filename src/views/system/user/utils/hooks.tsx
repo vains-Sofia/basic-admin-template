@@ -19,6 +19,7 @@ import { getAllRoleList } from '@/api/system/Role.ts'
 import type { FindRoleResponse } from '@/api/types/RoleTypes.ts'
 import UserRoles from '@/views/system/user/form/UserRoles.vue'
 import { generateUUID } from '@/utils/Common.ts'
+import { buildMinioObjectPath, buildMinioUrl, stripMinioBaseUrl } from '@/utils/minio.ts'
 
 const USER_PICTURE_BUCKET = 'user-picture'
 const PENDING_UPLOADS = Symbol('pendingUploads')
@@ -78,13 +79,12 @@ function setPendingPicture(row: UserUploadTarget, pending: PendingUpload) {
 }
 
 async function uploadPendingImage(pending: PendingUpload) {
-	const minioBaseUrl = import.meta.env.VITE_MINIO_BASE_URL
 	const res = await uploadPreSigned({
 		name: buildUploadName(pending.file.name, pending.fileType),
 		bucket: pending.bucket,
 	})
 	await uploadByPreSignedUrl(res.url, pending.blob, pending.fileType)
-	return `${minioBaseUrl}/${res.bucket}/${res.name}`
+	return buildMinioObjectPath(res.bucket, res.name)
 }
 
 async function flushUserPendingUploads(row: UserUploadTarget) {
@@ -122,7 +122,7 @@ export function useUser() {
 	})
 
 	const userPictures = () => {
-		return dataList.value.filter((e) => !!e && !!e.picture).map((e) => e.picture)
+		return dataList.value.filter((e) => !!e && !!e.picture).map((e) => buildMinioUrl(e.picture))
 	}
 
 	/**
@@ -146,8 +146,8 @@ export function useUser() {
 			formatter: ({ picture }) => (
 				<ElImage
 					fit="cover"
-					src={picture}
-					initial-index={userPictures().indexOf(picture)}
+					src={buildMinioUrl(picture)}
+					initial-index={userPictures().indexOf(buildMinioUrl(picture))}
 					preview-teleported={true}
 					preview-src-list={userPictures()}
 					class={'w-[80px] h-[80px] full align-middle'}
@@ -291,6 +291,7 @@ export function useUser() {
 
 					try {
 						await flushUserPendingUploads(formData)
+						formData.picture = stripMinioBaseUrl(formData.picture)
 						if (title === '新增') {
 							await insertBasicUser(formData as SaveBasicUserRequest)
 						} else {

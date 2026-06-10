@@ -5,6 +5,7 @@ import { formRules } from '../utils/rule'
 import type { FormProps } from '../utils/types'
 import { useStore } from '@/views/dine/store/utils/hooks.tsx'
 import { StatusEnum } from '@/api/types/Enums.ts'
+import { buildMinioUrl } from '@/utils/minio.ts'
 
 const {
 	formInline = {
@@ -56,7 +57,12 @@ defineExpose({
 				:show-file-list="false"
 				:before-upload="(file) => handleStoreImageSelect(file, newFormInline, 'logo')"
 			>
-				<img v-if="newFormInline.logo" :src="newFormInline.logo" alt="" class="logo" />
+				<img
+					v-if="newFormInline.logo"
+					:src="buildMinioUrl(newFormInline.logo)"
+					alt=""
+					class="logo"
+				/>
 				<el-icon v-else class="logo-uploader-icon"><Plus /></el-icon>
 			</el-upload>
 		</el-form-item>
@@ -93,7 +99,11 @@ defineExpose({
 		<el-form-item label="商家相册" prop="albums">
 			<div class="album-list">
 				<div v-for="(item, index) in newFormInline.albums" :key="item" class="album-item">
-					<el-image :src="item" fit="cover" :preview-src-list="newFormInline.albums" />
+					<el-image
+						:src="buildMinioUrl(item)"
+						fit="cover"
+						:preview-src-list="newFormInline.albums.map(buildMinioUrl)"
+					/>
 					<el-button class="album-remove" circle size="small" @click="removeAlbum(index)">
 						<Icon icon="ep:close" />
 					</el-button>

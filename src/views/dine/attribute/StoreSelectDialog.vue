@@ -23,7 +23,7 @@
 					:class="{ active: modelValue === item.id }"
 					@click="selectStore(item)"
 				>
-					<el-avatar :size="50" :src="item.logo" shape="square">
+					<el-avatar :size="50" :src="buildMinioUrl(item.logo)" shape="square">
 						{{ item.name.slice(0, 1) }}
 					</el-avatar>
 					<div class="store-info">
@@ -57,6 +57,7 @@ import { onMounted, ref } from 'vue'
 
 import { pageStore } from '@/api/dine/Store.ts'
 import type { FindStoreResponse } from '@/api/types/StoreTypes.ts'
+import { buildMinioUrl } from '@/utils/minio.ts'
 
 defineProps<{
 	modelValue?: string

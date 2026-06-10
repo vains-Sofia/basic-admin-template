@@ -1,7 +1,7 @@
 <template>
 	<div @click="openStoreDialog">
 		<div class="store-item">
-			<el-avatar :size="47" :src="selectedStore?.logo" shape="square">
+			<el-avatar :size="47" :src="buildMinioUrl(selectedStore?.logo)" shape="square">
 				{{ selectedStore?.name.slice(0, 1) || '选' }}
 			</el-avatar>
 			<div class="store-info">
@@ -20,6 +20,7 @@ import { h, ref } from 'vue'
 import { closeDialog, openDialog } from '@/components/CommonDialog'
 import type { FindStoreResponse } from '@/api/types/StoreTypes.ts'
 import StoreSelectDialog from '@/views/dine/attribute/StoreSelectDialog.vue'
+import { buildMinioUrl } from '@/utils/minio.ts'
 
 const emit = defineEmits<{
 	select: [store: FindStoreResponse]

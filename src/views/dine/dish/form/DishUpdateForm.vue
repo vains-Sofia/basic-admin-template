@@ -5,6 +5,7 @@ import type { FormProps } from '../utils/types'
 import { pageCategory } from '@/api/dine/Category.ts'
 import { pageStore } from '@/api/dine/Store.ts'
 import { RecommendEnum, StatusEnum } from '@/api/types/Enums.ts'
+import { buildMinioUrl } from '@/utils/minio.ts'
 
 const {
 	formInline = {
@@ -100,10 +101,10 @@ defineExpose({
 				<el-input v-model="newFormInline.image" clearable placeholder="请输入封面图 URL" />
 				<el-image
 					v-if="newFormInline.image"
-					:src="newFormInline.image"
+					:src="buildMinioUrl(newFormInline.image)"
 					fit="cover"
 					class="image-preview"
-					:preview-src-list="[newFormInline.image]"
+					:preview-src-list="[buildMinioUrl(newFormInline.image)]"
 					preview-teleported
 				/>
 			</div>
@@ -127,10 +128,10 @@ defineExpose({
 						class="gallery-item"
 					>
 						<el-image
-							:src="item"
+							:src="buildMinioUrl(item)"
 							fit="cover"
 							class="gallery-image"
-							:preview-src-list="newFormInline.images"
+							:preview-src-list="newFormInline.images.map(buildMinioUrl)"
 							:initial-index="index"
 							preview-teleported
 						/>
