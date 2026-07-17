@@ -45,3 +45,29 @@ select {
   font-weight: 600;
   letter-spacing: 0;
 }
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  z-index: 3000;
+  height: 2px;
+  background: var(--el-color-primary);
+}
+
+#nprogress .peg {
+  box-shadow:
+    0 0 8px var(--el-color-primary),
+    0 0 4px var(--el-color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #nprogress .bar {
+    transition: none;
+  }
+
+  #nprogress .peg {
+    display: none;
+  }
+}

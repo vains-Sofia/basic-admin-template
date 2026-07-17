@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { useBasicDrawer } from '@/components/BasicDrawer'
-import LoginIndex from '@/views/login/index.vue'
-import { useBasicDialog } from '@/components/BasicDialog'
 
 defineOptions({ name: 'DashboardView' })
 
@@ -20,30 +17,6 @@ const activities = [
   { content: '新增 12 个待审核用户', time: '3 小时前' },
   { content: '安全策略已完成自动检查', time: '昨天 18:30' },
 ]
-
-const testDrawer = () => {
-  useBasicDrawer({
-    title: '登录',
-    content: LoginIndex,
-    confirmText: '确认',
-    async onConfirm(user) {
-      if (!user) return
-      await Promise.resolve(user)
-    },
-  }).open('dashboard')
-}
-
-const testDialog = () => {
-  useBasicDialog({
-    title: '登录',
-    content: LoginIndex,
-    confirmText: '确认',
-    async onConfirm(user) {
-      if (!user) return
-      await Promise.resolve(user)
-    },
-  }).open('dashboard')
-}
 </script>
 
 <template>
@@ -67,8 +40,7 @@ const testDialog = () => {
     <section class="dashboard-grid">
       <div class="page-section">
         <div class="section-heading">
-          <h2 @click="testDialog">待办事项</h2>
-          <el-button link type="primary" @click="testDrawer">查看全部</el-button>
+          <h2>待办事项</h2>
         </div>
         <div class="dashboard-table">
           <el-table
