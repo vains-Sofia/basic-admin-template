@@ -43,5 +43,8 @@ export default defineConfig(({ mode }) => {
           },
         }
       : undefined,
+    build: {
+      outDir: 'dist',
+    }
   }
 })
