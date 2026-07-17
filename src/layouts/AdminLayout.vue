@@ -5,12 +5,12 @@ import { useRouter } from 'vue-router'
 import AppHeader from '@/components/Layout/AppHeader'
 import AppSidebar from '@/components/Layout/AppSidebar'
 import TagsView from '@/components/Layout/TagsView'
-import { useAppStore } from '@/stores/app'
+import { useLayoutStore } from '@/stores/layout'
 import { useTagsViewStore } from '@/stores/tags-view'
 import { useUserStore } from '@/stores/user'
 
 const MOBILE_QUERY = '(max-width: 991px)'
-const appStore = useAppStore()
+const layoutStore = useLayoutStore()
 const tagsStore = useTagsViewStore()
 const userStore = useUserStore()
 const router = useRouter()
@@ -19,12 +19,12 @@ let mediaQuery: MediaQueryList | undefined
 
 function updateDevice(event: MediaQueryListEvent | MediaQueryList): void {
   isMobile.value = event.matches
-  if (!event.matches) appStore.setMobileSidebar(false)
+  if (!event.matches) layoutStore.setMobileSidebar(false)
 }
 
 function toggleSidebar(): void {
-  if (isMobile.value) appStore.setMobileSidebar(!appStore.mobileSidebarOpened)
-  else appStore.toggleSidebar()
+  if (isMobile.value) layoutStore.toggleMobileSidebar()
+  else layoutStore.toggleSidebar()
 }
 
 async function logout(): Promise<void> {
@@ -45,21 +45,21 @@ onBeforeUnmount(() => mediaQuery?.removeEventListener('change', updateDevice))
   <div class="admin-layout">
     <aside
       v-if="!isMobile"
-      :class="['admin-layout__aside', { 'is-collapsed': appStore.sidebarCollapsed }]"
+      :class="['admin-layout__aside', { 'is-collapsed': layoutStore.sidebarCollapsed }]"
     >
-      <AppSidebar :collapsed="appStore.sidebarCollapsed" />
+      <AppSidebar :collapsed="layoutStore.sidebarCollapsed" />
     </aside>
 
     <el-drawer
       v-else
-      v-model="appStore.mobileSidebarOpened"
+      v-model="layoutStore.mobileSidebarOpened"
       class="admin-layout__drawer"
       direction="ltr"
       :show-close="false"
       size="224px"
       :with-header="false"
     >
-      <AppSidebar @navigate="appStore.setMobileSidebar(false)" />
+      <AppSidebar @navigate="layoutStore.setMobileSidebar(false)" />
     </el-drawer>
 
     <section class="admin-layout__body">

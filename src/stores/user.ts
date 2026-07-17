@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 import * as authApi from '@/api/modules/auth'
-import type { LoginData, UserProfile } from '@/api/types/AuthTypes'
+import type { EmailLoginData, LoginData, UserProfile } from '@/api/types/AuthTypes'
 import { clearAccessRoutes } from '@/router/access'
 
 import { usePermissionStore } from './permission'
@@ -22,6 +22,12 @@ export const useUserStore = defineStore(
       profile.value = result.profile
     }
 
+    async function signInByEmail(data: EmailLoginData): Promise<void> {
+      const result = await authApi.loginByEmail(data)
+      token.value = result.token
+      profile.value = result.profile
+    }
+
     async function signOut(requestServer = true): Promise<void> {
       if (requestServer) await authApi.logout().catch(() => undefined)
       token.value = ''
@@ -31,7 +37,7 @@ export const useUserStore = defineStore(
       useTagsViewStore().reset()
     }
 
-    return { token, profile, roles, permissions, signIn, signOut }
+    return { token, profile, roles, permissions, signIn, signInByEmail, signOut }
   },
   { persist: { key: 'admin-user', pick: ['token', 'profile'] } },
 )

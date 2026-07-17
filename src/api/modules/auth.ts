@@ -1,5 +1,5 @@
 import { request } from '../http'
-import type { LoginData, LoginResult } from '../types/AuthTypes'
+import type { EmailLoginData, LoginData, LoginResult } from '../types/AuthTypes'
 
 const useMock = import.meta.env.VITE_USE_MOCK === 'true'
 
@@ -48,4 +48,35 @@ export async function login(data: LoginData): Promise<LoginResult> {
 export async function logout(): Promise<void> {
   if (useMock) return
   await request<void>({ url: '/auth/logout', method: 'POST' })
+}
+
+export async function sendEmailCode(email: string): Promise<void> {
+  if (!useMock) {
+    await request<void>({ url: '/auth/email/code', method: 'POST', data: { email } })
+    return
+  }
+
+  await new Promise((resolve) => window.setTimeout(resolve, 350))
+}
+
+export async function loginByEmail(data: EmailLoginData): Promise<LoginResult> {
+  if (!useMock) {
+    return request<LoginResult>({ url: '/auth/email/login', method: 'POST', data })
+  }
+
+  await new Promise((resolve) => window.setTimeout(resolve, 350))
+  if (data.email !== 'admin@example.com' || data.code !== '123456') {
+    throw new Error('邮箱或验证码错误')
+  }
+
+  return {
+    token: 'mock-admin-token',
+    profile: {
+      id: 1,
+      username: 'admin',
+      displayName: '系统管理员',
+      roles: ['admin'],
+      permissions: ['*'],
+    },
+  }
 }

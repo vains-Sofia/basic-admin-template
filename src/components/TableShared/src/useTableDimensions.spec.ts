@@ -33,11 +33,11 @@ describe('useTableDimensions', () => {
       y: 300,
       toJSON: () => ({}),
     })
-    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (
-      this: HTMLElement,
-    ) {
-      return this.dataset.pagination === 'true' ? 44 : 0
-    })
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(
+      function (this: HTMLElement) {
+        return this.dataset.pagination === 'true' ? 44 : 0
+      },
+    )
     vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(900)
 
     const Harness = defineComponent({

@@ -1,4 +1,5 @@
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'nprogress/nprogress.css'
 import './assets/styles/main.css'
 
@@ -11,6 +12,7 @@ import { permissionDirective } from './directives/permission'
 import router from './router'
 import { setupRouterGuards } from './router/guards'
 import { setupRouterProgress } from './router/progress'
+import { useLayoutStore } from './stores/layout'
 import { useUserStore } from './stores/user'
 
 const app = createApp(App)
@@ -23,6 +25,8 @@ setupRouterGuards(router, pinia)
 app.use(pinia)
 app.use(router)
 app.directive('permission', permissionDirective)
+
+useLayoutStore(pinia)
 
 window.addEventListener('auth:unauthorized', () => {
   void useUserStore(pinia)

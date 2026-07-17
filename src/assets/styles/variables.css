@@ -8,6 +8,12 @@
   --app-page-background: #f5f7fa;
 }
 
+html.dark {
+  --app-page-background: var(--el-bg-color-page);
+
+  color-scheme: dark;
+}
+
 @media (max-width: 767px) {
   :root {
     --app-content-padding: 12px;

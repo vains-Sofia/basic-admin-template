@@ -3,6 +3,11 @@ export interface LoginData {
   password: string
 }
 
+export interface EmailLoginData {
+  email: string
+  code: string
+}
+
 export interface UserProfile {
   id: number
   username: string
