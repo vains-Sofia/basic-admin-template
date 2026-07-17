@@ -1,34 +1,16 @@
 /// <reference types="vite/client" />
 
-declare module '*.vue' {
-	import type { DefineComponent } from 'vue'
-	const component: DefineComponent<object, object, any>
-	export default component
-}
-
 interface ImportMetaEnv {
-	/**
-	 * 基础路径
-	 */
-	readonly VITE_BASE_PATH: string
-	/**
-	 * 后端接口地址
-	 */
-	readonly VITE_API_URL: string
-	/**
-	 * 路由模式 (hash | history)
-	 */
-	readonly VITE_ROUTER_MODE: 'hash' | 'history'
-	/**
-	 * Vue开发工具开关
-	 */
-	readonly VITE_VUE_DEVTOOLS: string
-	/**
-	 * MinIO 地址
-	 */
-	readonly VITE_MINIO_BASE_URL: string
+  /**
+   * 基础路径
+   */
+  readonly VITE_BASE_PATH: string
+  readonly VITE_APP_TITLE: string
+  readonly VITE_API_BASE_URL: string
+  readonly VITE_USE_MOCK: 'true' | 'false'
+  readonly VITE_API_PROXY_TARGET?: string
 }
 
 interface ImportMeta {
-	readonly env: ImportMetaEnv
+  readonly env: ImportMetaEnv
 }

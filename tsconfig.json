@@ -7,18 +7,5 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ],
-  "compilerOptions": {
-    "noEmit": true,
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "composite": true,
-    "types": [
-      "unplugin-icons/types/vue"
-    ]
-  }
+  ]
 }

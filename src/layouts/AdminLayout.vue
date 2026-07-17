@@ -1,0 +1,117 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import AppHeader from '@/components/Layout/AppHeader'
+import AppSidebar from '@/components/Layout/AppSidebar'
+import TagsView from '@/components/Layout/TagsView'
+import { useAppStore } from '@/stores/app'
+import { useTagsViewStore } from '@/stores/tags-view'
+import { useUserStore } from '@/stores/user'
+
+const MOBILE_QUERY = '(max-width: 991px)'
+const appStore = useAppStore()
+const tagsStore = useTagsViewStore()
+const userStore = useUserStore()
+const router = useRouter()
+const isMobile = ref(false)
+let mediaQuery: MediaQueryList | undefined
+
+function updateDevice(event: MediaQueryListEvent | MediaQueryList): void {
+  isMobile.value = event.matches
+  if (!event.matches) appStore.setMobileSidebar(false)
+}
+
+function toggleSidebar(): void {
+  if (isMobile.value) appStore.setMobileSidebar(!appStore.mobileSidebarOpened)
+  else appStore.toggleSidebar()
+}
+
+async function logout(): Promise<void> {
+  await userStore.signOut()
+  await router.replace('/login')
+}
+
+onMounted(() => {
+  mediaQuery = window.matchMedia(MOBILE_QUERY)
+  updateDevice(mediaQuery)
+  mediaQuery.addEventListener('change', updateDevice)
+})
+
+onBeforeUnmount(() => mediaQuery?.removeEventListener('change', updateDevice))
+</script>
+
+<template>
+  <div class="admin-layout">
+    <aside
+      v-if="!isMobile"
+      :class="['admin-layout__aside', { 'is-collapsed': appStore.sidebarCollapsed }]"
+    >
+      <AppSidebar :collapsed="appStore.sidebarCollapsed" />
+    </aside>
+
+    <el-drawer
+      v-else
+      v-model="appStore.mobileSidebarOpened"
+      class="admin-layout__drawer"
+      direction="ltr"
+      :show-close="false"
+      size="224px"
+      :with-header="false"
+    >
+      <AppSidebar @navigate="appStore.setMobileSidebar(false)" />
+    </el-drawer>
+
+    <section class="admin-layout__body">
+      <AppHeader :mobile="isMobile" @toggle="toggleSidebar" @logout="logout" />
+      <TagsView />
+      <main class="admin-layout__content">
+        <RouterView v-slot="{ Component, route }">
+          <KeepAlive :include="tagsStore.cachedViewNames">
+            <component :is="Component" :key="String(route.name)" />
+          </KeepAlive>
+        </RouterView>
+      </main>
+    </section>
+  </div>
+</template>
+
+<style scoped>
+.admin-layout {
+  display: flex;
+  min-width: 0;
+  min-height: 100vh;
+  background: var(--app-page-background);
+}
+
+.admin-layout__aside {
+  z-index: 10;
+  width: var(--app-sidebar-width);
+  flex: 0 0 var(--app-sidebar-width);
+  border-right: 1px solid var(--el-border-color-light);
+  transition:
+    width 0.2s,
+    flex-basis 0.2s;
+}
+
+.admin-layout__aside.is-collapsed {
+  width: var(--app-sidebar-collapsed-width);
+  flex-basis: var(--app-sidebar-collapsed-width);
+}
+
+.admin-layout__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-layout__content {
+  --basic-table-viewport-bottom-gap: var(--app-content-padding);
+
+  min-height: calc(100vh - var(--app-header-height) - var(--app-tags-height));
+  padding: var(--app-content-padding);
+}
+
+:global(.admin-layout__drawer .el-drawer__body) {
+  padding: 0;
+}
+</style>
