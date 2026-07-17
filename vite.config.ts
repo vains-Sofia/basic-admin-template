@@ -9,25 +9,21 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
     base: env.VITE_BASE_PATH,
-    plugins: [
-      vue(),
-      vueJsx(),
-      vueDevTools(),
-      AutoImport({
-        imports: ['vue', 'vue-router', 'pinia'],
-        resolvers: [ElementPlusResolver({ importStyle: false })],
-      }),
-      Components({
-        dirs: [],
-        resolvers: [ElementPlusResolver({ importStyle: false })],
-      }),
-    ],
+    plugins: [vue(), vueJsx(), vueDevTools(), AutoImport({
+      imports: ['vue', 'vue-router', 'pinia'],
+      resolvers: [ElementPlusResolver({ importStyle: false })],
+    }), Components({
+      dirs: [],
+      resolvers: [ElementPlusResolver({ importStyle: false })],
+    }), cloudflare()],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -46,5 +42,5 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
     }
-  }
+  };
 })
