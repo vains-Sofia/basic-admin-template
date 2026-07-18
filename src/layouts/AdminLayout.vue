@@ -66,11 +66,15 @@ onBeforeUnmount(() => mediaQuery?.removeEventListener('change', updateDevice))
       <AppHeader :mobile="isMobile" @toggle="toggleSidebar" @logout="logout" />
       <TagsView />
       <main class="admin-layout__content">
-        <RouterView v-slot="{ Component, route }">
-          <KeepAlive :include="tagsStore.cachedViewNames">
-            <component :is="Component" :key="String(route.name)" />
-          </KeepAlive>
-        </RouterView>
+        <el-scrollbar class="admin-layout__scrollbar">
+          <div class="admin-layout__content-inner">
+            <RouterView v-slot="{ Component, route }">
+              <KeepAlive :include="tagsStore.cachedViewNames">
+                <component :is="Component" :key="String(route.name)" />
+              </KeepAlive>
+            </RouterView>
+          </div>
+        </el-scrollbar>
       </main>
     </section>
   </div>
@@ -79,8 +83,10 @@ onBeforeUnmount(() => mediaQuery?.removeEventListener('change', updateDevice))
 <style scoped>
 .admin-layout {
   display: flex;
+  height: 100vh;
   min-width: 0;
   min-height: 100vh;
+  overflow: hidden;
   background: var(--app-page-background);
 }
 
@@ -100,14 +106,29 @@ onBeforeUnmount(() => mediaQuery?.removeEventListener('change', updateDevice))
 }
 
 .admin-layout__body {
+  display: flex;
+  height: 100vh;
   min-width: 0;
+  min-height: 0;
+  flex-direction: column;
   flex: 1;
 }
 
 .admin-layout__content {
   --basic-table-viewport-bottom-gap: var(--app-content-padding);
 
-  min-height: calc(100vh - var(--app-header-height) - var(--app-tags-height));
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.admin-layout__scrollbar {
+  height: 100%;
+}
+
+.admin-layout__content-inner {
+  min-height: 100%;
   padding: var(--app-content-padding);
 }
 

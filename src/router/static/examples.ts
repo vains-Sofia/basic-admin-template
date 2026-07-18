@@ -35,5 +35,17 @@ export default {
         keepAlive: true,
       },
     },
+    {
+      path: 'qrcode',
+      name: 'QrCodeExamples',
+      component: () => import('@/views/examples/qrcode/index.vue'),
+      meta: {
+        title: '二维码示例',
+        icon: 'Iphone',
+        order: 30,
+        requiresAuth: true,
+        keepAlive: true,
+      },
+    },
   ],
 } satisfies RouteRecordRaw

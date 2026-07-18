@@ -7,6 +7,7 @@ import {
   Collection,
   CopyDocument,
   Grid,
+  Iphone,
 } from '@element-plus/icons-vue'
 import { computed, type Component } from 'vue'
 
@@ -21,6 +22,7 @@ const icons: Record<string, Component> = {
   Collection,
   CopyDocument,
   Grid,
+  Iphone,
 }
 const iconComponent = computed(() => (props.name ? icons[props.name] : undefined))
 </script>
