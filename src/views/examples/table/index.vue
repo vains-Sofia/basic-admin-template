@@ -76,7 +76,6 @@ async function refresh(): Promise<void> {
       :data="pageRows"
       :columns="columns"
       :loading="loading"
-      :table-props="{ stripe: true }"
       row-key="id"
       title="BasicTable"
       @refresh="refresh"
