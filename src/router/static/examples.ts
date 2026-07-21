@@ -47,5 +47,53 @@ export default {
         keepAlive: true,
       },
     },
+    {
+      path: 'cropper',
+      name: 'ImageCropperExamples',
+      component: () => import('@/views/examples/cropper/index.vue'),
+      meta: {
+        title: '图片裁剪示例',
+        icon: 'Picture',
+        order: 40,
+        requiresAuth: true,
+        keepAlive: true,
+      },
+    },
+    {
+      path: 'feedback',
+      name: 'FeedbackExamples',
+      component: () => import('@/views/examples/feedback/index.vue'),
+      meta: {
+        title: '反馈状态示例',
+        icon: 'Warning',
+        order: 50,
+        requiresAuth: true,
+        keepAlive: true,
+      },
+    },
+    {
+      path: 'form',
+      name: 'FormExamples',
+      component: () => import('@/views/examples/form/index.vue'),
+      meta: {
+        title: '表单示例',
+        icon: 'EditPen',
+        order: 60,
+        requiresAuth: true,
+        keepAlive: true,
+      },
+    },
+    {
+      path: 'search-form',
+      name: 'SearchFormExamples',
+      component: () => import('@/views/examples/search-form/index.vue'),
+      meta: {
+        title: '查询表单示例',
+        icon: 'Search',
+        order: 70,
+        requiresAuth: true,
+        keepAlive: true,
+      },
+    },
   ],
 } satisfies RouteRecordRaw

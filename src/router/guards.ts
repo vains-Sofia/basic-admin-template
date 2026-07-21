@@ -16,9 +16,11 @@ export function setupRouterGuards(router: Router, pinia: Pinia): void {
     const permissionStore = usePermissionStore(pinia)
     document.title = to.meta.title ? `${to.meta.title} - ${APP_TITLE}` : APP_TITLE
 
-    if (to.path === LOGIN_ROUTE) return userStore.token ? DEFAULT_ROUTE : true
+    const authenticated = Boolean(userStore.token && userStore.profile)
 
-    if (!userStore.token || !userStore.profile) {
+    if (to.path === LOGIN_ROUTE) return authenticated ? DEFAULT_ROUTE : true
+
+    if (!authenticated) {
       return { path: LOGIN_ROUTE, query: { redirect: to.fullPath }, replace: true }
     }
 
@@ -26,6 +28,12 @@ export function setupRouterGuards(router: Router, pinia: Pinia): void {
       try {
         const routes = await permissionStore.build(userStore.roles, userStore.permissions)
         installAccessRoutes(router, routes)
+        if (
+          permissionStore.isKnownRoute(to.path) &&
+          !permissionStore.isAccessibleRoute(to.path)
+        ) {
+          return { path: '/403', replace: true }
+        }
         return { path: to.fullPath, replace: true }
       } catch {
         await userStore.signOut(false)

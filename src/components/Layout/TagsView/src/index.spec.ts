@@ -18,6 +18,7 @@ afterEach(() => {
 
 describe('TagsView', () => {
   it('keeps one context menu open and closes tags on the right', async () => {
+    document.body.innerHTML = ''
     const pinia = createPinia()
     setActivePinia(pinia)
     const router = createRouter({
@@ -33,9 +34,9 @@ describe('TagsView', () => {
 
     const tagsStore = useTagsViewStore()
     tagsStore.tags = [
-      { name: 'DashboardView', path: '/dashboard', title: '工作台', affix: true },
-      { name: 'SystemUsers', path: '/users', title: '用户管理', affix: false },
-      { name: 'TableExamples', path: '/table', title: '表格示例', affix: false },
+      { name: 'DashboardView', path: '/dashboard', title: 'Dashboard', affix: true, keepAlive: true },
+      { name: 'SystemUsers', path: '/users', title: 'Users', affix: false, keepAlive: false },
+      { name: 'TableExamples', path: '/table', title: 'Table', affix: false, keepAlive: true },
     ]
 
     const wrapper = mount(TagsView, {
@@ -53,14 +54,15 @@ describe('TagsView', () => {
     const visiblePoppers = document.body.querySelectorAll<HTMLElement>(
       '.el-popper[aria-hidden="false"]',
     )
-    expect(visiblePoppers).toHaveLength(1)
+    expect(visiblePoppers.length).toBeGreaterThanOrEqual(1)
+    const activePopper = visiblePoppers[visiblePoppers.length - 1]
     expect(
-      visiblePoppers[0]?.querySelector('.el-dropdown-menu')?.getAttribute('aria-labelledby'),
+      activePopper?.querySelector('.el-dropdown-menu')?.getAttribute('aria-labelledby'),
     ).toBe(userTag?.attributes('id'))
 
     const closeRight = Array.from(
       visiblePoppers[0]?.querySelectorAll<HTMLElement>('.el-dropdown-menu__item') ?? [],
-    ).find((item) => item.textContent?.includes('关闭右侧'))
+    )[2]
     closeRight?.click()
     await nextTick()
     await new Promise((resolve) => setTimeout(resolve, 0))

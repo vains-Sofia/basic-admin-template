@@ -6,6 +6,54 @@ import { loadDynamicRoutes } from '@/router/dynamic'
 import { getStaticRoutes } from '@/router/routes'
 import { hasPermission, hasRole } from '@/utils/permission'
 
+function normalizePath(path: string): string {
+  const normalized = `/${path}`.replace(/\/+/g, '/')
+  if (normalized.length > 1 && normalized.endsWith('/')) return normalized.slice(0, -1)
+  return normalized
+}
+
+function joinRoutePath(parentPath: string, routePath: string): string {
+  if (!routePath) return normalizePath(parentPath)
+  if (routePath.startsWith('/')) return normalizePath(routePath)
+  return normalizePath(`${parentPath}/${routePath}`)
+}
+
+function routePathMatches(pattern: string, actualPath: string): boolean {
+  const patternParts = normalizePath(pattern).split('/').filter(Boolean)
+  const actualParts = normalizePath(actualPath).split('/').filter(Boolean)
+  let actualIndex = 0
+
+  for (const part of patternParts) {
+    if (part === '*' || (part.startsWith(':') && part.includes('*'))) return true
+
+    const optional = part.startsWith(':') && part.endsWith('?')
+    const actualPart = actualParts[actualIndex]
+    if (actualPart === undefined) {
+      if (optional) continue
+      return false
+    }
+
+    if (!part.startsWith(':') && part !== actualPart) return false
+    actualIndex += 1
+  }
+
+  return actualIndex === actualParts.length
+}
+
+function hasMatchingRoute(
+  routes: RouteRecordRaw[],
+  path: string,
+  parentPath = '',
+): boolean {
+  return routes.some((route) => {
+    const fullPath = joinRoutePath(parentPath, route.path)
+    return (
+      routePathMatches(fullPath, path) ||
+      (route.children ? hasMatchingRoute(route.children, path, fullPath) : false)
+    )
+  })
+}
+
 function filterRoutes(
   routes: RouteRecordRaw[],
   roles: string[],
@@ -27,19 +75,30 @@ function filterRoutes(
 
 export const usePermissionStore = defineStore('permission', () => {
   const routes = ref<RouteRecordRaw[]>([])
+  const allRoutes = ref<RouteRecordRaw[]>([])
   const ready = ref(false)
 
   async function build(roles: string[], permissions: string[]): Promise<RouteRecordRaw[]> {
     const dynamicRoutes = await loadDynamicRoutes({ roles, permissions })
-    routes.value = filterRoutes([...getStaticRoutes(), ...dynamicRoutes], roles, permissions)
+    allRoutes.value = [...getStaticRoutes(), ...dynamicRoutes]
+    routes.value = filterRoutes(allRoutes.value, roles, permissions)
     ready.value = true
     return routes.value
   }
 
+  function isKnownRoute(path: string): boolean {
+    return hasMatchingRoute(allRoutes.value, path)
+  }
+
+  function isAccessibleRoute(path: string): boolean {
+    return hasMatchingRoute(routes.value, path)
+  }
+
   function reset(): void {
     routes.value = []
+    allRoutes.value = []
     ready.value = false
   }
 
-  return { routes, ready, build, reset }
+  return { routes, allRoutes, ready, build, isKnownRoute, isAccessibleRoute, reset }
 })

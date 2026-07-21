@@ -46,6 +46,12 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '无权访问', hidden: true, requiresAuth: true },
   },
   {
+    path: '/500',
+    name: 'ServerErrorView',
+    component: () => import('@/views/error/500.vue'),
+    meta: { title: '服务异常', hidden: true, requiresAuth: true },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/error/404.vue'),

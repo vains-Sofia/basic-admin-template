@@ -20,6 +20,11 @@ export interface BasicDrawerController<T = unknown> {
   destroy: () => void
 }
 
+export interface BasicDrawerContentExpose {
+  validate?: () => boolean | Promise<boolean>
+  getPayload?: () => unknown
+}
+
 export type BasicDrawerAction<T = unknown> = (
   payload: T | undefined,
   controller: BasicDrawerController<T>,

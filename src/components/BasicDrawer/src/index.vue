@@ -5,7 +5,12 @@ import { computed, type CSSProperties } from 'vue'
 import { useOverlayStore, type OverlayState } from '@/stores/overlay'
 
 import { createBasicDrawerController } from './useBasicDrawer'
-import type { BasicDrawerAction, BasicDrawerController, BasicDrawerOptions } from './types'
+import type {
+  BasicDrawerAction,
+  BasicDrawerContentExpose,
+  BasicDrawerController,
+  BasicDrawerOptions,
+} from './types'
 
 defineOptions({ name: 'BasicDrawer' })
 
@@ -17,6 +22,7 @@ interface DrawerEntry {
 
 const overlayStore = useOverlayStore()
 const controllerCache = new Map<string, BasicDrawerController>()
+const contentInstances = new Map<string, BasicDrawerContentExpose>()
 const originalPropKeys = [
   'direction',
   'resizable',
@@ -94,6 +100,11 @@ function getDrawerStyle(options: BasicDrawerOptions): CSSProperties {
   } as CSSProperties
 }
 
+function setContentInstance(drawerKey: string, instance: unknown): void {
+  if (instance) contentInstances.set(drawerKey, instance as BasicDrawerContentExpose)
+  else contentInstances.delete(drawerKey)
+}
+
 function setVisible(drawerKey: string, visible: boolean): void {
   overlayStore.setVisible('drawer', drawerKey, visible)
 }
@@ -109,6 +120,11 @@ function getResizeListeners(entry: DrawerEntry) {
 async function confirm(entry: DrawerEntry): Promise<void> {
   const controller = getController(entry.drawerKey)
   const handler = entry.options.onConfirm as BasicDrawerAction | undefined
+  const content = contentInstances.get(entry.drawerKey)
+
+  if (content?.validate && !(await content.validate())) return
+  const nextPayload = content?.getPayload?.()
+  if (nextPayload !== undefined) overlayStore.setPayload('drawer', entry.drawerKey, nextPayload)
 
   if (!handler) {
     if (entry.options.closeOnConfirm !== false) controller.close()
@@ -132,6 +148,7 @@ async function cancel(entry: DrawerEntry): Promise<void> {
 }
 
 function closed(entry: DrawerEntry): void {
+  contentInstances.delete(entry.drawerKey)
   entry.state.loading = false
   if (entry.options.clearPayloadOnClose !== false) entry.state.payload = undefined
   entry.options.onClosed?.()
@@ -161,6 +178,7 @@ function closed(entry: DrawerEntry): void {
 
     <component
       :is="entry.options.content"
+      :ref="(instance: unknown) => setContentInstance(entry.drawerKey, instance)"
       v-else-if="entry.options.content"
       v-bind="entry.options.contentProps"
       :payload="entry.state.payload"

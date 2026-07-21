@@ -41,7 +41,14 @@ let mockUsers: UserItem[] = [
 const delay = () => new Promise((resolve) => window.setTimeout(resolve, 250))
 
 export async function getUsers(params: UserQuery): Promise<UserPageResult> {
-  if (!useMock) return request<UserPageResult>({ url: '/users', method: 'GET', params })
+  if (!useMock)
+    return request<UserPageResult>({
+      url: '/users',
+      method: 'GET',
+      params,
+      skipGlobalLoading: true,
+      skipErrorMessage: true,
+    })
   await delay()
 
   const keyword = params.keyword.trim().toLowerCase()

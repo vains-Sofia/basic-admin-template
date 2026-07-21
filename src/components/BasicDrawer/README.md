@@ -47,6 +47,15 @@ defineProps<{
 }>()
 ```
 
+如果内容组件需要使用抽屉默认确认按钮，可以通过 `defineExpose` 暴露 `validate()` 和 `getPayload()`。BasicDrawer 会在 `onConfirm` 前先校验内容，并将 `getPayload()` 返回值传给回调：
+
+```ts
+defineExpose({
+  validate: () => formRef.value?.validate() ?? false,
+  getPayload: () => ({ id: props.payload?.id, data: { ...form } }),
+})
+```
+
 还可以使用 `contentProps` 传入固定属性：
 
 ```ts

@@ -8,6 +8,8 @@ import {
   CopyDocument,
   Grid,
   Iphone,
+  EditPen,
+  Search, Picture, Warning
 } from '@element-plus/icons-vue'
 import { computed, type Component } from 'vue'
 
@@ -23,6 +25,10 @@ const icons: Record<string, Component> = {
   CopyDocument,
   Grid,
   Iphone,
+  EditPen,
+  Search,
+  Picture,
+  Warning
 }
 const iconComponent = computed(() => (props.name ? icons[props.name] : undefined))
 </script>

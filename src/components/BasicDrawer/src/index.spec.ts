@@ -2,7 +2,7 @@
 
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import BasicDrawer, { useBasicDrawer } from '../index'
@@ -94,5 +94,35 @@ describe('BasicDrawer', () => {
     const drawer = wrapper.get('.el-drawer')
     expect(drawer.attributes('aria-label')).toBe('更新后的标题')
     expect(drawer.attributes('style')).toContain('width: 40%')
+  })
+
+  it('validates content and synchronizes its payload before confirming', async () => {
+    const validate = vi.fn(async () => true)
+    const getPayload = vi.fn(() => ({ id: 2 }))
+    const onConfirm = vi.fn(async () => undefined)
+    const Content = defineComponent({
+      setup(_, { expose }) {
+        expose({ validate, getPayload })
+        return () => h('div', 'content')
+      },
+    })
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const controller = useBasicDrawer({
+      drawerKey: 'content-bridge',
+      showFooter: true,
+      content: Content,
+      onConfirm,
+    })
+    const wrapper = mount(BasicDrawer, { global: { plugins: [pinia] } })
+
+    controller.open({ id: 1 })
+    await nextTick()
+    await wrapper.get('.el-drawer__footer .el-button--primary').trigger('click')
+    await nextTick()
+
+    expect(validate).toHaveBeenCalledOnce()
+    expect(getPayload).toHaveBeenCalledOnce()
+    expect(onConfirm).toHaveBeenCalledWith({ id: 2 }, expect.anything())
   })
 })
