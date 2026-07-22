@@ -76,7 +76,7 @@ export async function request<T>(config: RequestConfig): Promise<T> {
   const response = await http.request<ApiResponse<T>>(config)
   const payload = response.data
 
-  if (payload.code !== 0) {
+  if (payload.code !== 200) {
     if (!config.skipErrorMessage) ElMessage.error(payload.message || '请求失败')
     throw new Error(payload.message || 'Request failed')
   }

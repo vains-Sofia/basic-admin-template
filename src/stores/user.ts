@@ -12,6 +12,7 @@ import {
 
 import { usePermissionStore } from './permission'
 import { useTagsViewStore } from './tags-view'
+import { isOAuth2Enabled } from '@/config/oauth2.ts'
 
 export const useUserStore = defineStore(
   'user',
@@ -23,14 +24,18 @@ export const useUserStore = defineStore(
 
     async function signIn(data: LoginData): Promise<void> {
       const result = await authApi.login(data)
-      token.value = result.token
-      profile.value = result.profile
+      if (!isOAuth2Enabled()) {
+        token.value = result.token
+        profile.value = result.profile
+      }
     }
 
     async function signInByEmail(data: EmailLoginData): Promise<void> {
       const result = await authApi.loginByEmail(data)
-      token.value = result.token
-      profile.value = result.profile
+      if (!isOAuth2Enabled()) {
+        token.value = result.token
+        profile.value = result.profile
+      }
     }
 
     async function signInWithOAuth2(params: OAuth2CallbackParams): Promise<string> {

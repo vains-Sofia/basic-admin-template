@@ -7,9 +7,10 @@ const useMock = import.meta.env.VITE_USE_MOCK === 'true'
 export async function login(data: LoginData): Promise<LoginResult> {
   if (!useMock) {
     return request<LoginResult>({
-      url: '/auth/login',
+      url: '/login',
       method: 'POST',
       data,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       withCredentials: isOAuth2Enabled(),
     })
   }
