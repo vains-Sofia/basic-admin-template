@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Refresh } from '@element-plus/icons-vue'
-import QRCode from 'qrcode'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+
+import QrCode from '@/components/QrCode'
 
 defineOptions({ name: 'QrCodeLogin' })
 
-const qrImage = ref('')
+const qrData = ref(' ')
 const expiresIn = ref(120)
 const generating = ref(false)
 let countdownTimer: number | undefined
@@ -33,12 +34,8 @@ async function refresh(): Promise<void> {
     const token = crypto.randomUUID()
     const target = new URL(`${import.meta.env.BASE_URL}login`, window.location.origin)
     target.searchParams.set('qr_token', token)
-    qrImage.value = await QRCode.toDataURL(target.toString(), {
-      width: 220,
-      margin: 1,
-      errorCorrectionLevel: 'M',
-      color: { dark: '#172033', light: '#ffffff' },
-    })
+    qrData.value = target.toString()
+    await nextTick()
     startCountdown()
   } finally {
     generating.value = false
@@ -53,13 +50,23 @@ onBeforeUnmount(() => window.clearInterval(countdownTimer))
 
 <template>
   <div class="qr-login">
-    <div class="qr-login__code" :class="{ 'is-expired': expired }">
-      <img v-if="qrImage" :src="qrImage" alt="扫码登录二维码" />
-      <div v-if="generating" class="qr-login__loading">生成中...</div>
-      <button v-else-if="expired" type="button" @click="refresh">
-        <el-icon><Refresh /></el-icon>
-        二维码已失效
-      </button>
+    <div class="qr-login__code">
+      <QrCode
+        :data="qrData"
+        :size="166"
+        dots-color="#172033"
+        :loading="generating"
+        :expired="expired"
+        :on-refresh="refresh"
+        transition
+      >
+        <template #expired>
+          <button type="button" @click="refresh">
+            <el-icon><Refresh /></el-icon>
+            二维码已失效
+          </button>
+        </template>
+      </QrCode>
     </div>
     <strong>使用移动端扫码登录</strong>
     <p>二维码将在 {{ countdownText }} 后失效</p>
@@ -90,21 +97,10 @@ onBeforeUnmount(() => window.clearInterval(countdownTimer))
   background: #fff;
 }
 
-.qr-login__code img {
-  display: block;
+.qr-login__code button {
+  display: flex;
   width: 100%;
   height: 100%;
-}
-
-.qr-login__code.is-expired img {
-  opacity: 0.12;
-}
-
-.qr-login__code button,
-.qr-login__loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
@@ -114,9 +110,6 @@ onBeforeUnmount(() => window.clearInterval(countdownTimer))
   background: rgb(255 255 255 / 88%);
   font: inherit;
   font-size: 13px;
-}
-
-.qr-login__code button {
   cursor: pointer;
 }
 

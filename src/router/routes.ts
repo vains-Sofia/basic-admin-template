@@ -32,6 +32,12 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '登录', hidden: true },
   },
   {
+    path: '/oauth2/callback',
+    name: 'OAuth2CallbackView',
+    component: () => import('@/views/login/oauth2-callback.vue'),
+    meta: { title: 'OAuth2 登录', hidden: true },
+  },
+  {
     path: '/',
     name: 'Root',
     component: () => import('@/layouts/AdminLayout.vue'),

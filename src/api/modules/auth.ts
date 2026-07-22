@@ -1,11 +1,17 @@
 import { request } from '../http'
 import type { EmailLoginData, LoginData, LoginResult } from '../types/AuthTypes'
+import { isOAuth2Enabled } from '@/config/oauth2'
 
 const useMock = import.meta.env.VITE_USE_MOCK === 'true'
 
 export async function login(data: LoginData): Promise<LoginResult> {
   if (!useMock) {
-    return request<LoginResult>({ url: '/auth/login', method: 'POST', data })
+    return request<LoginResult>({
+      url: '/auth/login',
+      method: 'POST',
+      data,
+      withCredentials: isOAuth2Enabled(),
+    })
   }
 
   await new Promise((resolve) => window.setTimeout(resolve, 350))
@@ -52,7 +58,12 @@ export async function logout(): Promise<void> {
 
 export async function sendEmailCode(email: string): Promise<void> {
   if (!useMock) {
-    await request<void>({ url: '/auth/email/code', method: 'POST', data: { email } })
+    await request<void>({
+      url: '/auth/email/code',
+      method: 'POST',
+      data: { email },
+      withCredentials: isOAuth2Enabled(),
+    })
     return
   }
 
@@ -61,7 +72,12 @@ export async function sendEmailCode(email: string): Promise<void> {
 
 export async function loginByEmail(data: EmailLoginData): Promise<LoginResult> {
   if (!useMock) {
-    return request<LoginResult>({ url: '/auth/email/login', method: 'POST', data })
+    return request<LoginResult>({
+      url: '/auth/email/login',
+      method: 'POST',
+      data,
+      withCredentials: isOAuth2Enabled(),
+    })
   }
 
   await new Promise((resolve) => window.setTimeout(resolve, 350))

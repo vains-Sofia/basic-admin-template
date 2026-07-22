@@ -2,7 +2,9 @@ import { ElMessage } from 'element-plus'
 import type { Pinia } from 'pinia'
 import type { Router } from 'vue-router'
 
-import { APP_TITLE, DEFAULT_ROUTE, LOGIN_ROUTE } from '@/config/app'
+import { APP_TITLE, DEFAULT_ROUTE, LOGIN_ROUTE, OAUTH2_CALLBACK_ROUTE } from '@/config/app'
+import { isOAuth2Enabled } from '@/config/oauth2'
+import { redirectToOAuth2 } from '@/services/oauth2'
 import { usePermissionStore } from '@/stores/permission'
 import { useTagsViewStore } from '@/stores/tags-view'
 import { useUserStore } from '@/stores/user'
@@ -18,9 +20,19 @@ export function setupRouterGuards(router: Router, pinia: Pinia): void {
 
     const authenticated = Boolean(userStore.token && userStore.profile)
 
-    if (to.path === LOGIN_ROUTE) return authenticated ? DEFAULT_ROUTE : true
+    if (to.path === OAUTH2_CALLBACK_ROUTE) {
+      return true
+    }
+
+    if (to.path === LOGIN_ROUTE) {
+      return authenticated ? DEFAULT_ROUTE : true
+    }
 
     if (!authenticated) {
+      if (isOAuth2Enabled()) {
+        await redirectToOAuth2(to.fullPath)
+        return false
+      }
       return { path: LOGIN_ROUTE, query: { redirect: to.fullPath }, replace: true }
     }
 
@@ -28,10 +40,7 @@ export function setupRouterGuards(router: Router, pinia: Pinia): void {
       try {
         const routes = await permissionStore.build(userStore.roles, userStore.permissions)
         installAccessRoutes(router, routes)
-        if (
-          permissionStore.isKnownRoute(to.path) &&
-          !permissionStore.isAccessibleRoute(to.path)
-        ) {
+        if (permissionStore.isKnownRoute(to.path) && !permissionStore.isAccessibleRoute(to.path)) {
           return { path: '/403', replace: true }
         }
         return { path: to.fullPath, replace: true }

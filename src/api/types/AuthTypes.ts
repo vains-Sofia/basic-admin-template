@@ -9,7 +9,7 @@ export interface EmailLoginData {
 }
 
 export interface UserProfile {
-  id: number
+  id: string | number
   username: string
   displayName: string
   roles: string[]

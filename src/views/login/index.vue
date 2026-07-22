@@ -16,6 +16,8 @@ import { useRoute, useRouter } from 'vue-router'
 
 import type { EmailLoginData } from '@/api/types/AuthTypes'
 import { DEFAULT_ROUTE } from '@/config/app'
+import { isOAuth2Enabled } from '@/config/oauth2'
+import { redirectToOAuth2 } from '@/services/oauth2'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 
@@ -100,8 +102,12 @@ function switchLoginMode(index: number): void {
 }
 
 async function navigateAfterLogin(): Promise<void> {
-  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : DEFAULT_ROUTE
-  await router.replace(redirect)
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : undefined
+  if (isOAuth2Enabled()) {
+    await redirectToOAuth2()
+    return
+  }
+  await router.replace(redirect ?? DEFAULT_ROUTE)
 }
 
 async function submitPassword(): Promise<void> {
@@ -697,6 +703,40 @@ onMounted(() => {
   --login-muted: #8d99aa;
   --login-border: #333e4d;
   --login-surface: #141920;
+}
+
+.is-dark .brand-pane {
+  background:
+    linear-gradient(90deg, rgb(20 25 32 / 0%) 91%, rgb(91 111 176 / 8%)),
+    linear-gradient(145deg, #181e28 6%, #121a24 52%, #102430 100%);
+}
+
+.is-dark .brand-pane::after {
+  background: rgb(95 83 210 / 10%);
+}
+
+.is-dark .version,
+.is-dark .brand-badge {
+  border-color: #34496d;
+  color: #91adff;
+  background: rgb(34 50 75 / 75%);
+}
+
+.is-dark .brand-content > p {
+  color: #9baabd;
+}
+
+.is-dark .feature-list li {
+  color: #c7d0dc;
+}
+
+.is-dark .feature-list li + li::before {
+  background: #3a4655;
+}
+
+.is-dark .feature-list .el-icon {
+  color: #8babff;
+  background: #233653;
 }
 
 .is-dark .form-pane {

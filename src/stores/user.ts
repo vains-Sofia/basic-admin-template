@@ -4,6 +4,11 @@ import { computed, ref } from 'vue'
 import * as authApi from '@/api/modules/auth'
 import type { EmailLoginData, LoginData, UserProfile } from '@/api/types/AuthTypes'
 import { clearAccessRoutes } from '@/router/access'
+import {
+  completeOAuth2Login,
+  type OAuth2CallbackParams,
+  type OAuth2LoginResult,
+} from '@/services/oauth2'
 
 import { usePermissionStore } from './permission'
 import { useTagsViewStore } from './tags-view'
@@ -28,6 +33,13 @@ export const useUserStore = defineStore(
       profile.value = result.profile
     }
 
+    async function signInWithOAuth2(params: OAuth2CallbackParams): Promise<string> {
+      const result: OAuth2LoginResult = await completeOAuth2Login(params)
+      token.value = result.token
+      profile.value = result.profile
+      return result.returnPath
+    }
+
     async function signOut(requestServer = true): Promise<void> {
       if (requestServer) await authApi.logout().catch(() => undefined)
       token.value = ''
@@ -37,7 +49,16 @@ export const useUserStore = defineStore(
       useTagsViewStore().reset()
     }
 
-    return { token, profile, roles, permissions, signIn, signInByEmail, signOut }
+    return {
+      token,
+      profile,
+      roles,
+      permissions,
+      signIn,
+      signInByEmail,
+      signInWithOAuth2,
+      signOut,
+    }
   },
   { persist: { key: 'admin-user', pick: ['token', 'profile'] } },
 )
