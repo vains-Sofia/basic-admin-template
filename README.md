@@ -1,4 +1,4 @@
-# demo06 中后台框架
+# Basic Admin Template 中后台框架
 
 基于 Vite 8、Vue 3、Vue Router、Pinia 和 Element Plus 的中后台基础项目。
 
