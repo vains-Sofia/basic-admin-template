@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Basic Admin image cropper demo</title>
+  <desc id="desc">An abstract workspace with a blue window, a coral panel and a green plant.</desc>
+  <rect width="1200" height="800" fill="#e8eef5"/>
+  <rect x="70" y="74" width="1060" height="652" rx="24" fill="#ffffff" stroke="#c9d4e1" stroke-width="8"/>
+  <rect x="70" y="74" width="1060" height="92" rx="24" fill="#1f3a5b"/>
+  <circle cx="130" cy="120" r="14" fill="#ffb86b"/>
+  <circle cx="176" cy="120" r="14" fill="#77c8a5"/>
+  <circle cx="222" cy="120" r="14" fill="#8db8e8"/>
+  <rect x="126" y="228" width="548" height="424" rx="18" fill="#d9e8f8"/>
+  <rect x="718" y="228" width="348" height="130" rx="18" fill="#f6c6af"/>
+  <rect x="718" y="390" width="348" height="262" rx="18" fill="#d6eadc"/>
+  <circle cx="864" cy="518" r="78" fill="#4f9d69"/>
+  <path d="M864 590c-8-94 0-156 56-212M864 560c-40-47-73-70-112-78M864 520c38-41 76-55 120-55" fill="none" stroke="#2f7049" stroke-linecap="round" stroke-width="18"/>
+  <rect x="188" y="296" width="424" height="268" rx="14" fill="#5b95d5"/>
+  <circle cx="398" cy="430" r="92" fill="#f7d49b"/>
+  <path d="M335 472c28-70 96-98 160-49 25 19 42 42 50 77H335z" fill="#eb846d"/>
+  <circle cx="366" cy="405" r="14" fill="#1f3a5b"/>
+  <circle cx="430" cy="405" r="14" fill="#1f3a5b"/>
+  <path d="M372 451c20 20 44 20 64 0" fill="none" stroke="#1f3a5b" stroke-linecap="round" stroke-width="8"/>
+</svg>
